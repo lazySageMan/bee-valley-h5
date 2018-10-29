@@ -1,8 +1,7 @@
 import Taro, { Component, Config } from '@tarojs/taro'
 import { View, Button, Image } from '@tarojs/components'
-import { fetchWork, downloadWorkFile } from '../../utils/beevalley'
-import * as D3 from 'd3'
-import '@tarojs/async-await'
+import { fetchWork, downloadWorkFile, cancelWork, submitWork} from '../../utils/beevalley'
+import D3, {event} from 'd3'
 import './index.scss'
 
 export default class Index extends Component {
@@ -15,80 +14,139 @@ export default class Index extends Component {
     super(props);
 
     this.state = {
-      currentWork: {}
+      currentWork: {},
+      circlePoints: []
     }
-    this.apiToken = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1YmM0M2RiMmYxNzdjOTAwMDEzZTZkZTUiLCJyb2xlcyI6WyJXT1JLRVIiLCJSRVZJRVdFUiJdLCJpYXQiOjE1NDA3MTU5MDgsImV4cCI6MTU0MDgwMjMwOH0.26F_3tKRcTZc8KO-Xfxjk--ppa3EIraY4UWF3Zbzk5k';
+    this.apiToken = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1YmM0M2RiMmYxNzdjOTAwMDEzZTZkZTUiLCJyb2xlcyI6WyJXT1JLRVIiLCJSRVZJRVdFUiJdLCJpYXQiOjE1NDA4MTU5MzMsImV4cCI6MTU0MDkwMjMzM30.zqWwI2rid-r6CYZfwCMaO0vt6qCZdJLzeGIT1m6D7pc';
+    this.circlePoints = [];
   }
 
   componentWillMount() {
   }
 
-  getWork = async () => {
+  getWork = () => {
     let { apiToken } = this;
-    let work = await fetchWork(apiToken, 'count', 4);
-    this.work = work;
+    fetchWork(apiToken, 'count', 4).then((res) => {
+      this.work = res;
 
-    if (this.work.length > 0) {
-      work.forEach(item => this.getImgFile(item.id));
-      this.nextWork()
-    }
-  }
-
-  nextWork = () => {
-    let nowWork = this.work.pop();
-    if (this.screenWidth < 500) {
-      let { imageWidth, imageHeight } = nowWork.meta;
-      let ratio = imageWidth / imageHeight;
-      let newHeight = this.screenWidth / ratio;
-
-      nowWork.meta = {
-        imageWidth: this.screenWidth,
-        imageHeight: newHeight
+      if (this.work.length > 0) {
+        this.work.forEach(item => this.getImgFile(item.id));
+        this.nextWork()
       }
-    }
-    this.setState({
-      currentWork: nowWork
     })
   }
 
-  getImgFile = async (imgId) => {
-    let { apiToken } = this;
-    let imgArrBuffer = await downloadWorkFile(apiToken, imgId);
-    let imgBase64 = 'data:image/png;base64,' + Taro.arrayBufferToBase64(new Uint8Array(imgArrBuffer));
-    if (imgId === this.state.currentWork.id) {
-      let current = Object.assign({}, this.state.currentWork, { src: imgBase64 });
+  nextWork = () => {
 
-      this.setState({
-        currentWork: current
-      })
-    } else {
-      let foundIndex = this.work.findIndex(item => item.id === imgId);
+    if(this.work.length > 0){
+      let nowWork = this.work.pop();
 
-      if (foundIndex >= 0) {
-        this.work[foundIndex].src = imgBase64;
+      if (this.circlePoints.length > 0) {
+        this.circlePoints = [];
+
+        this.updateCircle();
+        this.svg.remove();
       }
+
+
+      if (this.screenWidth < 500) {
+        let { imageWidth, imageHeight } = nowWork.meta;
+        let ratio = imageWidth / imageHeight;
+        let newHeight = this.screenWidth / ratio;
+
+        nowWork.meta = {
+          imageWidth: this.screenWidth,
+          imageHeight: newHeight
+        }
+      }
+      this.setState({
+        currentWork: nowWork
+      })
+    }else{
+      this.getWork();
     }
+  }
+
+  getImgFile = (imgId) => {
+    let { apiToken } = this;
+    downloadWorkFile(apiToken, imgId).then((res) => {
+      let imgBase64 = 'data:image/png;base64,' + Taro.arrayBufferToBase64(new Uint8Array(res));
+      if (imgId === this.state.currentWork.id) {
+        let current = Object.assign({}, this.state.currentWork, { src: imgBase64 });
+
+        this.setState({
+          currentWork: current
+        })
+      } else {
+        let foundIndex = this.work.findIndex(item => item.id === imgId);
+
+        if (foundIndex >= 0) {
+          this.work[foundIndex].src = imgBase64;
+        }
+      }
+    });
 
   }
 
-  imgLoad = ()=> {
-    let svg = D3.select(".workImg")
-        .append("svg")
-        .attr("width", this.state.currentWork.meta.imageWidth)
-        .attr("height", this.state.currentWork.meta.imageHeight)
-        .on('click', function(){
-          console.log(D3.event)
-          svg.append("circle")
-          .attr("cx", D3.event.clientX)
-          .attr("cy", D3.event.clientY)
-          .attr("r", 10).attr("fill", "red");
-        });
+  imgLoad = () => {
+    this.svg = D3.select(".workImg")
+      .append("svg")
+      .attr("width", this.state.currentWork.meta.imageWidth)
+      .attr("height", this.state.currentWork.meta.imageHeight)
+      .on('click', () => {
+        this.addCircle(event)
+      });
   }
 
-  async componentDidMount() {
+  addCircle = (event) => {
+
+    console.log(event)
+    this.circlePoints.push({
+      x: event.clientX,
+      y: event.clientY
+    });
+    
+    this.updateCircle();
+  }
+
+  updateCircle = () => {
+
+    this.circle = this.svg.selectAll("circle");
+    let update = this.circle.data(this.circlePoints);
+
+    update.enter().append("circle")
+      .attr("r", 10)
+      .attr("fill", "red")
+      .attr("cx", function (d) { return d.x; })
+      .attr("cy", function (d) { return d.y; });
+    update.exit().remove();
+  }
+
+  cancelWork = () => {
+    let {apiToken} = this;
+    let {id} = this.state.currentWork;
+
+    cancelWork(apiToken, [id])
+    this.nextWork();
+  }
+
+  submitWork = () => {
+    let {apiToken} = this;
+    let {id} = this.state.currentWork;
+    let {circlePoints} = this;
+    if(circlePoints.length > 0){
+      submitWork(apiToken, id, circlePoints);
+      this.nextWork();
+    }else{
+      alert("请标注点")
+    }
+  }
+
+
+  componentDidMount() {
     this.getWork();
     const query = Taro.createSelectorQuery()
-      query
+    query
       .select('.imgItem')
       .boundingClientRect(rect => {
         this.screenWidth = rect.width;
@@ -109,14 +167,14 @@ export default class Index extends Component {
       <View className='index'>
         <View className="imgItem">
           {currentWork.src && (
-              <Image onLoad={() => this.imgLoad()} src={currentWork.src} style={`width:${currentWork.meta.imageWidth}px;height:${currentWork.meta.imageHeight}px;`}></Image>
-            )
+            <Image onLoad={() => this.imgLoad()} src={currentWork.src} style={`width:${currentWork.meta.imageWidth}px;height:${currentWork.meta.imageHeight}px;`}></Image>
+          )
           }
           <View className="workImg"></View>
         </View>
         <View className="btnItem">
-          <Button type="primary" onClick={this.nextWork}>提交</Button>
-          <Button type="warn" onClick={this.nextWork}>放弃</Button>
+          <Button type="primary" onClick={this.submitWork}>提交</Button>
+          <Button type="warn" onClick={this.cancelWork}>放弃</Button>
         </View>
       </View>
     )

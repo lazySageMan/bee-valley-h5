@@ -27,6 +27,32 @@ let beevalley = {
             },
             responseType: 'arraybuffer'
         }).then((res) => res.data).catch((err) => console.log(err))
+    },
+
+    cancelWork(token, workId){
+        return Taro.request({
+            url:  `${host}works/${workId.join(',')}/cancel`,
+            method: 'DELETE',
+            header: {
+                'Authorization': 'Bearer ' + token
+            },
+        }).then((res) => console.log(res)).catch((err) => console.log(err))
+    },
+
+    submitWork(token, workId, result){
+        return Taro.request({
+            url: `${host}works/`,
+            method: 'POST',
+            data: {
+                'id': workId,
+                'result': result
+            },
+            header: {
+                'content-type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            }
+        }).then((res) => console.log(res)).catch((err) => console.log(err))
     }
+
 }
 module.exports = beevalley

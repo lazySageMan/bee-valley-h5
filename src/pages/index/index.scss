@@ -49,6 +49,18 @@
             width: 100vw;
             height: 85vh;
             background: gray;
+            position: relative;
+            img{
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
+            .workImg{
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: 1;
+            }
         }
         .btnItem{
             width: 100vw;
