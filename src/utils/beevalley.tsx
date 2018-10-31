@@ -52,7 +52,50 @@ let beevalley = {
                 'Authorization': 'Bearer ' + token
             }
         }).then((res) => console.log(res)).catch((err) => console.log(err))
+    },
+
+    fetchReview(token, type, num){
+        return Taro.request({
+            url: `${host}reviews/fetch`,
+            method: 'POST',
+            data: {
+                type: type,
+                num: num
+            },
+            header: {
+                'content-type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            }
+        }).then((res) => res.data).catch((err) => console.log(err));
+    },
+
+    downloadReviewFile(token, reviewId){
+        return Taro.request({
+            url: `${host}reviews/${reviewId}/file`,
+            method: 'GET',
+            header: {
+                'Authorization': 'Bearer ' + token
+            },
+            responseType: 'arraybuffer'
+        }).then((res) => res.data).catch((err) => console.log(err))
+    },
+
+    submitReview(token, reviewId, result){
+        return Taro.request({
+            url: `${host}reviews`,
+            method: 'POST',
+            data: {
+                'id': reviewId,
+                'result': result
+            },
+            header: {
+                'content-type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            },
+            responseType: 'arraybuffer'
+        }).then((res) => res.data).catch((err) => console.log(err))
     }
+
 
 }
 module.exports = beevalley

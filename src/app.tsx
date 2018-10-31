@@ -1,5 +1,5 @@
 import Taro, { Component, Config } from '@tarojs/taro'
-import Index from './pages/index'
+import PointTask from './pages/point_task'
 
 import './app.scss'
 
@@ -14,7 +14,8 @@ class App extends Component {
    */
   config: Config = {
     pages: [
-      'pages/index/index'
+      'pages/point_review/index',
+      'pages/point_task/index'
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -34,7 +35,7 @@ class App extends Component {
 
   render () {
     return (
-      <Index />
+      <PointTask />
     )
   }
 }
