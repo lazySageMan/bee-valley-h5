@@ -17,7 +17,7 @@ export default class PointTask extends Component {
       currentWork: {},
       circlePoints: []
     }
-    this.apiToken = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1YmM0M2RiMmYxNzdjOTAwMDEzZTZkZTUiLCJyb2xlcyI6WyJXT1JLRVIiLCJSRVZJRVdFUiJdLCJpYXQiOjE1NDA5ODkyOTQsImV4cCI6MTU0MTA3NTY5NH0.ZzUQXwMrSE4A5GFSV7NSsfjWWRUA8s5jl_cCVrTM4B8';
+    this.apiToken = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1YmM0M2RiMmYxNzdjOTAwMDEzZTZkZTUiLCJyb2xlcyI6WyJXT1JLRVIiLCJSRVZJRVdFUiJdLCJpYXQiOjE1NDEwODI3MjUsImV4cCI6MTU0MTE2OTEyNX0.4ppsk0x0bkMdBJ4As9Su5_Ay75PWtn1Gg0Lxlru3JLA';
     this.circlePoints = [];
   }
 
@@ -113,10 +113,9 @@ export default class PointTask extends Component {
   }
 
   cancelWork = () => {
-    console.log(1)
     let { apiToken } = this;
     let { id } = this.state.currentWork;
-    if(!id) return;
+    if (!id) return;
     cancelWork(apiToken, [id])
     this.nextWork();
   }
@@ -124,7 +123,10 @@ export default class PointTask extends Component {
   submitWork = () => {
     let { apiToken } = this;
     let { id, pointPosition } = this.state.currentWork;
-    if(!id) return;
+    if (!id) return;
+    pointPosition = pointPosition.map((item) => {
+      return { x: item.x, y: item.y }
+    })
     if (pointPosition.length > 0) {
       submitWork(apiToken, id, pointPosition);
       this.nextWork();
@@ -135,40 +137,17 @@ export default class PointTask extends Component {
 
   deleteCircle = (event) => {
     let { currentWork } = this.state;
-    let target =  event.srcElement;   //  获取事件发生源DOM
+    let target = event.srcElement;   //  获取事件发生源DOM
     let data = d3.select(target).datum(); //获取Dom事件数据
-    currentWork.pointPosition.forEach((item) => {
-      if (item.id === data.id) {
-        if (this.rect) {
-          this.rect.remove();
-        }
-        this.rect = this.svg.append('rect') //添加一个框表示点被选择
-          .attr('id', data.id)
-          .attr('class', 'rect')
-          .attr('height', 20)
-          .attr('width', 20)
-          .attr('x', item.x - 10)
-          .attr('y', item.y - 10)
-          .attr('fill', 'transparent')
-          .attr('stroke', 'black')
-          .attr('stroke-width', 1);
-        this.svg.append(() => { //将事件源元素放在最后面 以便删除时不会错位
-          return target;
-        });
-      }
-    })
+    this.svg.append(() => { //将事件源元素放在最后面 以便删除时不会错位
+      return target;
+    });
+    target.onclick = () => {
 
-
-    document.onkeydown = (ev) => {
-      if (ev.keyCode === 46 && this.rect) { //删除点击的数据，同步删除元素
-
-        currentWork.pointPosition = currentWork.pointPosition.filter((item) => item.id !== data.id);
-        this.setState({
-          currentWork: currentWork
-        }, () => {
-          this.rect.remove();
-        })
-      }
+      currentWork.pointPosition = currentWork.pointPosition.filter((item) => item.id !== data.id);
+      this.setState({
+        currentWork: currentWork
+      })
     }
   }
 
@@ -202,7 +181,7 @@ export default class PointTask extends Component {
           this.deleteCircle(d3.event);
 
         })
-        update.exit().remove();
+      update.exit().remove();
     }
     return (
       <View className='index'>

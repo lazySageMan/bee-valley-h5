@@ -1,12 +1,12 @@
 import Taro, { Component, Config } from '@tarojs/taro'
 import { View, Button, Image } from '@tarojs/components'
-import {fetchReview, downloadReviewFile, submitReview, cancelWork} from '../../utils/beevalley'
+import { fetchReview, downloadReviewFile, submitReview, cancelWork } from '../../utils/beevalley'
 import * as d3 from 'd3'
 import './index.scss'
 
 export default class PointReview extends Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
 
         this.state = {
@@ -19,20 +19,20 @@ export default class PointReview extends Component {
     getWork = () => {
         let { apiToken } = this;
         fetchReview(apiToken, 'count', 4).then((res) => {
-          this.work = res;
-    
-          if (this.work.length > 0) {
-            this.work.forEach(item => this.getImgFile(item.id));
-            this.nextWork()
-          }
+            this.work = res;
+
+            if (this.work.length > 0) {
+                this.work.forEach(item => this.getImgFile(item.id));
+                this.nextWork()
+            }
         })
     }
 
     nextWork = () => {
-        if(this.work.length > 0){
+        if (this.work.length > 0) {
             let nowWork = this.work.pop();
-            
-            if(this.svg){
+
+            if (this.svg) {
                 this.svg.remove();
             }
 
@@ -40,16 +40,16 @@ export default class PointReview extends Component {
                 let { imageWidth, imageHeight } = nowWork.meta;
                 let ratio = imageWidth / imageHeight;
                 let newHeight = this.screenWidth / ratio;
-        
+
                 nowWork.meta = {
-                  imageWidth: this.screenWidth,
-                  imageHeight: newHeight
+                    imageWidth: this.screenWidth,
+                    imageHeight: newHeight
                 }
-              }
+            }
             this.setState({
                 currentWork: nowWork
             })
-        }else{
+        } else {
             this.getWork();
         }
     }
@@ -57,43 +57,43 @@ export default class PointReview extends Component {
     getImgFile = (imgId) => {
         let { apiToken } = this;
         downloadReviewFile(apiToken, imgId).then((res) => {
-          let imgBase64 = 'data:image/png;base64,' + Taro.arrayBufferToBase64(new Uint8Array(res));
-          if (imgId === this.state.currentWork.id) {
-            let current = Object.assign({}, this.state.currentWork, { src: imgBase64 });
-    
-            this.setState({
-              currentWork: current
-            })
-          } else {
-            let foundIndex = this.work.findIndex(item => item.id === imgId);
-    
-            if (foundIndex >= 0) {
-              this.work[foundIndex].src = imgBase64;
+            let imgBase64 = 'data:image/png;base64,' + Taro.arrayBufferToBase64(new Uint8Array(res));
+            if (imgId === this.state.currentWork.id) {
+                let current = Object.assign({}, this.state.currentWork, { src: imgBase64 });
+
+                this.setState({
+                    currentWork: current
+                })
+            } else {
+                let foundIndex = this.work.findIndex(item => item.id === imgId);
+
+                if (foundIndex >= 0) {
+                    this.work[foundIndex].src = imgBase64;
+                }
             }
-          }
         });
-    
+
     }
 
     submitWork = () => {
-        let {currentWork} = this.state;
-        if(!currentWork.id) return;
+        let { currentWork } = this.state;
+        if (!currentWork.id) return;
         submitReview(this.apiToken, currentWork.id, true);
         this.nextWork();
         console.log(1)
     }
 
     rejectWork = () => {
-        let {currentWork} = this.state;
-        if(!currentWork.id) return;
+        let { currentWork } = this.state;
+        if (!currentWork.id) return;
         submitReview(this.apiToken, currentWork.id, false);
         this.nextWork();
     }
 
     cancelWork = () => {
         console.log(1)
-        let {currentWork} = this.state;
-        if(!currentWork.id) return;
+        let { currentWork } = this.state;
+        if (!currentWork.id) return;
         cancelWork(this.apiToken, [currentWork.id]);
         this.nextWork();
     }
@@ -106,29 +106,29 @@ export default class PointReview extends Component {
         this.getWork();
         const query = Taro.createSelectorQuery()
         query
-          .select('.imgItem')
-          .boundingClientRect(rect => {
-            this.screenWidth = rect.width;
-          })
-          .exec()
+            .select('.imgItem')
+            .boundingClientRect(rect => {
+                this.screenWidth = rect.width;
+            })
+            .exec()
         if (process.env.TARO_ENV === 'weapp') {
         } else if (process.env.TARO_ENV === 'h5') {
         }
     }
 
-    render(){
+    render() {
 
         let { currentWork } = this.state;
-        
-        if(currentWork.src){
+
+        if (currentWork.src) {
             this.svg = d3.select(".workImg")
                 .append("svg")
                 .attr("width", this.state.currentWork.meta.imageWidth)
                 .attr("height", this.state.currentWork.meta.imageHeight);
-            
+
             let circle = this.svg.selectAll("circle");
             let update = circle.data(currentWork.work.result);
-        
+
             update.enter().append("circle")
                 .attr("r", 10)
                 .attr("fill", "red")
@@ -142,7 +142,7 @@ export default class PointReview extends Component {
                 <View className="imgItem">
                     {currentWork.src && (
                         <Image src={currentWork.src} style={`width:${currentWork.meta.imageWidth}px;height:${currentWork.meta.imageHeight}px;`}></Image>
-                        )
+                    )
                     }
                     <View className="workImg"></View>
                 </View>
