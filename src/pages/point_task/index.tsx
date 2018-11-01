@@ -15,10 +15,9 @@ export default class PointTask extends Component {
 
     this.state = {
       currentWork: {},
-      circlePoints: []
+      pointRadius: 10
     }
-    this.apiToken = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1YmM0M2RiMmYxNzdjOTAwMDEzZTZkZTUiLCJyb2xlcyI6WyJXT1JLRVIiLCJSRVZJRVdFUiJdLCJpYXQiOjE1NDEwODI3MjUsImV4cCI6MTU0MTE2OTEyNX0.4ppsk0x0bkMdBJ4As9Su5_Ay75PWtn1Gg0Lxlru3JLA';
-    this.circlePoints = [];
+    this.apiToken = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1YjkwZjZkOWE1NmY4MzAwMDE5NWYwM2UiLCJyb2xlcyI6WyJXT1JLRVIiLCJSRVFVRVNURVIiLCJBRE1JTiIsIlJFVklFV0VSIl0sImlhdCI6MTU0MTA4MDA2OSwiZXhwIjoxNTQxMTY2NDY5fQ.s0r8Npc8a89KzdohCJ7m0VYOL1dzu1--7WTVEdaxbRI';
   }
 
   componentWillMount() {
@@ -41,9 +40,9 @@ export default class PointTask extends Component {
     if (this.work.length > 0) {
       let nowWork = this.work.pop();
 
-      if (this.svg) {
-        this.svg.remove();
-      }
+      // if (this.svg) {
+      //   this.svg.remove();
+      // }
 
 
       if (this.screenWidth < 500) {
@@ -87,29 +86,20 @@ export default class PointTask extends Component {
   }
 
   imgLoad = () => {
-
     let { currentWork } = this.state;
-    this.svg = d3.select(".workImg")
-      .append("svg")
-      .attr("width", currentWork.meta.imageWidth)
-      .attr("height", currentWork.meta.imageHeight)
-      .on('click', () => {
-        this.addCircle(d3.event)
-      });
+    if (this.svg) {
+    this.svg.attr("width", currentWork.meta.imageWidth)
+      .attr("height", currentWork.meta.imageHeight);
+    }
   }
 
   addCircle = (ev) => {
-    let { currentWork } = this.state;
-    let id = `circle${Math.round(Math.random() * 100000000)}`
+    let { currentWork, pointRadius } = this.state;
     currentWork.pointPosition.push({
       x: ev.offsetX,
-      y: ev.offsetY,
-      id: id
+      y: ev.offsetY
     })
-    this.setState({
-      currentWork: currentWork
-    })
-
+    this.updateD3(currentWork.pointPosition, pointRadius);
   }
 
   cancelWork = () => {
@@ -124,30 +114,11 @@ export default class PointTask extends Component {
     let { apiToken } = this;
     let { id, pointPosition } = this.state.currentWork;
     if (!id) return;
-    pointPosition = pointPosition.map((item) => {
-      return { x: item.x, y: item.y }
-    })
     if (pointPosition.length > 0) {
       submitWork(apiToken, id, pointPosition);
       this.nextWork();
     } else {
       alert("请标注点")
-    }
-  }
-
-  deleteCircle = (event) => {
-    let { currentWork } = this.state;
-    let target = event.srcElement;   //  获取事件发生源DOM
-    let data = d3.select(target).datum(); //获取Dom事件数据
-    // this.svg.append(() => { //将事件源元素放在最后面 以便删除时不会错位
-    //   return target;
-    // });
-    target.onclick = () => {
-
-      currentWork.pointPosition = currentWork.pointPosition.filter((item) => item.id !== data.id);
-      this.setState({
-        currentWork: currentWork
-      })
     }
   }
 
@@ -163,27 +134,50 @@ export default class PointTask extends Component {
     if (process.env.TARO_ENV === 'weapp') {
     } else if (process.env.TARO_ENV === 'h5') {
     }
+    this.svg = d3.select(".workImg")
+      .append("svg")
+      .on('click', () => {
+        this.addCircle(d3.event)
+      });
   }
 
-  render() {
-    let { currentWork } = this.state;
+  updateD3(pointData, pointRadius) {
     if (this.svg) {
       let circle = this.svg.selectAll("circle");
-      let update = circle.data(currentWork.pointPosition, (d) => {
-        return d.id
+      let update = circle.data(pointData, (d) => {
+        return d.x + '_' + d.y
       });
+
+      update.attr("cx", function (d) { return d.x; })
+        .attr("cy", function (d) { return d.y; })
+        .attr("r", pointRadius);
+
       update.enter().append("circle")
-        .attr("r", 10)
+        .attr("r", pointRadius)
         .attr("fill", "red")
         .attr("cx", function (d) { return d.x; })
         .attr("cy", function (d) { return d.y; })
-        .on('click', () => {
+        .on('click', (datum) => {
+
           d3.event.stopPropagation();
-          this.deleteCircle(d3.event);
+          var index = pointData.findIndex(e => e.x === datum.x && e.y === datum.y);
+          if (index > -1) {
+            pointData.splice(index, 1);
+          }
+          this.updateD3(pointData, pointRadius);
 
         })
       update.exit().remove();
     }
+  }
+
+  render() {
+    let { currentWork, pointRadius } = this.state;
+    
+    if (currentWork.pointPosition) {
+      this.updateD3(currentWork.pointPosition, pointRadius);
+    }
+
     return (
       <View className='index'>
         <View className="imgItem">
