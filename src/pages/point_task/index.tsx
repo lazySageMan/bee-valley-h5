@@ -113,9 +113,10 @@ export default class PointTask extends Component {
   }
 
   cancelWork = () => {
+    console.log(1)
     let { apiToken } = this;
     let { id } = this.state.currentWork;
-    if(id) return;
+    if(!id) return;
     cancelWork(apiToken, [id])
     this.nextWork();
   }
@@ -123,7 +124,7 @@ export default class PointTask extends Component {
   submitWork = () => {
     let { apiToken } = this;
     let { id, pointPosition } = this.state.currentWork;
-    if(id) return;
+    if(!id) return;
     if (pointPosition.length > 0) {
       submitWork(apiToken, id, pointPosition);
       this.nextWork();
