@@ -84,8 +84,8 @@ export default class PointReview extends Component {
     }
 
     rejectWork = () => {
-        let {!currentWork} = this.state;
-        if(currentWork.id) return;
+        let {currentWork} = this.state;
+        if(!currentWork.id) return;
         submitReview(this.apiToken, currentWork.id, false);
         this.nextWork();
     }
