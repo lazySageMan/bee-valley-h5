@@ -139,9 +139,9 @@ export default class PointTask extends Component {
     let { currentWork } = this.state;
     let target = event.srcElement;   //  获取事件发生源DOM
     let data = d3.select(target).datum(); //获取Dom事件数据
-    this.svg.append(() => { //将事件源元素放在最后面 以便删除时不会错位
-      return target;
-    });
+    // this.svg.append(() => { //将事件源元素放在最后面 以便删除时不会错位
+    //   return target;
+    // });
     target.onclick = () => {
 
       currentWork.pointPosition = currentWork.pointPosition.filter((item) => item.id !== data.id);
@@ -169,10 +169,11 @@ export default class PointTask extends Component {
     let { currentWork } = this.state;
     if (this.svg) {
       let circle = this.svg.selectAll("circle");
-      let update = circle.data(currentWork.pointPosition);
+      let update = circle.data(currentWork.pointPosition, (d) => {
+        return d.id
+      });
       update.enter().append("circle")
         .attr("r", 10)
-        .attr('id', function (d) { return d.id; })
         .attr("fill", "red")
         .attr("cx", function (d) { return d.x; })
         .attr("cy", function (d) { return d.y; })

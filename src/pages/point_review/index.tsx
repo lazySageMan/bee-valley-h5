@@ -80,7 +80,6 @@ export default class PointReview extends Component {
         if (!currentWork.id) return;
         submitReview(this.apiToken, currentWork.id, true);
         this.nextWork();
-        console.log(1)
     }
 
     rejectWork = () => {
@@ -91,7 +90,6 @@ export default class PointReview extends Component {
     }
 
     cancelWork = () => {
-        console.log(1)
         let { currentWork } = this.state;
         if (!currentWork.id) return;
         cancelWork(this.apiToken, [currentWork.id]);
