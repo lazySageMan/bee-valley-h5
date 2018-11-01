@@ -85,14 +85,6 @@ export default class PointTask extends Component {
 
   }
 
-  imgLoad = () => {
-    let { currentWork } = this.state;
-    if (this.svg) {
-    this.svg.attr("width", currentWork.meta.imageWidth)
-      .attr("height", currentWork.meta.imageHeight);
-    }
-  }
-
   addCircle = (ev) => {
     let { currentWork, pointRadius } = this.state;
     currentWork.pointPosition.push({
@@ -175,12 +167,17 @@ export default class PointTask extends Component {
     if (currentWork.pointPosition) {
       this.updateD3(currentWork.pointPosition, pointRadius);
     }
+    
+    if (this.svg && currentWork) {
+      this.svg.attr("width", currentWork.meta.imageWidth)
+      .attr("height", currentWork.meta.imageHeight);
+    }
 
     return (
       <View className='index'>
         <View className="imgItem">
           {currentWork.src && (
-            <Image onLoad={() => this.imgLoad()} src={currentWork.src} style={`width:${currentWork.meta.imageWidth}px;height:${currentWork.meta.imageHeight}px;`}></Image>
+            <Image src={currentWork.src} style={`width:${currentWork.meta.imageWidth}px;height:${currentWork.meta.imageHeight}px;`}></Image>
           )
           }
           <View className="workImg"></View>
