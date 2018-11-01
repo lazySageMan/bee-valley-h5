@@ -144,9 +144,7 @@ export default class PointTask extends Component {
   updateD3(pointData, pointRadius) {
     if (this.svg) {
       let circle = this.svg.selectAll("circle");
-      let update = circle.data(pointData, (d) => {
-        return d.x + '_' + d.y
-      });
+      let update = circle.data(pointData);
 
       update.attr("cx", function (d) { return d.x; })
         .attr("cy", function (d) { return d.y; })
@@ -173,7 +171,7 @@ export default class PointTask extends Component {
 
   render() {
     let { currentWork, pointRadius } = this.state;
-    
+
     if (currentWork.pointPosition) {
       this.updateD3(currentWork.pointPosition, pointRadius);
     }
