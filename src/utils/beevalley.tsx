@@ -109,7 +109,14 @@ let beevalley = {
             headers: {
                 'content-type': 'application/json'
             }
-        }).then((res) => res.data).catch((err) => console.log(err));
+        }).then((res) => res.data).catch((err) => console.log(err))
+    },
+
+    wechatLogin(code){
+        return Axios({
+            url: `${host}login/weixin/${code}`,
+            method: 'POST'
+        }).then((res) => res.data).catch((err) => console.log(err))
     }
 
 

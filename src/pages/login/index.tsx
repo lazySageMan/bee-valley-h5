@@ -1,7 +1,7 @@
 import Taro, { Component, Config } from '@tarojs/taro'
 import { View, Text, Input, Button, Image } from '@tarojs/components'
 import {save, fetch} from '../../utils/localIfo'
-import { phoneLogin } from '../../utils/beevalley'
+import { phoneLogin, wechatLogin } from '../../utils/beevalley'
 import './index.scss'
 import wechat from '../../image/wechat.png'
 export default class Login extends Component {
@@ -22,11 +22,12 @@ export default class Login extends Component {
                     }
                 })
             }else{
-                save('apiToken', res);
                 Taro.showToast({
                     title: '登陆成功',
                     mask: true,
                     success: () => {
+                        save('apiToken', res);
+                        save('login', true);
                         Taro.navigateTo({
                             url: 'pages/point_task/index'
                         })
@@ -36,8 +37,48 @@ export default class Login extends Component {
         })
     }
 
-    componentWillMount(){
-        fetch('apiToken')
+    wechatLogin = () => {
+        var url = new URL(window.location.href);
+        let code = url.searchParams.get('code');
+
+        if(!code){
+            var redirect_uri = encodeURIComponent('http://bee-valley.todview.com');
+            var state = Math.ceil(Math.random()*1000);
+            window.location = 'https://open.weixin.qq.com/connect/qrconnect?appid=wx325f7c60ccdd70ed&redirect_uri='+redirect_uri+'&response_type=code&scope=snsapi_login&state='+state+'#wechat_redirect';
+        }
+    }
+
+    componentDidMount(){
+        let login = fetch('login');
+        var url = new URL(window.location.href);
+        this.code = url.searchParams.get('code');
+        if(login === true) {
+            Taro.navigateTo({
+                url: 'pages/point_task/index'
+            })
+        }
+        if(!this.code) return;
+        
+        wechatLogin(this.code).then((res) => {
+            if(!res){
+                Taro.showToast({
+                    title: '登陆失败',
+                    mask: true
+                })
+            }else{
+                Taro.showToast({
+                    title: '登陆成功',
+                    mask: true,
+                    success: () => {
+                        save('apiToken', res);
+                        save('login', true);
+                        Taro.navigateTo({
+                            url: 'pages/point_task/index'
+                        })
+                    }
+                })
+            }
+        })
     }
 
     render() {
@@ -55,7 +96,7 @@ export default class Login extends Component {
                 <View className='iconMenu'>
                     <View className='iconTitle'>其他方式登录</View>
                 </View>
-                <View className='icon'>
+                <View className='icon' onClick={this.wechatLogin}>
                     <Image style='width:50px;height:50px;' src={wechat}></Image>
                 </View>
             </View>
