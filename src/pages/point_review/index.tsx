@@ -1,7 +1,8 @@
 import Taro, { Component, Config } from '@tarojs/taro'
 import { View, Button, Image } from '@tarojs/components'
-import { fetchReview, downloadReviewFile, submitReview, cancelWork } from '../../utils/beevalley'
 import * as d3 from 'd3'
+import { fetchReview, downloadReviewFile, submitReview, cancelWork } from '../../utils/beevalley'
+import {fetch, save} from '../../utils/localIfo'
 import './index.scss'
 
 export default class PointReview extends Component {
@@ -13,7 +14,7 @@ export default class PointReview extends Component {
             currentWork: []
         }
 
-        this.apiToken = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1YmM0M2RiMmYxNzdjOTAwMDEzZTZkZTUiLCJyb2xlcyI6WyJXT1JLRVIiLCJSRVZJRVdFUiJdLCJpYXQiOjE1NDA5ODkyOTQsImV4cCI6MTU0MTA3NTY5NH0.ZzUQXwMrSE4A5GFSV7NSsfjWWRUA8s5jl_cCVrTM4B8';
+        this.apiToken = fetch('apiToken');
     }
 
     getWork = () => {

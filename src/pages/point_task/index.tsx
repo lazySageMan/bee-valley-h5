@@ -1,7 +1,8 @@
 import Taro, { Component, Config } from '@tarojs/taro'
 import { View, Button, Image } from '@tarojs/components'
-import { fetchWork, downloadWorkFile, cancelWork, submitWork } from '../../utils/beevalley'
 import * as d3 from 'd3'
+import { fetchWork, downloadWorkFile, cancelWork, submitWork } from '../../utils/beevalley'
+import {fetch, save} from '../../utils/localIfo'
 import './index.scss'
 
 export default class PointTask extends Component {
@@ -17,7 +18,7 @@ export default class PointTask extends Component {
       currentWork: {},
       pointRadius: 10
     }
-    this.apiToken = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1YjkwZjZkOWE1NmY4MzAwMDE5NWYwM2UiLCJyb2xlcyI6WyJXT1JLRVIiLCJSRVFVRVNURVIiLCJBRE1JTiIsIlJFVklFV0VSIl0sImlhdCI6MTU0MTA4MDA2OSwiZXhwIjoxNTQxMTY2NDY5fQ.s0r8Npc8a89KzdohCJ7m0VYOL1dzu1--7WTVEdaxbRI';
+    this.apiToken = fetch('apiToken');
   }
 
   componentWillMount() {

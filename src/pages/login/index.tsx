@@ -29,7 +29,7 @@ export default class Login extends Component {
                         save('apiToken', res);
                         save('login', true);
                         Taro.navigateTo({
-                            url: 'pages/point_task/index'
+                            url: 'pages/task_list/index'
                         })
                     }
                 })
@@ -54,7 +54,7 @@ export default class Login extends Component {
         this.code = url.searchParams.get('code');
         if(login === true) {
             Taro.navigateTo({
-                url: 'pages/point_task/index'
+                url: 'pages/task_list/index'
             })
         }
         if(!this.code) return;
@@ -73,7 +73,7 @@ export default class Login extends Component {
                         save('apiToken', res);
                         save('login', true);
                         Taro.navigateTo({
-                            url: 'pages/point_task/index'
+                            url: 'pages/task_list/index'
                         })
                     }
                 })
