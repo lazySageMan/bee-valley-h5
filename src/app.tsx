@@ -14,8 +14,9 @@ class App extends Component {
    */
   config: Config = {
     pages: [
-      'pages/point_review/index',
-      'pages/point_task/index'
+      'pages/login/index',
+      'pages/point_task/index',
+      'pages/point_review/index'
     ],
     window: {
       backgroundTextStyle: 'light',

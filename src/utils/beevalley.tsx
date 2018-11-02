@@ -1,5 +1,6 @@
 import Taro from '@tarojs/taro'
 import { host } from '../config'
+import Axios from 'axios'
 
 let beevalley = {
 
@@ -94,6 +95,21 @@ let beevalley = {
             },
             responseType: 'arraybuffer'
         }).then((res) => res.data).catch((err) => console.log(err))
+    },
+
+    phoneLogin(phone, passwd){
+        return Axios({
+            url: `${host}login/mobile`,
+            method: 'POST',
+            data: {
+                'mobile': phone,
+                'password': passwd,
+                'region': 'CN'
+            },
+            headers: {
+                'content-type': 'application/json'
+            }
+        }).then((res) => res.data).catch((err) => console.log(err));
     }
 
 
