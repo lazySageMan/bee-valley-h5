@@ -1,5 +1,6 @@
 import Taro from '@tarojs/taro'
 import { host } from '../config'
+import Axios from 'axios'
 
 let beevalley = {
 
@@ -93,6 +94,28 @@ let beevalley = {
                 'Authorization': 'Bearer ' + token
             },
             responseType: 'arraybuffer'
+        }).then((res) => res.data).catch((err) => console.log(err))
+    },
+
+    phoneLogin(phone, passwd){
+        return Axios({
+            url: `${host}login/mobile`,
+            method: 'POST',
+            data: {
+                'mobile': phone,
+                'password': passwd,
+                'region': 'CN'
+            },
+            headers: {
+                'content-type': 'application/json'
+            }
+        }).then((res) => res.data).catch((err) => console.log(err))
+    },
+
+    wechatLogin(code){
+        return Axios({
+            url: `${host}login/weixin/${code}`,
+            method: 'POST'
         }).then((res) => res.data).catch((err) => console.log(err))
     }
 
