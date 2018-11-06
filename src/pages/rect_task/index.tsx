@@ -14,7 +14,7 @@ export default class RectTask extends Component{
         }
 
         this.apiToken = fetch('apiToken');
-        console.log(this.apiToken)
+        this.rectInitialized = true;
     }
 
     getWork = () => {
@@ -76,17 +76,25 @@ export default class RectTask extends Component{
     addRect = (newRect) => {
         let {currentWork} = this.state;
 
-        currentWork.rectPosition = currentWork.rectPosition ? [newRect, ...currentWork.rectPosition] : [newRect];
+        currentWork.rectPosition = newRect;
 
         this.setState({
             currentWork: currentWork
         }, () => {
-            this.updateRect(currentWork.rectPosition);
+            this.changePosition(currentWork.rectPosition)
         })
     }
 
-    updateRect = (rectData) => {
+    changePosition = (rectPosition) => {
+        this.updateRect([{
+            x: rectPosition.xMin,
+            y: rectPosition.yMin,
+            width: rectPosition.xMax - rectPosition.xMin,
+            height: rectPosition.yMax - rectPosition.yMin
+        }]);
+    }
 
+    updateRect = (rectData) => {
         if(this.svg){
             let rect = this.svg.selectAll("rect");
             let update = rect.data(rectData);
@@ -105,13 +113,61 @@ export default class RectTask extends Component{
                 .attr("y", function(d) { return d.y })
                 .attr("width", function(d) { return d.width })
                 .attr("height", function(d) { return d.height });
-            
-            rect.on("click", (d) => {
-                d3.event.stopPropagation();
-                console.log(d);
-            })
         }
 
+    }
+
+    drawRect = (ev) => {
+        let {x, y} = this.startRect;
+        let {rectPosition} = this.state.currentWork;
+        let changeWidth = ev.offsetX - x;
+        let changeHeight = ev.offsetY - y;
+
+        if(changeWidth < 0){
+            rectPosition.xMin = ev.offsetX;
+            rectPosition.xMax = x
+            
+        }else{
+            rectPosition.xMax = ev.offsetX;
+        }
+        if(changeHeight < 0){
+            rectPosition.yMin = ev.offsetY;
+            rectPosition.yMax = y;
+            
+        }else{
+            rectPosition.yMax = ev.offsetY;
+        }
+        this.changePosition(rectPosition);      
+    }
+
+    adjustRect = (ev) => {
+        let {x, y} = this.startRect;
+        let {rectPosition} = this.state.currentWork;
+
+        let deltaXmin = Math.abs(ev.offsetX - rectPosition.xMin);
+        let deltaXmax = Math.abs(ev.offsetX - rectPosition.xMax);
+        let deltaYmin = Math.abs(ev.offsetY - rectPosition.yMin);
+        let deltaYmax = Math.abs(ev.offsetY - rectPosition.yMax);
+
+        if (rectPosition.yMin < ev.offsetY && rectPosition.yMax > ev.offsetY) {
+            if (deltaXmax < deltaXmin) {
+                rectPosition.xMax += (ev.offsetX - x);
+            } else {
+                rectPosition.xMin += (ev.offsetX - x);
+            }
+        }
+        if (rectPosition.xMin < ev.offsetX && rectPosition.xMax > ev.offsetX) {
+            if (deltaYmax < deltaYmin) {
+                rectPosition.yMax += (ev.offsetY - y);
+            } else {
+                rectPosition.yMin += (ev.offsetY - y);
+            }
+        }
+        this.changePosition(rectPosition);
+        this.startRect = {
+            x: ev.offsetX,
+            y: ev.offsetY
+        };
     }
 
     componentDidMount() {
@@ -129,51 +185,42 @@ export default class RectTask extends Component{
         this.svg = d3.select(".workImg")
             .append("svg");
         this.svg.on('mousedown', () => {
-            let id = Math.random()*500000;
-            this.addRect({
+            if(this.rectInitialized){
+                
+                this.addRect({
+                    xMin: d3.event.offsetX,
+                    yMin: d3.event.offsetY,
+                    xMax: d3.event.offsetX,
+                    yMax: d3.event.offsetY
+                });
+            }
+
+            this.startRect = {
                 x: d3.event.offsetX,
-                y: d3.event.offsetY,
-                defaultX: d3.event.offsetX,
-                defaultY: d3.event.offsetY,
-                width: 0,
-                height: 0,
-                id: id
-            });
+                y: d3.event.offsetY
+            };
 
             this.svg.on('mousemove', () => {
-                let {rectPosition} = this.state.currentWork;
-                rectPosition.forEach((item) => {
-                    if(item.id === id){
-                        let {defaultX, defaultY} = item;
 
-                        let changeWidth = d3.event.offsetX - defaultX;
-                        let changeHeight = d3.event.offsetY - defaultY;
-
-                        if(changeWidth < 0){
-                            item.x = d3.event.offsetX;
-                            item.width = Math.abs(changeWidth);
-                            
-                        }else{
-                            item.width = changeWidth
-                        }
-                        if(changeHeight < 0){
-                            item.y = d3.event.offsetY;
-                            item.height = Math.abs(changeHeight);
-                            
-                        }else{
-                            item.height = changeHeight;
-                        }
-                        this.updateRect(rectPosition);
-                    }
-                })
+                if(this.rectInitialized){
+                    this.drawRect(d3.event);
+                }else {
+                    this.adjustRect(d3.event);
+                }
                 
             });
             this.svg.on('mouseup', () => {
+                if(this.rectInitialized){
+                    this.rectInitialized = false;
+                }
                 this.svg.on('mousemove', null);
                 this.svg.on('mouseup', null);
             });
+
         });
     }
+
+
 
     submitWork = () => {
 
