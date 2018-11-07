@@ -1,6 +1,7 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button } from '@tarojs/components'
 import './index.scss'
+
 export default class TaskList extends Component {
     constructor(props){
         super(props);

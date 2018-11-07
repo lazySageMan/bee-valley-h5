@@ -1,8 +1,8 @@
-import Taro, { Component, Config } from '@tarojs/taro'
+import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Image } from '@tarojs/components'
 import * as d3 from 'd3'
 import { fetchReview, downloadReviewFile, submitReview, cancelWork } from '../../utils/beevalley'
-import {fetch, save} from '../../utils/localIfo'
+import {fetch} from '../../utils/localIfo'
 import './index.scss'
 
 export default class PointReview extends Component {
@@ -58,7 +58,7 @@ export default class PointReview extends Component {
     getImgFile = (imgId) => {
         let { apiToken } = this;
         downloadReviewFile(apiToken, imgId).then((res) => {
-            let imgBase64 = 'data:image/png;base64,' + Taro.arrayBufferToBase64(new Uint8Array(res));
+            let imgBase64 = 'data:image/jpeg;base64,' + Taro.arrayBufferToBase64(new Uint8Array(res));
             if (imgId === this.state.currentWork.id) {
                 let current = Object.assign({}, this.state.currentWork, { src: imgBase64 });
 
@@ -138,17 +138,17 @@ export default class PointReview extends Component {
 
         return (
             <View className='index'>
-                <View className="imgItem">
+                <View className='imgItem'>
                     {currentWork.src && (
                         <Image src={currentWork.src} style={`width:${currentWork.meta.imageWidth}px;height:${currentWork.meta.imageHeight}px;`}></Image>
                     )
                     }
-                    <View className="workImg"></View>
+                    <View className='workImg'></View>
                 </View>
-                <View className="btnItem">
-                    <Button type="primary" onClick={this.submitWork}>通过</Button>
-                    <Button type="warn" onClick={this.rejectWork}>驳回</Button>
-                    <Button style="background: #FFCC00;" type="warn" onClick={this.cancelWork}>放弃</Button>
+                <View className='btnItem'>
+                    <Button type='primary' onClick={this.submitWork}>通过</Button>
+                    <Button type='warn' onClick={this.rejectWork}>驳回</Button>
+                    <Button style='background: #FFCC00;' type='warn' onClick={this.cancelWork}>放弃</Button>
                 </View>
             </View>
         )

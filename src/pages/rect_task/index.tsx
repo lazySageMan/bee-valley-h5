@@ -1,8 +1,8 @@
-import Taro, { Component, Config } from '@tarojs/taro'
+import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Image } from '@tarojs/components'
 import * as d3 from 'd3'
 import { fetchWork, downloadWorkFile, cancelWork, submitWork } from '../../utils/beevalley'
-import { fetch, save } from '../../utils/localIfo'
+import { fetch } from '../../utils/localIfo'
 import './index.scss'
 
 export default class RectTask extends Component {
@@ -55,7 +55,7 @@ export default class RectTask extends Component {
     getImgFile = (imgId) => {
         let { apiToken } = this;
         downloadWorkFile(apiToken, imgId).then((res) => {
-            let imgBase64 = 'data:image/png;base64,' + Taro.arrayBufferToBase64(new Uint8Array(res));
+            let imgBase64 = 'data:image/jpeg;base64,' + Taro.arrayBufferToBase64(new Uint8Array(res));
             if (imgId === this.state.currentWork.id) {
                 let current = Object.assign({}, this.state.currentWork, { src: imgBase64 });
 

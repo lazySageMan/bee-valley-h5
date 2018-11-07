@@ -57,7 +57,7 @@ export default class RectReview extends Component {
     getImgFile = (imgId) => {
         let { apiToken } = this;
         downloadReviewFile(apiToken, imgId).then((res) => {
-            let imgBase64 = 'data:image/png;base64,' + Taro.arrayBufferToBase64(new Uint8Array(res));
+            let imgBase64 = 'data:image/jpeg;base64,' + Taro.arrayBufferToBase64(new Uint8Array(res));
             if (imgId === this.state.currentWork.id) {
                 let current = Object.assign({}, this.state.currentWork, { src: imgBase64 });
 

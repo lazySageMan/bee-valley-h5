@@ -2,7 +2,7 @@ import Taro, { Component, Config } from '@tarojs/taro'
 import { View, Button, Image } from '@tarojs/components'
 import * as d3 from 'd3'
 import { fetchWork, downloadWorkFile, cancelWork, submitWork } from '../../utils/beevalley'
-import {fetch, save} from '../../utils/localIfo'
+import {fetch} from '../../utils/localIfo'
 import './index.scss'
 
 export default class PointTask extends Component {
@@ -68,7 +68,7 @@ export default class PointTask extends Component {
   getImgFile = (imgId) => {
     let { apiToken } = this;
     downloadWorkFile(apiToken, imgId).then((res) => {
-      let imgBase64 = 'data:image/png;base64,' + Taro.arrayBufferToBase64(new Uint8Array(res));
+      let imgBase64 = 'data:image/jpeg;base64,' + Taro.arrayBufferToBase64(new Uint8Array(res));
       if (imgId === this.state.currentWork.id) {
         let current = Object.assign({}, this.state.currentWork, { src: imgBase64 });
 
@@ -92,7 +92,7 @@ export default class PointTask extends Component {
       x: ev.offsetX,
       y: ev.offsetY
     })
-    this.updateD3(currentWork.pointPosition, pointRadius);
+    this.renderDthree(currentWork.pointPosition, pointRadius);
   }
 
   cancelWork = () => {
@@ -134,20 +134,22 @@ export default class PointTask extends Component {
       });
   }
 
-  updateD3(pointData, pointRadius) {
+  renderDthree(pointData, pointRadius) {
     if (this.svg) {
       let circle = this.svg.selectAll("circle");
       let update = circle.data(pointData);
 
       update.attr("cx", function (d) { return d.x; })
         .attr("cy", function (d) { return d.y; })
-        .attr("r", pointRadius);
+        .attr("r", pointRadius)
+        .style('opacity', 0.5);
 
       update.enter().append("circle")
         .attr("r", pointRadius)
         .attr("fill", "red")
         .attr("cx", function (d) { return d.x; })
         .attr("cy", function (d) { return d.y; })
+        .style('opacity', 0.5)
         .on('click', (datum) => {
 
           d3.event.stopPropagation();
@@ -155,7 +157,7 @@ export default class PointTask extends Component {
           if (index > -1) {
             pointData.splice(index, 1);
           }
-          this.updateD3(pointData, pointRadius);
+          this.renderDthree(pointData, pointRadius);
 
         })
       update.exit().remove();
@@ -166,7 +168,7 @@ export default class PointTask extends Component {
     let { currentWork, pointRadius } = this.state;
 
     if (currentWork.pointPosition) {
-      this.updateD3(currentWork.pointPosition, pointRadius);
+      this.renderDthree(currentWork.pointPosition, pointRadius);
     }
     
     if (this.svg && currentWork) {
@@ -176,16 +178,16 @@ export default class PointTask extends Component {
 
     return (
       <View className='index'>
-        <View className="imgItem">
+        <View className='imgItem'>
           {currentWork.src && (
             <Image src={currentWork.src} style={`width:${currentWork.meta.imageWidth}px;height:${currentWork.meta.imageHeight}px;`}></Image>
           )
           }
-          <View className="workImg"></View>
+          <View className='workImg'></View>
         </View>
-        <View className="btnItem">
-          <Button type="primary" onClick={this.submitWork}>提交</Button>
-          <Button type="warn" onClick={this.cancelWork}>放弃</Button>
+        <View className='btnItem'>
+          <Button type='primary' onClick={this.submitWork}>提交</Button>
+          <Button type='warn' onClick={this.cancelWork}>放弃</Button>
         </View>
       </View>
     )
