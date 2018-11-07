@@ -18,12 +18,18 @@ export default class TaskList extends Component {
         })
     }
 
+    toRectTask = () => {
+        Taro.navigateTo({
+            url: '/pages/rect_task/index'
+        })
+    }
+
     render(){
         return (
             <View className='wrapList'>
                 <Button type='primary' onClick={this.toPointTask}>点标注</Button>
                 <Button type='primary' onClick={this.toPointReview}>点审核</Button>
-                <Button type='primary'>框标注</Button>
+                <Button type='primary' onClick={this.toRectTask}>框标注</Button>
                 <Button type='primary'>框审核</Button>
             </View>
         )
