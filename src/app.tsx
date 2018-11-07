@@ -16,6 +16,7 @@ class App extends Component {
     pages: [
       'pages/login/index',
       'pages/rect_task/index',
+      'pages/rect_review/index',
       'pages/task_list/index',
       'pages/point_task/index',
       'pages/point_review/index'

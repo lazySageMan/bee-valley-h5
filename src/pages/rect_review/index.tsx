@@ -1,0 +1,162 @@
+import Taro, { Component } from '@tarojs/taro'
+import { View, Button, Image } from '@tarojs/components'
+import * as d3 from 'd3'
+import { fetchReview, downloadReviewFile, submitReview, cancelWork } from '../../utils/beevalley'
+import { fetch } from '../../utils/localIfo'
+import './index.scss'
+
+export default class RectReview extends Component {
+    constructor(props){
+        super(props);
+
+        this.state = {
+            currentWork: {}
+        }
+
+        this.apiToken = fetch('apiToken');
+    }
+
+    getWork = () => {
+        let { apiToken } = this;
+        fetchReview(apiToken, 'rect', 4).then((res) => {
+            this.work = res;
+            console.log(res)
+            if (this.work.length > 0) {
+                this.work.forEach(item => this.getImgFile(item.id));
+                this.nextWork()
+            }
+        })
+    }
+
+    nextWork = () => {
+        if (this.work.length > 0) {
+            let nowWork = this.work.pop();
+
+            if (this.svg) {
+                this.svg.remove();
+            }
+
+            if (this.screenWidth < 500) {
+                let { imageWidth, imageHeight } = nowWork.meta;
+                let ratio = imageWidth / imageHeight;
+                let newHeight = this.screenWidth / ratio;
+
+                nowWork.meta = {
+                    imageWidth: this.screenWidth,
+                    imageHeight: newHeight
+                }
+            }
+            this.setState({
+                currentWork: nowWork
+            })
+        } else {
+            this.getWork();
+        }
+    }
+
+    getImgFile = (imgId) => {
+        let { apiToken } = this;
+        downloadReviewFile(apiToken, imgId).then((res) => {
+            let imgBase64 = 'data:image/png;base64,' + Taro.arrayBufferToBase64(new Uint8Array(res));
+            if (imgId === this.state.currentWork.id) {
+                let current = Object.assign({}, this.state.currentWork, { src: imgBase64 });
+
+                this.setState({
+                    currentWork: current
+                })
+            } else {
+                let foundIndex = this.work.findIndex(item => item.id === imgId);
+
+                if (foundIndex >= 0) {
+                    this.work[foundIndex].src = imgBase64;
+                }
+            }
+        });
+
+    }
+
+    submitWork = () => {
+        let { currentWork } = this.state;
+        if (!currentWork.id) return;
+        submitReview(this.apiToken, currentWork.id, true);
+        this.nextWork();
+    }
+
+    rejectWork = () => {
+        let { currentWork } = this.state;
+        if (!currentWork.id) return;
+        submitReview(this.apiToken, currentWork.id, false);
+        this.nextWork();
+    }
+
+    cancelWork = () => {
+        let { currentWork } = this.state;
+        if (!currentWork.id) return;
+        cancelWork(this.apiToken, [currentWork.id]);
+        this.nextWork();
+    }
+
+    componentDidMount() {
+        this.getWork();
+        const query = Taro.createSelectorQuery()
+        query
+            .select('.imgItem')
+            .boundingClientRect(rect => {
+                this.screenWidth = rect.width;
+            })
+            .exec()
+        if (process.env.TARO_ENV === 'weapp') {
+        } else if (process.env.TARO_ENV === 'h5') {
+        }
+    }
+
+    
+
+    render(){
+        
+        let { currentWork } = this.state;
+
+        if (currentWork.src) {
+            this.svg = d3.select(".workImg")
+                .append("svg")
+                .attr("width", this.state.currentWork.meta.imageWidth)
+                .attr("height", this.state.currentWork.meta.imageHeight);
+            let rectData = {
+                x: currentWork.work.result[0][0].x,
+                y: currentWork.work.result[0][0].y,
+                width: currentWork.work.result[0][1].x - currentWork.work.result[0][0].x,
+                height: currentWork.work.result[0][1].y - currentWork.work.result[0][0].y
+            }
+            let rect = this.svg.selectAll("rect");
+            let update = rect.data([rectData]);
+
+            update.exit().remove();
+            update.enter().append("rect")
+                .attr("fill", "yellow")
+                .attr("fill-opacity", 0.1)
+                .attr("stroke", "green")
+                .attr("stroke-width", "2px")
+                .attr("x", (d) => d.x)
+                .attr("y", (d) => d.y)
+                .attr("width", (d) => d.width)
+                .attr("height", (d) => d.height);
+        }
+
+        return (
+            <View className='index'>
+                <View className="imgItem">
+                    {currentWork.src && (
+                        <Image src={currentWork.src} style={`width:${currentWork.meta.imageWidth}px;height:${currentWork.meta.imageHeight}px;`}></Image>
+                    )
+                    }
+                    <View className="workImg"></View>
+                </View>
+                <View className="btnItem">
+                    <Button type="primary" onClick={this.submitWork}>提交</Button>
+                    <Button type="warn" onClick={this.rejectWork}>驳回</Button>
+                    <Button style="background: #FFCC00;" type="warn" onClick={this.cancelWork}>放弃</Button>
+                </View>
+            </View>
+        )
+    }
+}
