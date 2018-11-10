@@ -19,9 +19,9 @@ let beevalley = {
         }).then((res) => res.data).catch((err) => console.log(err))
     },
 
-    downloadWorkFile(token, workId) {
+    downloadWorkFile(token, workId, options) {
         return Taro.request({
-            url: `${host}works/${workId}/file`,
+            url: options ? `${host}works/${workId}/file?format=${options.format}&x=${options.x}&y=${options.y}&width=${options.width}&height=${options.height }` : `${host}works/${workId}/file`,
             method: 'GET',
             header: {
                 'Authorization': 'Bearer ' + token
