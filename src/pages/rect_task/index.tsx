@@ -289,7 +289,7 @@ export default class RectTask extends Component {
         }
     }
 
-   calculateWorkarea = (imageWidth, imageHeight, anchorX, anchorY, windowWidth, windowHeight) => {
+    calculateWorkarea = (imageWidth, imageHeight, anchorX, anchorY, windowWidth, windowHeight) => {
         var x;
         if (anchorX < windowWidth / 2) {
             x = 0;

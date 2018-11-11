@@ -70,9 +70,9 @@ let beevalley = {
         }).then((res) => res.data).catch((err) => console.log(err));
     },
 
-    downloadReviewFile(token, reviewId){
+    downloadReviewFile(token, reviewId, options){
         return Taro.request({
-            url: `${host}reviews/${reviewId}/file`,
+            url: options ? `${host}reviews/${reviewId}/file?format=${options.format}&x=${options.x}&y=${options.y}&width=${options.width}&height=${options.height }` : `${host}reviews/${reviewId}/file`,
             method: 'GET',
             header: {
                 'Authorization': 'Bearer ' + token
