@@ -23,13 +23,10 @@ export default class RectTask extends Component {
             let nowWork = this.work.pop();
             this.rectInitialized = true;
             if (this.screenWidth < 500) {
-                let { imageWidth, imageHeight } = nowWork.meta;
-                let ratio = imageWidth / imageHeight;
-                let newHeight = this.screenWidth / ratio;
 
                 nowWork.meta = {
                     imageWidth: this.screenWidth,
-                    imageHeight: newHeight
+                    imageHeight: this.screenHeight
                 }
             }
             nowWork.pointPosition = [];
@@ -46,24 +43,46 @@ export default class RectTask extends Component {
         fetchWork(apiToken, 'rect', 4).then((res) => {
             this.work = res;
             if (this.work.length > 0) {
-                this.work.forEach(item => this.getImgFile(item.id));
+                if(this.screenWidth < 500){
+                    this.work = this.work.map((item) => this.preprocessWork(item))
+                }
+
+                this.work.forEach(item => this.getImgFile(item));
                 this.nextWork()
             }
         })
     }
 
-    getImgFile = (imgId) => {
+    preprocessWork = (work) => {
+        let anchorX = Math.floor(work.prerequisites[0].result[work.meta.index].x);
+        let anchorY = Math.floor(work.prerequisites[0].result[work.meta.index].y);
+
+        let options = this.calculateWorkarea(work.meta.imageWidth, work.meta.imageHeight, anchorX, anchorY, this.screenWidth, this.screenHeight);
+        options['format'] = 'jpeg';
+
+        work['xOffset'] = options.x;
+        work['yOffset'] = options.y;
+        work['anchorX'] = anchorX;
+        work['anchorY'] = anchorY;
+        work['downloadOptions'] = options;
+
+        return work;
+
+    }
+
+    getImgFile = (work) => {
         let { apiToken } = this;
-        downloadWorkFile(apiToken, imgId).then((res) => {
+        // console.log(work)
+        downloadWorkFile(apiToken, work.id, work.downloadOptions).then((res) => {
             let imgBase64 = 'data:image/jpeg;base64,' + Taro.arrayBufferToBase64(new Uint8Array(res));
-            if (imgId === this.state.currentWork.id) {
+            if (work.id === this.state.currentWork.id) {
                 let current = Object.assign({}, this.state.currentWork, { src: imgBase64 });
 
                 this.setState({
                     currentWork: current
                 })
             } else {
-                let foundIndex = this.work.findIndex(item => item.id === imgId);
+                let foundIndex = this.work.findIndex(item => item.id === work.id);
 
                 if (foundIndex >= 0) {
                     this.work[foundIndex].src = imgBase64;
@@ -75,12 +94,8 @@ export default class RectTask extends Component {
     addRect = (newRect) => {
         let { currentWork } = this.state;
         currentWork.rectPosition = newRect;
-
-        this.setState({
-            currentWork: currentWork
-        }, () => {
-            this.changePosition(currentWork.rectPosition)
-        })
+        
+        this.changePosition(newRect)
     }
 
     changePosition = (rectPosition) => {
@@ -129,107 +144,169 @@ export default class RectTask extends Component {
         }
     }
 
-    drawRect = (ev) => {
+    drawRect = (Touchx, Touchy) => {
         let { x, y } = this.startRect;
         let { rectPosition } = this.state.currentWork;
-        let changeWidth = ev.offsetX - x;
-        let changeHeight = ev.offsetY - y;
+        let changeWidth = Touchx - x;
+        let changeHeight = Touchy - y;
 
         if (changeWidth < 0) {
-            rectPosition.xMin = ev.offsetX;
+            rectPosition.xMin = Touchx;
             rectPosition.xMax = x
 
         } else {
-            rectPosition.xMax = ev.offsetX;
+            rectPosition.xMax = Touchx;
         }
         if (changeHeight < 0) {
-            rectPosition.yMin = ev.offsetY;
+            rectPosition.yMin = Touchy;
             rectPosition.yMax = y;
 
         } else {
-            rectPosition.yMax = ev.offsetY;
+            rectPosition.yMax = Touchy;
         }
         this.changePosition(rectPosition);
     }
 
-    adjustRect = (ev) => {
+    adjustRect = (Touchx, Touchy) => {
         let { x, y } = this.startRect;
         let { rectPosition } = this.state.currentWork;
 
-        let deltaXmin = Math.abs(ev.offsetX - rectPosition.xMin);
-        let deltaXmax = Math.abs(ev.offsetX - rectPosition.xMax);
-        let deltaYmin = Math.abs(ev.offsetY - rectPosition.yMin);
-        let deltaYmax = Math.abs(ev.offsetY - rectPosition.yMax);
+        let deltaXmin = Math.abs(Touchx - rectPosition.xMin);
+        let deltaXmax = Math.abs(Touchx- rectPosition.xMax);
+        let deltaYmin = Math.abs(Touchy - rectPosition.yMin);
+        let deltaYmax = Math.abs(Touchy- rectPosition.yMax);
 
-        if (rectPosition.yMin < ev.offsetY && rectPosition.yMax > ev.offsetY) {
+        if (rectPosition.yMin < Touchy && rectPosition.yMax > Touchy) {
             if (deltaXmax < deltaXmin) {
-                rectPosition.xMax += (ev.offsetX - x);
+                rectPosition.xMax += (Touchx - x);
             } else {
-                rectPosition.xMin += (ev.offsetX - x);
+                rectPosition.xMin += (Touchx - x);
             }
         }
-        if (rectPosition.xMin < ev.offsetX && rectPosition.xMax > ev.offsetX) {
+        if (rectPosition.xMin < Touchx && rectPosition.xMax > Touchx) {
             if (deltaYmax < deltaYmin) {
-                rectPosition.yMax += (ev.offsetY - y);
+                rectPosition.yMax += (Touchy - y);
             } else {
-                rectPosition.yMin += (ev.offsetY - y);
+                rectPosition.yMin += (Touchy - y);
             }
         }
         this.changePosition(rectPosition);
         this.startRect = {
-            x: ev.offsetX,
-            y: ev.offsetY
+            x: Touchx,
+            y: Touchy
         };
     }
 
     componentDidMount() {
-        this.getWork();
         const query = Taro.createSelectorQuery()
         query
-            .select('.imgItem')
-            .boundingClientRect(rect => {
-                this.screenWidth = rect.width;
+            .select('#workearea')
+            .fields({
+                size: true,   
+            }, res => {
+                
+                this.screenWidth = Math.floor(res.width);
+                this.screenHeight = Math.floor(res.height);
             })
-            .exec()
+            .exec();
+        this.getWork();
         if (process.env.TARO_ENV === 'weapp') {
         } else if (process.env.TARO_ENV === 'h5') {
         }
         this.svg = d3.select(".workImg")
             .append("svg");
-        this.svg.on('mousedown', () => {
-            if (this.rectInitialized) {
 
-                this.addRect({
-                    xMin: d3.event.offsetX,
-                    yMin: d3.event.offsetY,
-                    xMax: d3.event.offsetX,
-                    yMax: d3.event.offsetY
+        if(this.screenWidth < 500){
+            this.svg.on("touchstart", () => {
+            
+                if (this.rectInitialized) {
+                    console.log(d3.event)
+                    this.addRect({
+                        xMin: d3.event.targetTouches[0].clientX,
+                        yMin: d3.event.targetTouches[0].clientY,
+                        xMax: d3.event.targetTouches[0].clientX,
+                        yMax: d3.event.targetTouches[0].clientY
+                    });
+                }
+
+                this.startRect = {
+                    x: d3.event.targetTouches[0].clientX,
+                    y: d3.event.targetTouches[0].clientY
+                };
+
+                this.svg.on("touchmove", () => {
+                    if (this.rectInitialized) {
+                        this.drawRect(d3.event.targetTouches[0].clientX, d3.event.targetTouches[0].clientY);
+                    } else {
+                        this.adjustRect(d3.event.targetTouches[0].clientX, d3.event.targetTouches[0].clientY);
+                    }
+                })
+    
+                this.svg.on("touchend", () => {
+    
+                    if (this.rectInitialized) {
+                        this.rectInitialized = false;
+                    }
+                    this.svg.on("touchmove", null)
+                    this.svg.on("touchend", null)
+                })
+            })   
+        }else{
+            this.svg.on('mousedown', () => {
+                if (this.rectInitialized) {
+    
+                    this.addRect({
+                        xMin: d3.event.offsetX,
+                        yMin: d3.event.offsetY,
+                        xMax: d3.event.offsetX,
+                        yMax: d3.event.offsetY
+                    });
+                }
+    
+                this.startRect = {
+                    x: d3.event.offsetX,
+                    y: d3.event.offsetY
+                };
+    
+                this.svg.on('mousemove', () => {
+    
+                    if (this.rectInitialized) {
+                        this.drawRect(d3.event.offsetX, d3.event.offsetY);
+                    } else {
+                        this.adjustRect(d3.event.offsetX, d3.event.offsetY);
+                    }
+    
                 });
-            }
-
-            this.startRect = {
-                x: d3.event.offsetX,
-                y: d3.event.offsetY
-            };
-
-            this.svg.on('mousemove', () => {
-
-                if (this.rectInitialized) {
-                    this.drawRect(d3.event);
-                } else {
-                    this.adjustRect(d3.event);
-                }
-
+                this.svg.on('mouseup', () => {
+                    if (this.rectInitialized) {
+                        this.rectInitialized = false;
+                    }
+                    this.svg.on('mousemove', null);
+                    this.svg.on('mouseup', null);
+                });
+    
             });
-            this.svg.on('mouseup', () => {
-                if (this.rectInitialized) {
-                    this.rectInitialized = false;
-                }
-                this.svg.on('mousemove', null);
-                this.svg.on('mouseup', null);
-            });
+        }
+    }
 
-        });
+   calculateWorkarea = (imageWidth, imageHeight, anchorX, anchorY, windowWidth, windowHeight) => {
+        var x;
+        if (anchorX < windowWidth / 2) {
+            x = 0;
+        } else if (anchorX > imageWidth - windowWidth / 2) {
+            x = imageWidth - windowWidth;
+        } else {
+            x = anchorX - windowWidth / 2
+        }
+        var y;
+        if (anchorY < windowHeight / 2) {
+            y = 0;
+        } else if (anchorY > imageHeight - windowHeight / 2) {
+            y = imageHeight - windowHeight;
+        } else {
+            y = anchorY - windowHeight / 2
+        }
+        return { x: Math.floor(x), y: Math.floor(y), width: windowWidth, height: windowHeight };
     }
 
 
@@ -255,41 +332,69 @@ export default class RectTask extends Component {
     }
 
     render() {
-
         let { currentWork } = this.state;
 
         if (this.svg && currentWork) {
             this.svg.attr("width", currentWork.meta.imageWidth)
                 .attr("height", currentWork.meta.imageHeight);
+            if(this.screenWidth < 500){
+                let circleData = {
+                    x: currentWork.anchorX - currentWork.xOffset,
+                    y: currentWork.anchorY - currentWork.yOffset,
+                }
+                this.updateCircle([circleData])
 
-            if (currentWork.prerequisites !== null) {
+                if (currentWork.previousWork !== null && currentWork.rectPosition == undefined) {
+                
+                    let rectData = {
+                        xMin: currentWork.previousWork.result[0][0].x - currentWork.xOffset,
+                        yMin: currentWork.previousWork.result[0][0].y - currentWork.yOffset,
+                        xMax: currentWork.previousWork.result[0][1].x - currentWork.xOffset,
+                        yMax: currentWork.previousWork.result[0][1].y - currentWork.yOffset,
+                    }
+    
+                    this.addRect(rectData);
+                    this.rectInitialized = false;
+                } else {
+                    if(currentWork.rectPosition){
+                        this.changePosition(currentWork.rectPosition);
+                    }else{
+                        this.updateRect([])  
+                    }
+                    
+                }
+            }else{
                 let circleData = {
                     x: currentWork.prerequisites[0].result[currentWork.meta.index].x,
                     y: currentWork.prerequisites[0].result[currentWork.meta.index].y
                 }
-                this.updateCircle([circleData]);
-            } else {
-                this.updateCircle([]);
-            }
+                this.updateCircle([circleData])
 
-            if (currentWork.previousWork !== null) {
-                let rectData = {
-                    xMin: currentWork.previousWork.result[0][0].x,
-                    yMin: currentWork.previousWork.result[0][0].y,
-                    xMax: currentWork.previousWork.result[0][1].x,
-                    yMax: currentWork.previousWork.result[0][1].y,
+                if (currentWork.previousWork !== null && currentWork.rectPosition == undefined) {
+                
+                    let rectData = {
+                        xMin: currentWork.previousWork.result[0][0].x,
+                        yMin: currentWork.previousWork.result[0][0].y,
+                        xMax: currentWork.previousWork.result[0][1].x,
+                        yMax: currentWork.previousWork.result[0][1].y,
+                    }
+    
+                    this.addRect(rectData);
+                    this.rectInitialized = false;
+                } else {
+                    if(currentWork.rectPosition){
+                        this.changePosition(currentWork.rectPosition);
+                    }else{
+                        this.updateRect([])  
+                    }
+                    
                 }
-
-                this.addRect(rectData);
-                this.rectInitialized = false;
-            } else {
-                this.updateRect([]);
             }
         }
 
         return (
             <View className='index'>
-                <View className="imgItem">
+                <View className="imgItem" id="workearea">
                     {currentWork.src && (
                         <Image src={currentWork.src} style={`width:${currentWork.meta.imageWidth}px;height:${currentWork.meta.imageHeight}px;`}></Image>
                     )
