@@ -2,13 +2,13 @@
 
 @media screen and (min-width:640px) {
     .wrap{
-        width: 15vw;
-        height: 42vh;
+        width: 370px;
+        height: 450px;
         background: white;
         margin: 0 auto;
         border: 1px solid black;
-        margin-top: 15vh;
-        padding: 1vh 2vw;
+        margin-top: 150px;
+        padding: 10px 20px;
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
@@ -39,6 +39,9 @@
             justify-content: space-between;
             font-size: 12px;
             margin-top: 2vh;
+            .onResiges{
+                color: blue;
+            }
         }
         .iconMenu{
             text-align: center;
@@ -107,7 +110,7 @@
         }
         .btn{
             width: 100%;
-            height: 55px;
+            height: 65px;
             background: orangered;
             border: none;
             outline: none;
@@ -120,6 +123,10 @@
             justify-content: space-between;
             font-size: 12px;
             margin-top: 3vh;
+            .onResiges{
+                color: blue;
+            }
+            
         }
         .iconMenu{
             text-align: center;

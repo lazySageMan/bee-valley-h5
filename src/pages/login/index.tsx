@@ -104,7 +104,7 @@ export default class Login extends Component {
                 <Button style='background:orangered;margin-top:3vh;' type='warn' onClick={this.login}>登录</Button>
                 <View className='viewText'>
                     <Text>忘记密码？</Text>
-                    <Text>还没有账号？立即注册</Text>
+                    <Text>还没有账号？<Text className="onResiges">立即注册</Text></Text>
                 </View>
                 <View className='iconMenu'>
                     <View className='iconTitle'>其他方式登录</View>
