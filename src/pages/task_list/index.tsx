@@ -1,43 +1,84 @@
 import Taro, { Component } from '@tarojs/taro'
-import { View, Button } from '@tarojs/components'
+import { View, Button, Text } from '@tarojs/components'
+import {listAuthorizedWorkType} '../../utils/beevalley'
+import { fetch } from '../../utils/localIfo'
 import './index.scss'
 
 export default class TaskList extends Component {
     constructor(props){
         super(props);
+
+        this.apiToken = fetch("apiToken");
+
+        this.state = {
+            taskType : []
+        }
     }
 
-    toPointTask = () => {
-        Taro.navigateTo({
-            url: '/pages/point_task/index'
+    componentDidMount (){
+
+        const query = Taro.createSelectorQuery()
+        query
+            .select('.wrapList')
+            .fields({
+                size: true,   
+            }, res => {
+                
+                this.screenWidth = Math.floor(res.width);
+                this.screenHeight = Math.floor(res.height);
+            })
+            .exec();
+
+        listAuthorizedWorkType(this.apiToken).then((res) => {
+            this.setState({
+                taskType: res
+            })
         })
     }
 
-    toPointReview = () => {
+    navigateToTask = (packageId, typeCode) => {
         Taro.navigateTo({
-            url: '/pages/point_review/index'
-        })
-    }
-
-    toRectTask = () => {
-        Taro.navigateTo({
-            url: '/pages/rect_task/index'
-        })
-    }
-
-    toRectReview = () => {
-        Taro.navigateTo({
-            url: '/pages/rect_review/index'
+            url: `/pages/${typeCode}_task/index?packageId=${packageId}`
         })
     }
 
     render(){
+        let {taskType} = this.state;
+
+        if(taskType && this.screenWidth < 500){
+            taskType = taskType.map((item) => {
+                return (
+                    <View 
+                        className="task_wrap" 
+                        onClick={ () => this.navigateToTask(item.packageId, item.typeCode)}
+                    >
+                        <Text 
+                            className="task_wrap_btn"
+                        >{item.packageName}:{item.typeName}</Text>
+                        <Text className="task_wrap_text">{item.priceRange}元/张</Text>
+                    </View>
+                )
+            })
+        }else{
+            taskType = taskType.map((item) => {
+                return (
+                    <View 
+                        className="task_wrap" 
+                        onClick={ () => this.navigateToTask(item.packageId, item.typeCode)}
+                    >
+                        <Button 
+                            type="primary"
+                            className="task_wrap_btn"
+                        >{item.packageName}:{item.typeName}</Button>
+                        <Text className="task_wrap_text">{item.priceRange}元/张</Text>
+                    </View>
+                )
+            })
+        }
+
         return (
             <View className='wrapList'>
-                <Button type='primary' onClick={this.toPointTask}>点标注</Button>
-                <Button type='primary' onClick={this.toPointReview}>点审核</Button>
-                <Button type='primary' onClick={this.toRectTask}>框标注</Button>
-                <Button type='primary' onClick={this.toRectReview}>框审核</Button>
+                {taskType}
             </View>
         )
     }

@@ -119,8 +119,16 @@ let beevalley = {
             method: 'POST',
             responseType: 'arraybuffer'
         }).then((res) => new TextDecoder("utf-8").decode(res.data))
+    },
+
+    listAuthorizedWorkType(token) {
+        return Taro.request({
+            url: `${host}works/authorizations`,
+            method: 'GET',
+            header: {
+                'Authorization': 'Bearer ' + token
+            },
+        }).then((res) => res.data).catch((err) => console.log(err));
     }
-
-
 }
 module.exports = beevalley

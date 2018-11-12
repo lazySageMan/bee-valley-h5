@@ -18,8 +18,8 @@ class App extends Component {
       'pages/rect_task/index',
       'pages/rect_review/index',
       'pages/task_list/index',
-      'pages/point_task/index',
-      'pages/point_review/index'
+      'pages/count_task/index',
+      'pages/count_review/index'
     ],
     window: {
       backgroundTextStyle: 'light',
