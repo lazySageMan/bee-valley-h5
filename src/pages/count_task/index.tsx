@@ -26,7 +26,7 @@ export default class PointTask extends Component {
 
   getWork = () => {
     let { apiToken } = this;
-    fetchWork(apiToken, 'count', 4).then((res) => {
+    fetchWork(apiToken, 'count', 4, this.packageId).then((res) => {
       this.work = res;
 
       if (this.work.length > 0) {
@@ -116,6 +116,7 @@ export default class PointTask extends Component {
   }
 
   componentDidMount() {
+    this.packageId = this.$router.params.packageId;
     this.getWork();
     const query = Taro.createSelectorQuery()
     query
