@@ -314,9 +314,9 @@ export default class RectTask extends Component {
     submitWork = () => {
         let { rectPosition, id } = this.state.currentWork;
         let { apiToken } = this;
-
+        let rectData = [{x: rectPosition.xMin, y: rectPosition.yMin},{x: rectPosition.xMax, y: rectPosition.yMax}];
         if (rectPosition) {
-            submitWork(apiToken, id, [rectPosition]);
+            submitWork(apiToken, id, [rectData]);
             this.nextWork();
         } else {
             alert("请标注框");

@@ -16,6 +16,19 @@ export default class TaskList extends Component {
     }
 
     componentDidMount (){
+
+        const query = Taro.createSelectorQuery()
+        query
+            .select('.wrapList')
+            .fields({
+                size: true,   
+            }, res => {
+                
+                this.screenWidth = Math.floor(res.width);
+                this.screenHeight = Math.floor(res.height);
+            })
+            .exec();
+
         listAuthorizedWorkType(this.apiToken).then((res) => {
             this.setState({
                 taskType: res
@@ -32,16 +45,32 @@ export default class TaskList extends Component {
     render(){
         let {taskType} = this.state;
 
-        if(taskType.length > 0){
+        if(taskType && this.screenWidth < 500){
             taskType = taskType.map((item) => {
                 return (
-                    <View className="task_wrap">
-                        <Button 
-                            type='primary' 
+                    <View 
+                        className="task_wrap" 
+                        onClick={ () => this.navigateToTask(item.packageId, item.typeCode)}
+                    >
+                        <Text 
                             className="task_wrap_btn"
-                            onClick={ () => this.navigateToTask(item.packageId, item.typeCode) }
+                        >{item.packageName}:{item.typeName}</Text>
+                        <Text className="task_wrap_text">{item.priceRange}元/张</Text>
+                    </View>
+                )
+            })
+        }else{
+            taskType = taskType.map((item) => {
+                return (
+                    <View 
+                        className="task_wrap" 
+                        onClick={ () => this.navigateToTask(item.packageId, item.typeCode)}
+                    >
+                        <Button 
+                            type="primary"
+                            className="task_wrap_btn"
                         >{item.packageName}:{item.typeName}</Button>
-                        <Text className="task_wrap_text">{item.priceRange}</Text>
+                        <Text className="task_wrap_text">{item.priceRange}元/张</Text>
                     </View>
                 )
             })
