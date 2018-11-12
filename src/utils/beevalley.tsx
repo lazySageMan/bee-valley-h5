@@ -35,6 +35,7 @@ let beevalley = {
         return Taro.request({
             url:  `${host}works/${workId.join(',')}/cancel`,
             method: 'DELETE',
+            responseType: 'arraybuffer',
             header: {
                 'Authorization': 'Bearer ' + token
             },
@@ -45,6 +46,7 @@ let beevalley = {
         return Taro.request({
             url: `${host}works/`,
             method: 'POST',
+            responseType: 'arraybuffer',
             data: {
                 'id': workId,
                 'result': result
