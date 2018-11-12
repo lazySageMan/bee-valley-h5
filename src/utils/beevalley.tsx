@@ -4,13 +4,14 @@ import { host } from '../config'
 
 let beevalley = {
 
-    fetchWork(token, type, num) {
+    fetchWork(token, type, num, packageId) {
         return Taro.request({
             url: `${host}works/fetch`,
             method: 'POST',
             data: {
                 type: type,
-                num: num
+                num: num,
+                packages: [packageId]
             },
             header: {
                 'content-type': 'application/json',

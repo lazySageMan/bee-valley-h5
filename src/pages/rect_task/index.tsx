@@ -40,7 +40,7 @@ export default class RectTask extends Component {
 
     getWork = () => {
         let { apiToken } = this;
-        fetchWork(apiToken, 'rect', 4).then((res) => {
+        fetchWork(apiToken, 'rect', 4, this.packageId).then((res) => {
             this.work = res;
             if (this.work.length > 0) {
                 if(this.screenWidth < 500){
@@ -198,6 +198,8 @@ export default class RectTask extends Component {
     }
 
     componentDidMount() {
+
+        this.packageId = this.$router.params.packageId;
         const query = Taro.createSelectorQuery()
         query
             .select('#workearea')
