@@ -22,7 +22,7 @@ let beevalley = {
 
     downloadWorkFile(token, workId, options) {
         return Taro.request({
-            url: options ? `${host}works/${workId}/file?format=${options.format}&x=${options.x}&y=${options.y}&width=${options.width}&height=${options.height }` : `${host}works/${workId}/file`,
+            url: options ? `${host}works/${workId}/file?format=${options.format}&x=${options.x}&y=${options.y}&width=${options.width}&height=${options.height}` : `${host}works/${workId}/file`,
             method: 'GET',
             header: {
                 'Authorization': 'Bearer ' + token
@@ -31,9 +31,9 @@ let beevalley = {
         }).then((res) => res.data).catch((err) => console.log(err))
     },
 
-    cancelWork(token, workId){
+    cancelWork(token, workId) {
         return Taro.request({
-            url:  `${host}works/${workId.join(',')}/cancel`,
+            url: `${host}works/${workId.join(',')}/cancel`,
             method: 'DELETE',
             header: {
                 'Authorization': 'Bearer ' + token
@@ -41,7 +41,7 @@ let beevalley = {
         }).then((res) => console.log(res)).catch((err) => console.log(err))
     },
 
-    submitWork(token, workId, result){
+    submitWork(token, workId, result) {
         return Taro.request({
             url: `${host}works/`,
             method: 'POST',
@@ -56,7 +56,7 @@ let beevalley = {
         }).then((res) => console.log(res)).catch((err) => console.log(err))
     },
 
-    fetchReview(token, type, num){
+    fetchReview(token, type, num) {
         return Taro.request({
             url: `${host}reviews/fetch`,
             method: 'POST',
@@ -71,9 +71,9 @@ let beevalley = {
         }).then((res) => res.data).catch((err) => console.log(err));
     },
 
-    downloadReviewFile(token, reviewId, options){
+    downloadReviewFile(token, reviewId, options) {
         return Taro.request({
-            url: options ? `${host}reviews/${reviewId}/file?format=${options.format}&x=${options.x}&y=${options.y}&width=${options.width}&height=${options.height }` : `${host}reviews/${reviewId}/file`,
+            url: options ? `${host}reviews/${reviewId}/file?format=${options.format}&x=${options.x}&y=${options.y}&width=${options.width}&height=${options.height}` : `${host}reviews/${reviewId}/file`,
             method: 'GET',
             header: {
                 'Authorization': 'Bearer ' + token
@@ -82,7 +82,7 @@ let beevalley = {
         }).then((res) => res.data).catch((err) => console.log(err))
     },
 
-    submitReview(token, reviewId, result){
+    submitReview(token, reviewId, result) {
         return Taro.request({
             url: `${host}reviews`,
             method: 'POST',
@@ -98,7 +98,7 @@ let beevalley = {
         }).then((res) => res.data).catch((err) => console.log(err))
     },
 
-    phoneLogin(phone, passwd){
+    phoneLogin(phone, passwd) {
         return Taro.request({
             url: `${host}login/mobile`,
             method: 'POST',
@@ -114,7 +114,7 @@ let beevalley = {
         }).then((res) => new TextDecoder("utf-8").decode(res.data))
     },
 
-    wechatLogin(code){
+    wechatLogin(code) {
         return Taro.request({
             url: `${host}login/weixin/${code}`,
             method: 'POST',
