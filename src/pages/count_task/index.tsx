@@ -24,7 +24,7 @@ export default class PointTask extends Component {
   componentWillMount() {
   }
 
-  getWork = () => {
+  fetchWork = () => {
     let { apiToken } = this;
     fetchWork(apiToken, 'count', 4, this.packageId).then((res) => {
       this.work = res;
@@ -61,7 +61,7 @@ export default class PointTask extends Component {
         currentWork: nowWork
       })
     } else {
-      this.getWork();
+      this.fetchWork();
     }
   }
 
@@ -117,7 +117,7 @@ export default class PointTask extends Component {
 
   componentDidMount() {
     this.packageId = this.$router.params.packageId;
-    this.getWork();
+    this.fetchWork();
     const query = Taro.createSelectorQuery()
     query
       .select('.imgItem')
