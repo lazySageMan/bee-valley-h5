@@ -81,12 +81,14 @@ export default class PointTask extends Component {
   }
 
   addCircle = (ev) => {
-    let { currentWork, pointRadius } = this.state;
-    currentWork.pointPosition.push({
-      x: ev.offsetX,
-      y: ev.offsetY
+    this.setState((prevState) => {
+      let updated = prevState.currentWork
+      updated.pointPosition.push({
+        x: ev.offsetX,
+        y: ev.offsetY
+      })
+      return { currentWork: updated }
     })
-    this.renderDthree(currentWork.pointPosition, pointRadius);
   }
 
   cancelWork = () => {
@@ -153,7 +155,14 @@ export default class PointTask extends Component {
           if (index > -1) {
             pointData.splice(index, 1);
           }
-          this.renderDthree(pointData, pointRadius);
+
+          this.setState((prevState) => {
+            let updated = prevState.currentWork
+            updated.pointPosition = pointData
+            return { currentWork: updated }
+          })
+
+          // this.renderDthree(pointData, pointRadius);
 
         })
       update.exit().remove();
