@@ -98,7 +98,8 @@ export default class RectTask extends Component {
     downloadWorkFile = (work) => {
         let { apiToken } = this;
         // console.log(work)
-        downloadWorkFile(apiToken, work.id, work.downloadOptions).then((res) => {
+        downloadWorkFile(apiToken, work.id, work.downloadOptions)
+        .then((res) => {
             let imgBase64 = 'data:image/jpeg;base64,' + Taro.arrayBufferToBase64(new Uint8Array(res));
             if (work.id === this.state.currentWork.id) {
                 let current = Object.assign({}, this.state.currentWork, { src: imgBase64 });
@@ -113,7 +114,10 @@ export default class RectTask extends Component {
                     this.work[foundIndex].src = imgBase64;
                 }
             }
-        });
+        })
+        .catch(() => Taro.navigateBack({
+            delta: 1
+        }))
     }
 
     changePosition = (rectPosition) => {
@@ -232,13 +236,10 @@ export default class RectTask extends Component {
         this.packageId = this.$router.params.packageId;
         this.rectInitialized = false;
 
-        Taro.getSystemInfo({
-            success: (res) => {
-                this.screenWidth = res.windowWidth;
-                this.screenHeight = Math.floor(res.windowHeight * 0.85);
-                this.isMobile = checkDveice(res)
-            }
-        })
+        let res = Taro.getSystemInfoSync()
+        this.screenWidth = res.windowWidth;
+        this.screenHeight = Math.floor(res.windowHeight * 0.85);
+        this.isMobile = checkDveice(res)
 
         if (process.env.TARO_ENV === 'weapp') {
         } else if (process.env.TARO_ENV === 'h5') {
@@ -355,9 +356,13 @@ export default class RectTask extends Component {
         // TODO missing offset handling
         if (rectPosition) {
             let rectData = [{ x: rectPosition.xMin, y: rectPosition.yMin }, { x: rectPosition.xMax, y: rectPosition.yMax }];
-            submitWork(apiToken, id, [rectData]).then(() => {
+            submitWork(apiToken, id, [rectData])
+            .then(() => {
                 this.nextWork();
-            });
+            })
+            .catch(() => Taro.navigateBack({
+                delta: 1
+            }))
         } else {
             alert("请标注框");
         }
@@ -367,9 +372,13 @@ export default class RectTask extends Component {
         let { id } = this.state.currentWork;
         let { apiToken } = this;
 
-        cancelWork(apiToken, [id]).then(() => {
+        cancelWork(apiToken, [id])
+        .then(() => {
             this.nextWork();
         })
+        .catch(() => Taro.navigateBack({
+            delta: 1
+        }))
     }
 
     render() {

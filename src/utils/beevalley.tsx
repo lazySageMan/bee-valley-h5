@@ -13,8 +13,8 @@ function handleError(res) {
     } else if (res.statusCode === 401) {
         Taro.removeStorageSync('login')
         Taro.removeStorageSync('apiToken')
-        Taro.navigateTo({
-                url: 'pages/login/index'
+        Taro.navigateBack({
+                url: '/pages/login/index'
             })
     } else if (res.statusCode === 403) {
         throw 'forbidden'
@@ -36,8 +36,10 @@ function fetchWork(token, type, num, packageId) {
         header: {
             'content-type': 'application/json',
             'Authorization': 'Bearer ' + token
-        }
-    }).then(handleRes)
+        },
+        dataType: 'text',
+        responseType: 'text'
+    }).then(handleRes).then((data) => JSON.parse(data))
 }
 
 function downloadWorkFile(token, workId, options) {
@@ -89,8 +91,10 @@ function fetchReview(token, type, num) {
         header: {
             'content-type': 'application/json',
             'Authorization': 'Bearer ' + token
-        }
-    }).then(handleRes)
+        },
+        dataType: 'text',
+        responseType: 'text'
+    }).then(handleRes).then((data) => JSON.parse(data))
 }
 
 function downloadReviewFile(token, reviewId, options) {
@@ -129,29 +133,33 @@ function phoneLogin(phone, passwd) {
             'password': passwd,
             'region': 'CN'
         },
-        responseType: 'arraybuffer',
         header: {
             'content-type': 'application/json'
-        }
-    }).then(handleRes).then((data) => new TextDecoder("utf-8").decode(data))
+        },
+        dataType: 'text',
+        responseType: 'text'
+    }).then(handleRes)
 }
 
 function wechatLogin(code) {
     return Taro.request({
         url: `${host}login/weixin/${code}`,
         method: 'POST',
-        responseType: 'arraybuffer'
-    }).then(handleRes).then((data) => new TextDecoder("utf-8").decode(data))
+        dataType: 'text',
+        responseType: 'text'
+    }).then(handleRes)
 }
 
 function listAuthorizedWorkType(token) {
     return Taro.request({
         url: `${host}works/authorizations`,
         method: 'GET',
+        dataType: 'text',
         header: {
             'Authorization': 'Bearer ' + token
         },
-    }).then(handleRes)
+        responseType: 'text'
+    }).then(handleRes).then((data) => JSON.parse(data))
 }
 
 function checkDveice(res) {

@@ -29,6 +29,7 @@ export default class PointTask extends Component {
       this.work = res;
 
       if (this.work.length > 0) {
+        // TODO fix potential bug here
         this.work.forEach(item => this.getImgFile(item.id));
         this.nextWork()
       }
@@ -61,7 +62,8 @@ export default class PointTask extends Component {
 
   getImgFile = (imgId) => {
     let { apiToken } = this;
-    downloadWorkFile(apiToken, imgId).then((res) => {
+    downloadWorkFile(apiToken, imgId)
+    .then((res) => {
       let imgBase64 = 'data:image/jpeg;base64,' + Taro.arrayBufferToBase64(new Uint8Array(res));
       if (imgId === this.state.currentWork.id) {
         let current = Object.assign({}, this.state.currentWork, { src: imgBase64 });
@@ -76,7 +78,10 @@ export default class PointTask extends Component {
           this.work[foundIndex].src = imgBase64;
         }
       }
-    });
+    })
+    .catch(() => Taro.navigateBack({
+        delta: 1
+    }))
 
   }
 
@@ -96,7 +101,10 @@ export default class PointTask extends Component {
     let { id } = this.state.currentWork;
     if (!id) return;
     cancelWork(apiToken, [id])
-    .then(() => this.nextWork())    
+    .then(() => this.nextWork())
+    .catch(() => Taro.navigateBack({
+        delta: 1
+    }))
   }
 
   submitWork = () => {
@@ -106,6 +114,9 @@ export default class PointTask extends Component {
     if (pointPosition.length > 0) {
       submitWork(apiToken, id, pointPosition)
       .then(() => this.nextWork())
+      .catch(() => Taro.navigateBack({
+          delta: 1
+      }))
     } else {
       alert("请标注点")
     }

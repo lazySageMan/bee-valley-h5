@@ -16,19 +16,17 @@ export default class TaskList extends Component {
 
     componentDidMount() {
 
-        Taro.getSystemInfo({
-            success: (res) => {
-                this.screenWidth = res.windowWidth;
-                this.screenHeight = Math.floor(res.windowHeight * 0.85);
-                this.isMobile = checkDveice(res)
-            }
-        })
+        let res = Taro.getSystemInfoSync()
+        this.screenWidth = res.windowWidth;
+        this.screenHeight = Math.floor(res.windowHeight * 0.85);
+        this.isMobile = checkDveice(res)
 
-        listAuthorizedWorkType(this.apiToken).then((res) => {
+        listAuthorizedWorkType(this.apiToken).then((taskType) => {
             this.setState({
-                taskType: res
+                taskType: taskType
             })
         })
+        
     }
 
     navigateToTask = (packageId, typeCode) => {

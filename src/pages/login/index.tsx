@@ -12,8 +12,8 @@ export default class Login extends Component {
 
     login = () => {
         
-        phoneLogin(this.state.username, this.state.password).then((res) => {
-            if(!res) {
+        phoneLogin(this.state.username, this.state.password).then((token) => {
+            if(!token) {
                 Taro.showToast({
                     title: '登陆失败',
                     mask: true
@@ -24,8 +24,8 @@ export default class Login extends Component {
                     mask: true,
                     success: () => {
 
-                        Taro.setStorageSync({ key: 'apiToken', data: res })
-                        Taro.setStorageSync({ key: 'login', data: true })
+                        Taro.setStorageSync('apiToken', token)
+                        Taro.setStorageSync('login', true)
 
                         Taro.navigateTo({
                             url: 'pages/task_list/index'
@@ -51,14 +51,14 @@ export default class Login extends Component {
         const login = Taro.getStorageSync('login')
         if(login === true) {
             Taro.navigateTo({
-                url: 'pages/task_list/index'
+                url: '/pages/task_list/index'
             })
         }
         var url = new URL(window.location.href);
         this.code = url.searchParams.get('code');
         if(this.code) {
-            wechatLogin(this.code).then((res) => {
-                if(!res){
+            wechatLogin(this.code).then((token) => {
+                if(!token){
                     Taro.showToast({
                         title: '登陆失败',
                         mask: true
@@ -68,11 +68,11 @@ export default class Login extends Component {
                         title: '登陆成功',
                         mask: true,
                         success: () => {
-                            Taro.setStorageSync({ key: 'apiToken', data: res })
-                            Taro.setStorageSync({ key: 'login', data: true })
+                            Taro.setStorageSync('apiToken', token)
+                            Taro.setStorageSync('login', true)
 
                             Taro.navigateTo({
-                                url: 'pages/task_list/index'
+                                url: '/pages/task_list/index'
                             })
                         }
                     })
