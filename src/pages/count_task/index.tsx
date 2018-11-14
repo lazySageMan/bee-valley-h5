@@ -1,7 +1,7 @@
 import Taro, { Component, Config } from '@tarojs/taro'
 import { View, Button, Image } from '@tarojs/components'
 import * as d3 from 'd3'
-import { fetchWork, downloadWorkFile, cancelWork, submitWork } from '../../utils/beevalley'
+import { fetchWork, downloadWorkFile, cancelWork, submitWork, checkDveice} from '../../utils/beevalley'
 import './index.scss'
 
 export default class PointTask extends Component {
@@ -118,7 +118,7 @@ export default class PointTask extends Component {
     Taro.getSystemInfo({
       success: (res) => {
         this.screenWidth = res.windowWidth;
-        (res.model !== null) ? this.isMobile = true : this.isMobile = false;
+        this.isMobile = checkDveice(res)
       }
     })
 
