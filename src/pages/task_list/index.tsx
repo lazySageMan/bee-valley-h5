@@ -1,33 +1,28 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text } from '@tarojs/components'
-import {listAuthorizedWorkType} '../../utils/beevalley'
-import { fetch } from '../../utils/localIfo'
+import { listAuthorizedWorkType } '../../utils/beevalley'
 import './index.scss'
 
 export default class TaskList extends Component {
-    constructor(props){
+    constructor(props) {
         super(props);
 
-        this.apiToken = fetch("apiToken");
+        this.apiToken = Taro.getStorageSync('apiToken');
 
         this.state = {
-            taskType : []
+            taskType: []
         }
     }
 
-    componentDidMount (){
+    componentDidMount() {
 
-        const query = Taro.createSelectorQuery()
-        query
-            .select('.wrapList')
-            .fields({
-                size: true,   
-            }, res => {
-                
-                this.screenWidth = Math.floor(res.width);
-                this.screenHeight = Math.floor(res.height);
-            })
-            .exec();
+        Taro.getSystemInfo({
+            success: (res) => {
+                this.screenWidth = res.windowWidth;
+                this.screenHeight = Math.floor(res.windowHeight * 0.85);
+                (res.model !== null) ? this.isMobile = true : this.isMobile = false;
+            }
+        })
 
         listAuthorizedWorkType(this.apiToken).then((res) => {
             this.setState({
@@ -41,32 +36,33 @@ export default class TaskList extends Component {
             url: `/pages/${typeCode}_task/index?packageId=${packageId}`
         })
     }
+    
 
-    render(){
-        let {taskType} = this.state;
+    render() {
+        let { taskType } = this.state;
 
-        if(taskType && this.screenWidth < 500){
+        if (taskType && this.isMobile) {
             taskType = taskType.map((item) => {
                 return (
-                    <View 
-                        className="task_wrap" 
-                        onClick={ () => this.navigateToTask(item.packageId, item.typeCode)}
+                    <View
+                        className="task_wrap"
+                        onClick={() => this.navigateToTask(item.packageId, item.typeCode)}
                     >
-                        <Text 
+                        <Text
                             className="task_wrap_btn"
                         >{item.packageName}:{item.typeName}</Text>
                         <Text className="task_wrap_text">{item.priceRange}元/张</Text>
                     </View>
                 )
             })
-        }else{
+        } else {
             taskType = taskType.map((item) => {
                 return (
-                    <View 
-                        className="task_wrap" 
-                        onClick={ () => this.navigateToTask(item.packageId, item.typeCode)}
+                    <View
+                        className="task_wrap"
+                        onClick={() => this.navigateToTask(item.packageId, item.typeCode)}
                     >
-                        <Button 
+                        <Button
                             type="primary"
                             className="task_wrap_btn"
                         >{item.packageName}:{item.typeName}</Button>

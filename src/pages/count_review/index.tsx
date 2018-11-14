@@ -2,7 +2,6 @@ import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Image } from '@tarojs/components'
 import * as d3 from 'd3'
 import { fetchReview, downloadReviewFile, submitReview, cancelWork } from '../../utils/beevalley'
-import {fetch} from '../../utils/localIfo'
 import './index.scss'
 
 export default class PointReview extends Component {
@@ -14,7 +13,7 @@ export default class PointReview extends Component {
             currentWork: []
         }
 
-        this.apiToken = fetch('apiToken');
+        this.apiToken = Taro.getStorageSync('apiToken');
     }
 
     fetchWorks = () => {
@@ -33,7 +32,7 @@ export default class PointReview extends Component {
         if (this.work.length > 0) {
             let nowWork = this.work.pop();
 
-            if (this.screenWidth < 500) {
+            if (this.isMobile) {
                 let { imageWidth, imageHeight } = nowWork.meta;
                 let ratio = imageWidth / imageHeight;
                 let newHeight = this.screenWidth / ratio;
@@ -99,13 +98,12 @@ export default class PointReview extends Component {
 
     componentDidMount() {
         this.fetchWorks();
-        const query = Taro.createSelectorQuery()
-        query
-            .select('.imgItem')
-            .boundingClientRect(rect => {
-                this.screenWidth = rect.width;
-            })
-            .exec()
+        Taro.getSystemInfo({
+            success: (res) => {
+                this.screenWidth = res.windowWidth;
+                (res.model !== null) ? this.isMobile = true : this.isMobile = false;
+            }
+        })
         if (process.env.TARO_ENV === 'weapp') {
         } else if (process.env.TARO_ENV === 'h5') {
         }
@@ -113,19 +111,19 @@ export default class PointReview extends Component {
 
     updateCircle = () => {
 
-        let {currentWork} = this.state;
-        if(currentWork.work){
+        let { currentWork } = this.state;
+        if (currentWork.work) {
             let circle = this.svg.selectAll("circle");
             let update = circle.data(currentWork.work.result);
             update.exit().remove();
             update.enter().append("circle")
                 .attr("r", 10)
                 .attr("fill", "red")
-                .attr("cx", (d) =>  d.x)
-                .attr("cy", (d) =>  d.y);
-            update.attr("cx", (d) => d.x).attr("cy", (d) =>  d.y);
-                
-            
+                .attr("cx", (d) => d.x)
+                .attr("cy", (d) => d.y);
+            update.attr("cx", (d) => d.x).attr("cy", (d) => d.y);
+
+
         }
     }
 

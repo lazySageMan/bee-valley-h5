@@ -1,6 +1,5 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Text, Button, Input, Image } from '@tarojs/components'
-import {save, fetch} from '../../utils/localIfo'
 import { phoneLogin, wechatLogin } from '../../utils/beevalley'
 import './index.scss'
 import wechat from '../../image/wechat.png'
@@ -15,22 +14,21 @@ export default class Login extends Component {
         
         phoneLogin(this.state.username, this.state.password).then((res) => {
             if(!res) {
-                // this.setState({username: '', password: ''});
                 Taro.showToast({
                     title: '登陆失败',
-                    mask: true,
-                    success: () => {
-                        // this.refs.phone.value = '';
-                        // this.refs.passWd.value = '';
-                    }
+                    mask: true
                 })
             }else{
                 Taro.showToast({
                     title: '登陆成功',
                     mask: true,
                     success: () => {
-                        save('apiToken', res);
-                        save('login', true);
+
+                        Taro.setStorage({ key: 'apiToken', data: res })
+                            .then(res => console.log(res))
+                        Taro.setStorage({ key: 'login', data: true })
+                            .then(res => console.log(res))
+
                         Taro.navigateTo({
                             url: 'pages/task_list/index'
                         })
@@ -52,7 +50,7 @@ export default class Login extends Component {
     }
 
     componentDidMount(){
-        let login = fetch('login');
+        const login = Taro.getStorageSync('login')
         if(login === true) {
             Taro.navigateTo({
                 url: 'pages/task_list/index'
@@ -72,8 +70,10 @@ export default class Login extends Component {
                         title: '登陆成功',
                         mask: true,
                         success: () => {
-                            save('apiToken', res);
-                            save('login', true);
+                            Taro.setStorage({ key: 'apiToken', data: res })
+                                .then(res => console.log(res))
+                            Taro.setStorage({ key: 'login', data: true })
+                                .then(res => console.log(res))
                             Taro.navigateTo({
                                 url: 'pages/task_list/index'
                             })
