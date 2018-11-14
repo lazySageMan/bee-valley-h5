@@ -6,7 +6,7 @@ import { fetch } from '../../utils/localIfo'
 import './index.scss'
 
 export default class RectReview extends Component {
-    constructor(props){
+    constructor(props) {
         super(props);
 
         this.state = {
@@ -16,14 +16,14 @@ export default class RectReview extends Component {
         this.apiToken = fetch('apiToken');
     }
 
-    getWork = () => {
+    fetchWorks = () => {
         let { apiToken } = this;
         fetchReview(apiToken, 'rect', 4).then((res) => {
             this.work = res;
-            
+
             if (this.work.length > 0) {
 
-                if(this.screenWidth < 500){
+                if (this.screenWidth < 500) {
                     this.work = this.work.map((item) => this.preprocessWork(item))
                 }
 
@@ -34,8 +34,8 @@ export default class RectReview extends Component {
     }
 
     preprocessWork = (work) => {
-        let anchorX = Math.floor(work.work.result[0][0].x + (work.work.result[0][1].x - work.work.result[0][0].x)/2);
-        let anchorY = Math.floor(work.work.result[0][0].y + (work.work.result[0][1].y - work.work.result[0][0].y)/2);
+        let anchorX = Math.floor(work.work.result[0][0].x + (work.work.result[0][1].x - work.work.result[0][0].x) / 2);
+        let anchorY = Math.floor(work.work.result[0][0].y + (work.work.result[0][1].y - work.work.result[0][0].y) / 2);
 
         let options = this.calculateWorkarea(work.meta.imageWidth, work.meta.imageHeight, anchorX, anchorY, this.screenWidth, this.screenHeight);
         options['format'] = 'jpeg';
@@ -53,13 +53,7 @@ export default class RectReview extends Component {
     nextWork = () => {
         if (this.work.length > 0) {
             let nowWork = this.work.pop();
-
-            if (this.svg) {
-                this.svg.remove();
-            }
-
             if (this.screenWidth < 500) {
-
                 nowWork.meta = {
                     imageWidth: this.screenWidth,
                     imageHeight: this.screenHeight
@@ -69,7 +63,7 @@ export default class RectReview extends Component {
                 currentWork: nowWork
             })
         } else {
-            this.getWork();
+            this.fetchWorks();
         }
     }
 
@@ -116,14 +110,14 @@ export default class RectReview extends Component {
     }
 
     componentDidMount() {
-        this.getWork();
+        this.fetchWorks();
         const query = Taro.createSelectorQuery()
         query
             .select('#workearea')
             .fields({
-                size: true,   
+                size: true,
             }, res => {
-                
+
                 this.screenWidth = Math.floor(res.width);
                 this.screenHeight = Math.floor(res.height);
             })
@@ -153,10 +147,47 @@ export default class RectReview extends Component {
         return { x: Math.floor(x), y: Math.floor(y), width: windowWidth, height: windowHeight };
     }
 
-    
+    updateReact = () => {
+        let currentWork = this.state;
+        let rectData = {};
+        if (this.screenWidth < 500) {
+            rectData = {
+                x: currentWork.work.result[0][0].x - currentWork.xOffset,
+                y: currentWork.work.result[0][0].y - currentWork.yOffset,
+                width: currentWork.work.result[0][1].x - currentWork.work.result[0][0].x,
+                height: currentWork.work.result[0][1].y - currentWork.work.result[0][0].y
+            }
+        } else {
+            rectData = {
+                x: currentWork.work.result[0][0].x,
+                y: currentWork.work.result[0][0].y,
+                width: currentWork.work.result[0][1].x - currentWork.work.result[0][0].x,
+                height: currentWork.work.result[0][1].y - currentWork.work.result[0][0].y
+            }
+        }
 
-    render(){
-        
+        let rect = this.svg.selectAll("rect");
+        let update = rect.data([rectData]);
+
+        update.exit().remove();
+        update.enter().append("rect")
+            .attr("fill", "yellow")
+            .attr("fill-opacity", 0.1)
+            .attr("stroke", "green")
+            .attr("stroke-width", "2px")
+            .attr("x", (d) => d.x)
+            .attr("y", (d) => d.y)
+            .attr("width", (d) => d.width)
+            .attr("height", (d) => d.height);
+
+        update.attr("x", (d) => d.x)
+            .attr("y", (d) => d.y)
+            .attr("width", (d) => d.width)
+            .attr("height", (d) => d.height);
+    }
+
+    render() {
+
         let { currentWork } = this.state;
 
         if (currentWork.src) {
@@ -164,36 +195,7 @@ export default class RectReview extends Component {
                 .append("svg")
                 .attr("width", this.state.currentWork.meta.imageWidth)
                 .attr("height", this.state.currentWork.meta.imageHeight);
-            let rectData = {}; 
-            if(this.screenWidth < 500){
-                rectData = {
-                    x: currentWork.work.result[0][0].x - currentWork.xOffset,
-                    y: currentWork.work.result[0][0].y - currentWork.yOffset,
-                    width: currentWork.work.result[0][1].x - currentWork.work.result[0][0].x,
-                    height: currentWork.work.result[0][1].y - currentWork.work.result[0][0].y 
-                }
-            }else{
-                rectData = {
-                    x: currentWork.work.result[0][0].x,
-                    y: currentWork.work.result[0][0].y,
-                    width: currentWork.work.result[0][1].x - currentWork.work.result[0][0].x,
-                    height: currentWork.work.result[0][1].y - currentWork.work.result[0][0].y
-                }
-            }
-            
-            let rect = this.svg.selectAll("rect");
-            let update = rect.data([rectData]);
-
-            update.exit().remove();
-            update.enter().append("rect")
-                .attr("fill", "yellow")
-                .attr("fill-opacity", 0.1)
-                .attr("stroke", "green")
-                .attr("stroke-width", "2px")
-                .attr("x", (d) => d.x)
-                .attr("y", (d) => d.y)
-                .attr("width", (d) => d.width)
-                .attr("height", (d) => d.height);
+            this.updateReact();
         }
 
         return (

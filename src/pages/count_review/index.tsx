@@ -17,7 +17,7 @@ export default class PointReview extends Component {
         this.apiToken = fetch('apiToken');
     }
 
-    getWork = () => {
+    fetchWorks = () => {
         let { apiToken } = this;
         fetchReview(apiToken, 'count', 4).then((res) => {
             this.work = res;
@@ -33,10 +33,6 @@ export default class PointReview extends Component {
         if (this.work.length > 0) {
             let nowWork = this.work.pop();
 
-            if (this.svg) {
-                this.svg.remove();
-            }
-
             if (this.screenWidth < 500) {
                 let { imageWidth, imageHeight } = nowWork.meta;
                 let ratio = imageWidth / imageHeight;
@@ -51,7 +47,7 @@ export default class PointReview extends Component {
                 currentWork: nowWork
             })
         } else {
-            this.getWork();
+            this.fetchWorks();
         }
     }
 
@@ -102,7 +98,7 @@ export default class PointReview extends Component {
     }
 
     componentDidMount() {
-        this.getWork();
+        this.fetchWorks();
         const query = Taro.createSelectorQuery()
         query
             .select('.imgItem')
@@ -115,6 +111,24 @@ export default class PointReview extends Component {
         }
     }
 
+    updateCircle = () => {
+
+        let {currentWork} = this.state;
+        if(currentWork.work){
+            let circle = this.svg.selectAll("circle");
+            let update = circle.data(currentWork.work.result);
+            update.exit().remove();
+            update.enter().append("circle")
+                .attr("r", 10)
+                .attr("fill", "red")
+                .attr("cx", (d) =>  d.x)
+                .attr("cy", (d) =>  d.y);
+            update.attr("cx", (d) => d.x).attr("cy", (d) =>  d.y);
+                
+            
+        }
+    }
+
     render() {
 
         let { currentWork } = this.state;
@@ -124,16 +138,7 @@ export default class PointReview extends Component {
                 .append("svg")
                 .attr("width", this.state.currentWork.meta.imageWidth)
                 .attr("height", this.state.currentWork.meta.imageHeight);
-
-            let circle = this.svg.selectAll("circle");
-            let update = circle.data(currentWork.work.result);
-
-            update.enter().append("circle")
-                .attr("r", 10)
-                .attr("fill", "red")
-                .attr("cx", function (d) { return d.x; })
-                .attr("cy", function (d) { return d.y; });
-            update.exit().remove();
+            this.updateCircle();
         }
 
         return (
