@@ -1,6 +1,6 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text } from '@tarojs/components'
-import { listAuthorizedWorkType } from '../../utils/beevalley'
+import { listAuthorizedWorkType, checkDveice } from '../../utils/beevalley'
 import './index.scss'
 
 export default class TaskList extends Component {
@@ -20,7 +20,7 @@ export default class TaskList extends Component {
             success: (res) => {
                 this.screenWidth = res.windowWidth;
                 this.screenHeight = Math.floor(res.windowHeight * 0.85);
-                (res.model !== null) ? this.isMobile = true : this.isMobile = false;
+                this.isMobile = checkDveice(res)
             }
         })
 

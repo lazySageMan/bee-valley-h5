@@ -154,4 +154,8 @@ function listAuthorizedWorkType(token) {
     }).then(handleRes)
 }
 
-export {fetchWork, downloadWorkFile, cancelWork, submitWork, fetchReview, downloadReviewFile, submitReview, phoneLogin, wechatLogin, listAuthorizedWorkType};
+function checkDveice(res) {
+    return (res.model !== null) ? true : false;
+}
+
+export {fetchWork, downloadWorkFile, cancelWork, submitWork, fetchReview, downloadReviewFile, submitReview, phoneLogin, wechatLogin, listAuthorizedWorkType, checkDveice};

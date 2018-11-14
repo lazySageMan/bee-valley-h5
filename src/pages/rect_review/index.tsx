@@ -1,7 +1,7 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Image } from '@tarojs/components'
 import * as d3 from 'd3'
-import { fetchReview, downloadReviewFile, submitReview, cancelWork } from '../../utils/beevalley'
+import { fetchReview, downloadReviewFile, submitReview, cancelWork, checkDveice } from '../../utils/beevalley'
 import './index.scss'
 
 export default class RectReview extends Component {
@@ -114,7 +114,7 @@ export default class RectReview extends Component {
             success: (res) => {
                 this.screenWidth = res.windowWidth;
                 this.screenHeight = Math.floor(res.windowHeight * 0.85);
-                (res.model !== null) ? this.isMobile = true : this.isMobile = false;
+                this.isMobile = checkDveice(res)
             }
         })
 
