@@ -25,9 +25,7 @@ export default class Login extends Component {
                     success: () => {
 
                         Taro.setStorage({ key: 'apiToken', data: res })
-                            .then(res => console.log(res))
                         Taro.setStorage({ key: 'login', data: true })
-                            .then(res => console.log(res))
 
                         Taro.navigateTo({
                             url: 'pages/task_list/index'
@@ -71,9 +69,8 @@ export default class Login extends Component {
                         mask: true,
                         success: () => {
                             Taro.setStorage({ key: 'apiToken', data: res })
-                                .then(res => console.log(res))
                             Taro.setStorage({ key: 'login', data: true })
-                                .then(res => console.log(res))
+
                             Taro.navigateTo({
                                 url: 'pages/task_list/index'
                             })

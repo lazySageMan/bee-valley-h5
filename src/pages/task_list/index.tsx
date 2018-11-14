@@ -45,13 +45,14 @@ export default class TaskList extends Component {
             taskType = taskType.map((item) => {
                 return (
                     <View
-                        className="task_wrap"
-                        onClick={() => this.navigateToTask(item.packageId, item.typeCode)}
+                      key={item.packageId + '_' + item.typeCode}
+                      className='task_wrap'
+                      onClick={this.navigateToTask.bind(this, item.packageId, item.typeCode)}
                     >
                         <Text
-                            className="task_wrap_btn"
+                          className='task_wrap_btn'
                         >{item.packageName}:{item.typeName}</Text>
-                        <Text className="task_wrap_text">{item.priceRange}元/张</Text>
+                        <Text className='task_wrap_text'>{item.priceRange}元/张</Text>
                     </View>
                 )
             })
@@ -59,14 +60,15 @@ export default class TaskList extends Component {
             taskType = taskType.map((item) => {
                 return (
                     <View
-                        className="task_wrap"
-                        onClick={() => this.navigateToTask(item.packageId, item.typeCode)}
+                      key={item.packageId + '_' + item.typeCode}
+                      className='task_wrap'
+                      onClick={this.navigateToTask.bind(this, item.packageId, item.typeCode)}
                     >
-                        <Button
-                            type="primary"
-                            className="task_wrap_btn"
-                        >{item.packageName}:{item.typeName}</Button>
-                        <Text className="task_wrap_text">{item.priceRange}元/张</Text>
+                    <Button
+                      type='primary'
+                      className='task_wrap_btn'
+                    >{item.packageName}:{item.typeName}</Button>
+                    <Text className='task_wrap_text'>{item.priceRange}元/张</Text>
                     </View>
                 )
             })

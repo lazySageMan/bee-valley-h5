@@ -196,17 +196,17 @@ export default class RectReview extends Component {
 
         return (
             <View className='index'>
-                <View className="imgItem" id="workearea">
+                <View className='imgItem' id='workearea'>
                     {currentWork.src && (
                         <Image src={currentWork.src} style={`width:${currentWork.meta.imageWidth}px;height:${currentWork.meta.imageHeight}px;`}></Image>
                     )
                     }
-                    <View className="workImg"></View>
+                    <View className='workImg'></View>
                 </View>
-                <View className="btnItem">
-                    <Button type="primary" onClick={this.submitWork}>提交</Button>
-                    <Button type="warn" onClick={this.rejectWork}>驳回</Button>
-                    <Button style="background: #FFCC00;" type="warn" onClick={this.cancelWork}>放弃</Button>
+                <View className='btnItem'>
+                    <Button type='primary' onClick={this.submitWork}>提交</Button>
+                    <Button type='warn' onClick={this.rejectWork}>驳回</Button>
+                    <Button style='background: #FFCC00;' type='warn' onClick={this.cancelWork}>放弃</Button>
                 </View>
             </View>
         )
