@@ -96,7 +96,7 @@ export default class PointTask extends Component {
     let { id } = this.state.currentWork;
     if (!id) return;
     cancelWork(apiToken, [id])
-    this.nextWork();
+    .then(() => this.nextWork())    
   }
 
   submitWork = () => {
@@ -104,8 +104,8 @@ export default class PointTask extends Component {
     let { id, pointPosition } = this.state.currentWork;
     if (!id) return;
     if (pointPosition.length > 0) {
-      submitWork(apiToken, id, pointPosition);
-      this.nextWork();
+      submitWork(apiToken, id, pointPosition)
+      .then(() => this.nextWork())
     } else {
       alert("请标注点")
     }
@@ -161,8 +161,6 @@ export default class PointTask extends Component {
             updated.pointPosition = pointData
             return { currentWork: updated }
           })
-
-          // this.renderDthree(pointData, pointRadius);
 
         })
       update.exit().remove();
