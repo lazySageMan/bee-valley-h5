@@ -2,7 +2,6 @@ import Taro, { Component, Config } from '@tarojs/taro'
 import { View, Button, Image } from '@tarojs/components'
 import * as d3 from 'd3'
 import { fetchWork, downloadWorkFile, cancelWork, submitWork } from '../../utils/beevalley'
-import {fetch} from '../../utils/localIfo'
 import './index.scss'
 
 export default class PointTask extends Component {
@@ -18,7 +17,7 @@ export default class PointTask extends Component {
       currentWork: {},
       pointRadius: 10
     }
-    this.apiToken = fetch('apiToken');
+    this.apiToken = Taro.getStorageSync('apiToken');
   }
 
   componentWillMount() {
@@ -41,12 +40,7 @@ export default class PointTask extends Component {
     if (this.work.length > 0) {
       let nowWork = this.work.pop();
 
-      // if (this.svg) {
-      //   this.svg.remove();
-      // }
-
-
-      if (this.screenWidth < 500) {
+      if (this.isMobile) {
         let { imageWidth, imageHeight } = nowWork.meta;
         let ratio = imageWidth / imageHeight;
         let newHeight = this.screenWidth / ratio;
@@ -118,13 +112,14 @@ export default class PointTask extends Component {
   componentDidMount() {
     this.packageId = this.$router.params.packageId;
     this.fetchWork();
-    const query = Taro.createSelectorQuery()
-    query
-      .select('.imgItem')
-      .boundingClientRect(rect => {
-        this.screenWidth = rect.width;
-      })
-      .exec()
+
+    Taro.getSystemInfo({
+      success: (res) => {
+        this.screenWidth = res.windowWidth;
+        (res.model !== null) ? this.isMobile = true : this.isMobile = false;
+      }
+    })
+
     if (process.env.TARO_ENV === 'weapp') {
     } else if (process.env.TARO_ENV === 'h5') {
     }

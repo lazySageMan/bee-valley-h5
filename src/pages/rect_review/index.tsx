@@ -2,7 +2,6 @@ import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Image } from '@tarojs/components'
 import * as d3 from 'd3'
 import { fetchReview, downloadReviewFile, submitReview, cancelWork } from '../../utils/beevalley'
-import { fetch } from '../../utils/localIfo'
 import './index.scss'
 
 export default class RectReview extends Component {
@@ -13,7 +12,7 @@ export default class RectReview extends Component {
             currentWork: {}
         }
 
-        this.apiToken = fetch('apiToken');
+        this.apiToken = Taro.getStorageSync('apiToken');
     }
 
     fetchWorks = () => {
@@ -23,7 +22,7 @@ export default class RectReview extends Component {
 
             if (this.work.length > 0) {
 
-                if (this.screenWidth < 500) {
+                if (this.isMobile) {
                     this.work = this.work.map((item) => this.preprocessWork(item))
                 }
 
@@ -53,7 +52,7 @@ export default class RectReview extends Component {
     nextWork = () => {
         if (this.work.length > 0) {
             let nowWork = this.work.pop();
-            if (this.screenWidth < 500) {
+            if (this.isMobile) {
                 nowWork.meta = {
                     imageWidth: this.screenWidth,
                     imageHeight: this.screenHeight
@@ -111,17 +110,14 @@ export default class RectReview extends Component {
 
     componentDidMount() {
         this.fetchWorks();
-        const query = Taro.createSelectorQuery()
-        query
-            .select('#workearea')
-            .fields({
-                size: true,
-            }, res => {
+        Taro.getSystemInfo({
+            success: (res) => {
+                this.screenWidth = res.windowWidth;
+                this.screenHeight = Math.floor(res.windowHeight * 0.85);
+                (res.model !== null) ? this.isMobile = true : this.isMobile = false;
+            }
+        })
 
-                this.screenWidth = Math.floor(res.width);
-                this.screenHeight = Math.floor(res.height);
-            })
-            .exec();
         if (process.env.TARO_ENV === 'weapp') {
         } else if (process.env.TARO_ENV === 'h5') {
         }
@@ -150,7 +146,7 @@ export default class RectReview extends Component {
     updateReact = () => {
         let currentWork = this.state;
         let rectData = {};
-        if (this.screenWidth < 500) {
+        if (this.isMobile) {
             rectData = {
                 x: currentWork.work.result[0][0].x - currentWork.xOffset,
                 y: currentWork.work.result[0][0].y - currentWork.yOffset,

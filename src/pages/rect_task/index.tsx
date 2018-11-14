@@ -2,7 +2,6 @@ import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Image } from '@tarojs/components'
 import * as d3 from 'd3'
 import { fetchWork, downloadWorkFile, cancelWork, submitWork } from '../../utils/beevalley'
-import { fetch } from '../../utils/localIfo'
 import './index.scss'
 
 export default class RectTask extends Component {
@@ -14,7 +13,7 @@ export default class RectTask extends Component {
             currentWork: {}
         }
 
-        this.apiToken = fetch('apiToken');
+        this.apiToken = Taro.getStorageSync('apiToken');
         this.rectInitialized = false;
     }
 
@@ -23,14 +22,14 @@ export default class RectTask extends Component {
         if (this.work.length > 0) {
             let currentWork = this.work.pop();
 
-              if (this.work.length > 0) {
+            if (this.work.length > 0) {
                 this.downloadWorkFile(this.work[this.work.length - 1]);
-              }
+            }
 
             this.rectInitialized = false;
 
             // TODO find better way to check mobile device
-            if (this.screenWidth < 500) {
+            if (this.isMobile) {
 
                 currentWork.meta = {
                     imageWidth: this.screenWidth,
@@ -39,7 +38,7 @@ export default class RectTask extends Component {
             }
 
             if (currentWork.previousWork) {
-            
+
                 let rectData = {
                     xMin: currentWork.previousWork.result[0][0].x - currentWork.xOffset,
                     yMin: currentWork.previousWork.result[0][0].y - currentWork.yOffset,
@@ -48,8 +47,7 @@ export default class RectTask extends Component {
                 };
 
                 this.rectInitialized = true;
-                currentWork.pointPosition = rectData;
-
+                currentWork.rectPosition = rectData;
             }
 
             this.setState({
@@ -64,15 +62,15 @@ export default class RectTask extends Component {
         let { apiToken } = this;
         fetchWork(apiToken, 'rect', 4, this.packageId).then((res) => {
 
-          this.work = res.map(item => this.preprocessWork(item));
-          
-          if (this.work.length > 0) {
-            this.downloadWorkFile(this.work[this.work.length - 1]);
-            this.nextWork();
-          } else {
-            // TODO show toast
+            this.work = res.map(item => this.preprocessWork(item));
 
-          }
+            if (this.work.length > 0) {
+                this.downloadWorkFile(this.work[this.work.length - 1]);
+                this.nextWork();
+            } else {
+                // TODO show toast
+
+            }
 
         })
     }
@@ -83,7 +81,7 @@ export default class RectTask extends Component {
         work['anchorX'] = anchorX;
         work['anchorY'] = anchorY;
 
-        if (this.screenWidth < 500) {
+        if (this.isMobile) {
             let options = this.calculateWorkarea(work.meta.imageWidth, work.meta.imageHeight, anchorX, anchorY, this.screenWidth, this.screenHeight);
             options['format'] = 'jpeg';
             work['xOffset'] = options.x;
@@ -172,23 +170,23 @@ export default class RectTask extends Component {
         let rectPosition = this.state.currentWork.rectPosition;
 
         if (x > rectPosition.xMin) {
-          rectPosition.xMax = x;
+            rectPosition.xMax = x;
         } else {
-          rectPosition.xMax = rectPosition.xMin;
-          rectPosition.xMin = x;
+            rectPosition.xMax = rectPosition.xMin;
+            rectPosition.xMin = x;
         }
 
         if (y > rectPosition.yMin) {
-          rectPosition.yMax = y;
+            rectPosition.yMax = y;
         } else {
-          rectPosition.yMax = rectPosition.yMin;
-          rectPosition.yMin = y;
+            rectPosition.yMax = rectPosition.yMin;
+            rectPosition.yMin = y;
         }
 
         let updated = Object.assign({}, this.state.currentWork, {
             rectPosition: rectPosition
-          });
-        this.setState({currentWork: updated});
+        });
+        this.setState({ currentWork: updated });
 
     }
 
@@ -197,9 +195,9 @@ export default class RectTask extends Component {
         let { rectPosition } = this.state.currentWork;
 
         let deltaXmin = Math.abs(Touchx - rectPosition.xMin);
-        let deltaXmax = Math.abs(Touchx- rectPosition.xMax);
+        let deltaXmax = Math.abs(Touchx - rectPosition.xMax);
         let deltaYmin = Math.abs(Touchy - rectPosition.yMin);
-        let deltaYmax = Math.abs(Touchy- rectPosition.yMax);
+        let deltaYmax = Math.abs(Touchy - rectPosition.yMax);
 
         if (rectPosition.yMin < Touchy && rectPosition.yMax > Touchy) {
             if (deltaXmax < deltaXmin) {
@@ -219,9 +217,9 @@ export default class RectTask extends Component {
 
         let updated = Object.assign({}, this.state.currentWork, {
             rectPosition: rectPosition
-          });
+        });
 
-        this.setState({currentWork: updated});
+        this.setState({ currentWork: updated });
 
         this.startRect = {
             x: Touchx,
@@ -234,17 +232,13 @@ export default class RectTask extends Component {
         this.packageId = this.$router.params.packageId;
         this.rectInitialized = false;
 
-        const query = Taro.createSelectorQuery()
-        query
-            .select('#workearea')
-            .fields({
-                size: true,   
-            }, res => {
-                
-                this.screenWidth = Math.floor(res.width);
-                this.screenHeight = Math.floor(res.height);
-            })
-            .exec();
+        Taro.getSystemInfo({
+            success: (res) => {
+                this.screenWidth = res.windowWidth;
+                this.screenHeight = Math.floor(res.windowHeight * 0.85);
+                (res.model !== null) ? this.isMobile = true : this.isMobile = false;
+            }
+        })
 
         if (process.env.TARO_ENV === 'weapp') {
         } else if (process.env.TARO_ENV === 'h5') {
@@ -253,9 +247,9 @@ export default class RectTask extends Component {
         this.svg = d3.select(".workImg")
             .append("svg");
 
-        if(this.screenWidth < 500){
+        if (this.isMobile) {
             this.svg.on("touchstart", () => {
-            
+
                 if (!this.rectInitialized) {
                     console.log(d3.event)
                     let updated = Object.assign({}, this.state.currentWork, {
@@ -263,8 +257,8 @@ export default class RectTask extends Component {
                             xMin: d3.event.targetTouches[0].clientX,
                             yMin: d3.event.targetTouches[0].clientY
                         }
-                      });
-                    this.setState({currentWork: updated});
+                    });
+                    this.setState({ currentWork: updated });
                 }
 
                 this.startRect = {
@@ -291,7 +285,7 @@ export default class RectTask extends Component {
                 }
             })
 
-        }else{
+        } else {
 
             this.svg.on('mousedown', () => {
                 if (!this.rectInitialized) {
@@ -300,15 +294,15 @@ export default class RectTask extends Component {
                             xMin: d3.event.offsetX,
                             yMin: d3.event.offsetY
                         }
-                      });
-                    this.setState({currentWork: updated});
+                    });
+                    this.setState({ currentWork: updated });
                 }
-    
+
                 this.startRect = {
                     x: d3.event.offsetX,
                     y: d3.event.offsetY
                 };
-    
+
             });
 
             this.svg.on('mousemove', () => {
@@ -360,7 +354,7 @@ export default class RectTask extends Component {
         let { apiToken } = this;
         // TODO missing offset handling
         if (rectPosition) {
-            let rectData = [{x: rectPosition.xMin, y: rectPosition.yMin},{x: rectPosition.xMax, y: rectPosition.yMax}];
+            let rectData = [{ x: rectPosition.xMin, y: rectPosition.yMin }, { x: rectPosition.xMax, y: rectPosition.yMax }];
             submitWork(apiToken, id, [rectData]).then(() => {
                 this.nextWork();
             });
@@ -385,12 +379,12 @@ export default class RectTask extends Component {
             this.svg.attr("width", currentWork.meta.imageWidth)
                 .attr("height", currentWork.meta.imageHeight);
 
-                let circleData = {
-                    x: currentWork.anchorX - currentWork.xOffset,
-                    y: currentWork.anchorY - currentWork.yOffset,
-                };
-                this.updateCircle([circleData])
-                this.changePosition(currentWork.rectPosition);
+            let circleData = {
+                x: currentWork.anchorX - currentWork.xOffset,
+                y: currentWork.anchorY - currentWork.yOffset,
+            };
+            this.updateCircle([circleData])
+            this.changePosition(currentWork.rectPosition);
         }
 
         return (
