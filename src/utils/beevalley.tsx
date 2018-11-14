@@ -154,4 +154,4 @@ function listAuthorizedWorkType(token) {
     }).then(handleRes)
 }
 
-exports = {fetchWork, downloadWorkFile, cancelWork, submitWork, fetchReview, downloadReviewFile, submitReview, phoneLogin, wechatLogin, listAuthorizedWorkType}
+export {fetchWork, downloadWorkFile, cancelWork, submitWork, fetchReview, downloadReviewFile, submitReview, phoneLogin, wechatLogin, listAuthorizedWorkType};

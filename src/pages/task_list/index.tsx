@@ -1,6 +1,6 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text } from '@tarojs/components'
-import { listAuthorizedWorkType } '../../utils/beevalley'
+import { listAuthorizedWorkType } from '../../utils/beevalley'
 import './index.scss'
 
 export default class TaskList extends Component {
