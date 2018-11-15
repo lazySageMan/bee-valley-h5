@@ -248,6 +248,24 @@ export default class RectTask extends Component {
         this.svg = d3.select(".workImg")
             .append("svg");
 
+        // this.svg.append("svg:clipPath") 
+        //     .attr("id", "clipper") 
+        //     .append("svg:rect") 
+        //     .style("stroke", "gray") 
+        //     .style("fill", "black") 
+        //     .attr("x", 50) 
+        //     .attr("y", 25) 
+        //     .attr("width", 300) 
+        //     .attr("height", 45); 
+        
+        // this.svg.append("g").append("svg:circle") 
+        //     .style("stroke", "gray") 
+        //     .style("fill", "blue") 
+        //     .attr("cx", 175) 
+        //     .attr("cy", 55) 
+        //     .attr("r", 50) 
+        //     .attr("clip-path", "url(#clipper)"); 
+        
         if (this.isMobile) {
             this.svg.on("touchstart", () => {
 

@@ -15,7 +15,9 @@ export default class PointTask extends Component {
 
     this.state = {
       currentWork: {},
-      pointRadius: 10
+      pointRadius: 10,
+      lineData:[],
+      lineWidth: 50
     }
     this.apiToken = Taro.getStorageSync('apiToken');
   }
@@ -141,6 +143,62 @@ export default class PointTask extends Component {
       .on('click', () => {
         this.addCircle(d3.event)
       });
+    this.svg.on("mouseover", () => {
+      this.changeLine(d3.event.offsetX, d3.event.offsetY)
+
+      this.svg.on("mousemove", () => {
+        this.changeLine(d3.event.offsetX, d3.event.offsetY)
+      })
+
+      this.svg.on("mouseout", () => {
+        this.svg.on("mousemove", null);
+        this.svg.on("mouseout", null);
+        this.setState({
+          lineData: []
+        })
+      })
+    })
+  }
+
+  changeLine = (eventX, eventY) => {
+    let {lineWidth, pointRadius} = this.state;
+
+    let hengX1 = eventX - pointRadius;
+    let hengX2 = eventX + pointRadius;
+
+    let shuY1 = eventY - pointRadius;
+    let shuY2 = eventY + pointRadius;
+
+    this.setState({
+      lineData: [
+        {x1: hengX1, x2: hengX1 - lineWidth, y1: eventY, y2: eventY},
+        {x1: hengX2, x2: hengX2 + lineWidth, y1: eventY, y2: eventY},
+        {x1: eventX, x2: eventX, y1: shuY1, y2: shuY1 - lineWidth},
+        {x1: eventX, x2: eventX, y1: shuY2, y2: shuY2 + lineWidth}
+      ]
+    });
+  }
+
+  updateLine = (lineData) => {
+    if(this.svg){
+      let line = this.svg.selectAll("line");
+      let update = line.data(lineData);
+
+      update.exit().remove();
+      
+      update.enter().append("line")
+        .attr("x1", (d) => d.x1)
+        .attr("y1", (d) => d.y1)
+        .attr("x2", (d) => d.x2)
+        .attr("y2", (d) => d.y2)
+        .style("stroke", "red")
+        .style("stroke-width", 2);
+
+      update.attr("x1", (d) => d.x1)
+        .attr("y1", (d) => d.y1)
+        .attr("x2", (d) => d.x2)
+        .attr("y2", (d) => d.y2);
+    }
   }
 
   renderDthree(pointData, pointRadius) {
@@ -179,7 +237,7 @@ export default class PointTask extends Component {
   }
 
   render() {
-    let { currentWork, pointRadius } = this.state;
+    let { currentWork, pointRadius, lineData } = this.state;
 
     if (currentWork.pointPosition) {
       this.renderDthree(currentWork.pointPosition, pointRadius);
@@ -188,6 +246,7 @@ export default class PointTask extends Component {
     if (this.svg && currentWork) {
       this.svg.attr("width", currentWork.meta.imageWidth)
       .attr("height", currentWork.meta.imageHeight);
+      this.updateLine(lineData)
     }
 
     return (
