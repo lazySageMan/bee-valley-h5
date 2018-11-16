@@ -1,5 +1,5 @@
 import Taro, { Component } from '@tarojs/taro'
-import { View, Button, Image } from '@tarojs/components'
+import { View, Button, Image, Input } from '@tarojs/components'
 import * as d3 from 'd3'
 import { fetchReview, downloadReviewFile, submitReview, cancelWork, checkDveice } from '../../utils/beevalley'
 import './index.scss'
@@ -10,7 +10,9 @@ export default class PointReview extends Component {
         super(props);
 
         this.state = {
-            currentWork: []
+            currentWork: [],
+            lineData:[],
+            lineWidth: 50
         }
 
         this.apiToken = Taro.getStorageSync('apiToken');
@@ -104,6 +106,25 @@ export default class PointReview extends Component {
                 this.isMobile = checkDveice(res)
             }
         })
+
+        this.svg = d3.select(".workImg").append("svg");
+
+        this.svg.on("mouseover", () => {
+            this.changeLine(d3.event.offsetX, d3.event.offsetY)
+      
+            this.svg.on("mousemove", () => {
+                this.changeLine(d3.event.offsetX, d3.event.offsetY)
+            })
+      
+            this.svg.on("mouseout", () => {
+                this.svg.on("mousemove", null);
+                this.svg.on("mouseout", null);
+                this.setState({
+                    lineData: []
+                })
+            })
+        })
+
         if (process.env.TARO_ENV === 'weapp') {
         } else if (process.env.TARO_ENV === 'h5') {
         }
@@ -127,16 +148,62 @@ export default class PointReview extends Component {
         }
     }
 
+    updateLine = (lineData) => {
+        if(this.svg){
+            let line = this.svg.selectAll("line");
+            let update = line.data(lineData);
+        
+            update.exit().remove();
+            
+            update.enter().append("line")
+                .attr("x1", (d) => d.x1)
+                .attr("y1", (d) => d.y1)
+                .attr("x2", (d) => d.x2)
+                .attr("y2", (d) => d.y2)
+                .style("stroke", "red")
+                .style("stroke-width", 2);
+        
+            update.attr("x1", (d) => d.x1)
+                .attr("y1", (d) => d.y1)
+                .attr("x2", (d) => d.x2)
+                .attr("y2", (d) => d.y2);
+        }
+    }
+
+    changeLine = (eventX, eventY) => {
+        let {lineWidth} = this.state;
+        let pointRadius = 10;
+        let hengX1 = eventX - pointRadius;
+        let hengX2 = eventX + pointRadius;
+    
+        let shuY1 = eventY - pointRadius;
+        let shuY2 = eventY + pointRadius;
+    
+        this.setState({
+            lineData: [
+                {x1: hengX1, x2: hengX1 - lineWidth, y1: eventY, y2: eventY},
+                {x1: hengX2, x2: hengX2 + lineWidth, y1: eventY, y2: eventY},
+                {x1: eventX, x2: eventX, y1: shuY1, y2: shuY1 - lineWidth},
+                {x1: eventX, x2: eventX, y1: shuY2, y2: shuY2 + lineWidth}
+            ]
+        });
+    }
+
+    changeR = (ev) => {
+        this.setState({lineWidth: Number(ev.target.value)});
+    }
+
     render() {
 
-        let { currentWork } = this.state;
+        let { currentWork, lineData } = this.state;
 
-        if (currentWork.src) {
-            this.svg = d3.select(".workImg")
-                .append("svg")
+        if (currentWork.src && this.svg) {
+
+            this.svg
                 .attr("width", this.state.currentWork.meta.imageWidth)
                 .attr("height", this.state.currentWork.meta.imageHeight);
             this.updateCircle();
+            this.updateLine(lineData);
         }
 
         return (
@@ -152,6 +219,7 @@ export default class PointReview extends Component {
                     <Button type='primary' onClick={this.submitWork}>通过</Button>
                     <Button type='warn' onClick={this.rejectWork}>驳回</Button>
                     <Button style='background: #FFCC00;' type='warn' onClick={this.cancelWork}>放弃</Button>
+                    <Input placeholder="十字标的半径" className="changeR" onChange={this.changeR} value={this.state.lineWidth}></Input>
                 </View>
             </View>
         )
