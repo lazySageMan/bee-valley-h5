@@ -144,7 +144,6 @@ export default class PointReview extends Component {
                 .attr("cy", (d) => d.y);
             update.attr("cx", (d) => d.x).attr("cy", (d) => d.y);
 
-
         }
     }
 
@@ -181,16 +180,16 @@ export default class PointReview extends Component {
     
         this.setState({
             lineData: [
-                {x1: hengX1, x2: hengX1 - lineWidth, y1: eventY, y2: eventY},
-                {x1: hengX2, x2: hengX2 + lineWidth, y1: eventY, y2: eventY},
-                {x1: eventX, x2: eventX, y1: shuY1, y2: shuY1 - lineWidth},
-                {x1: eventX, x2: eventX, y1: shuY2, y2: shuY2 + lineWidth}
+                {x1: hengX1, x2: eventX - lineWidth, y1: eventY, y2: eventY},
+                {x1: hengX2, x2: eventX + lineWidth, y1: eventY, y2: eventY},
+                {x1: eventX, x2: eventX, y1: shuY1, y2: eventY - lineWidth},
+                {x1: eventX, x2: eventX, y1: shuY2, y2: eventY + lineWidth}
             ]
         });
     }
 
     changeR = (ev) => {
-        this.setState({lineWidth: Number(ev.target.value)});
+        this.setState({lineWidth: parseFloat(ev.target.value)});
     }
 
     render() {
