@@ -1,5 +1,5 @@
 import Taro, { Component, Config } from '@tarojs/taro'
-import { View, Button, Image } from '@tarojs/components'
+import { View, Button, Image, Input} from '@tarojs/components'
 import * as d3 from 'd3'
 import { fetchWork, downloadWorkFile, cancelWork, submitWork, checkDveice} from '../../utils/beevalley'
 import './index.scss'
@@ -162,7 +162,6 @@ export default class PointTask extends Component {
 
   changeLine = (eventX, eventY) => {
     let {lineWidth, pointRadius} = this.state;
-
     let hengX1 = eventX - pointRadius;
     let hengX2 = eventX + pointRadius;
 
@@ -236,9 +235,12 @@ export default class PointTask extends Component {
     }
   }
 
+  changeR = (ev) => {
+    this.setState({lineWidth: Number(ev.target.value)});
+  }
+
   render() {
     let { currentWork, pointRadius, lineData } = this.state;
-
     if (currentWork.pointPosition) {
       this.renderDthree(currentWork.pointPosition, pointRadius);
     }
@@ -261,6 +263,7 @@ export default class PointTask extends Component {
         <View className='btnItem'>
           <Button type='primary' onClick={this.submitWork}>提交</Button>
           <Button type='warn' onClick={this.cancelWork}>放弃</Button>
+          <Input placeholder="十字标的半径" className="changeR" onChange={this.changeR} value={this.state.lineWidth}></Input>
         </View>
       </View>
     )
