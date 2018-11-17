@@ -28,7 +28,7 @@ export default class Login extends Component {
                         Taro.setStorageSync('login', true)
 
                         Taro.navigateTo({
-                            url: 'pages/task_list/index'
+                            url: 'pages/index/index'
                         })
                     }
                 })
@@ -51,7 +51,7 @@ export default class Login extends Component {
         const login = Taro.getStorageSync('login')
         if(login === true) {
             Taro.navigateTo({
-                url: '/pages/task_list/index'
+                url: '/pages/index/index'
             })
         }
         var url = new URL(window.location.href);
@@ -72,7 +72,7 @@ export default class Login extends Component {
                             Taro.setStorageSync('login', true)
 
                             Taro.navigateTo({
-                                url: '/pages/task_list/index'
+                                url: '/pages/index/index'
                             })
                         }
                     })

@@ -22,6 +22,9 @@ export default class TaskList extends Component {
         this.isMobile = checkDveice(res)
 
         listAuthorizedWorkType(this.apiToken).then((taskType) => {
+            if(this.isMobile){
+                taskType = taskType.filter((item) => item.typeCode !== "count")
+            }
             this.setState({
                 taskType: taskType
             })

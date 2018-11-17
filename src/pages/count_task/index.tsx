@@ -1,5 +1,6 @@
 import Taro, { Component, Config } from '@tarojs/taro'
 import { View, Button, Image, Input} from '@tarojs/components'
+import {  AtTabs, AtTabsPane } from 'taro-ui'
 import * as d3 from 'd3'
 import { fetchWork, downloadWorkFile, cancelWork, submitWork, checkDveice} from '../../utils/beevalley'
 import './index.scss'
@@ -10,8 +11,8 @@ export default class PointTask extends Component {
     navigationBarTitleText: '首页'
   }
 
-  constructor(props) {
-    super(props);
+  constructor() {
+    super(...arguments);
 
     this.state = {
       currentWork: {},
