@@ -14,13 +14,9 @@ class App extends Component {
    */
   config: Config = {
     pages: [
-<<<<<<< HEAD
       '/pages/data_acquistion/index',
-      '/pages/login/index',
-=======
       '/pages/index/login',
       '/pages/index/index',
->>>>>>> c0372e0e94f52fc7a73295cc666f7f43107cb22d
       '/pages/rect_task/index',
       '/pages/rect_review/index',
       '/pages/count_task/index',
