@@ -53,6 +53,9 @@ export default class RectTask extends Component {
             this.setState({
                 currentWork: currentWork
             })
+
+            Taro.hideLoading()
+
         } else {
             this.fetchWorks();
         }
@@ -107,6 +110,7 @@ export default class RectTask extends Component {
                 this.setState({
                     currentWork: current
                 })
+                
             } else {
                 let foundIndex = this.work.findIndex(item => item.id === work.id);
 
@@ -247,25 +251,7 @@ export default class RectTask extends Component {
 
         this.svg = d3.select(".workImg")
             .append("svg");
-
-        // this.svg.append("svg:clipPath") 
-        //     .attr("id", "clipper") 
-        //     .append("svg:rect") 
-        //     .style("stroke", "gray") 
-        //     .style("fill", "black") 
-        //     .attr("x", 50) 
-        //     .attr("y", 25) 
-        //     .attr("width", 300) 
-        //     .attr("height", 45); 
-        
-        // this.svg.append("g").append("svg:circle") 
-        //     .style("stroke", "gray") 
-        //     .style("fill", "blue") 
-        //     .attr("cx", 175) 
-        //     .attr("cy", 55) 
-        //     .attr("r", 50) 
-        //     .attr("clip-path", "url(#clipper)"); 
-        
+       
         if (this.isMobile) {
             this.svg.on("touchstart", () => {
 
@@ -344,8 +330,25 @@ export default class RectTask extends Component {
             });
         }
 
+        Taro.showLoading({
+          title: 'loading',
+          mask: true
+        })
+
         this.fetchWorks();
 
+    }
+
+    componentWillUnmount() {
+        if (this.work) {
+            let toCancel = this.work.map(w => w.id)
+            if (this.state.currentWork) {
+                toCancel.push(this.state.currentWork.id)
+            }
+            if (toCancel.length > 0) {
+                cancelWork(this.apiToken, toCancel)
+            }
+        }
     }
 
     calculateWorkarea = (imageWidth, imageHeight, anchorX, anchorY, windowWidth, windowHeight) => {
@@ -369,11 +372,16 @@ export default class RectTask extends Component {
     }
 
     submitWork = () => {
-        let { rectPosition, id } = this.state.currentWork;
+        let { rectPosition, id, anchorX, anchorY, xOffset, yOffset } = this.state.currentWork;
         let { apiToken } = this;
-        // TODO missing offset handling
-        if (rectPosition) {
-            let rectData = [{ x: rectPosition.xMin, y: rectPosition.yMin }, { x: rectPosition.xMax, y: rectPosition.yMax }];
+        let relativeAnchorX = anchorX - xOffset;
+        let relativeAnchorY = anchorY - yOffset;
+        if (rectPosition && relativeAnchorX > rectPosition.xMin && relativeAnchorX < rectPosition.xMax && relativeAnchorY > rectPosition.yMin && relativeAnchorY < rectPosition.yMax) {
+            let rectData = [{ x: rectPosition.xMin + xOffset, y: rectPosition.yMin + yOffset}, { x: rectPosition.xMax + xOffset, y: rectPosition.yMax + yOffset}];
+            Taro.showLoading({
+              title: 'loading',
+              mask: true
+            })
             submitWork(apiToken, id, [rectData])
             .then(() => {
                 this.nextWork();
@@ -382,13 +390,18 @@ export default class RectTask extends Component {
                 delta: 1
             }))
         } else {
-            alert("请标注框");
+            alert("请框中圆点标记目标");
         }
     }
 
     cancelWork = () => {
         let { id } = this.state.currentWork;
         let { apiToken } = this;
+
+        Taro.showLoading({
+          title: 'loading',
+          mask: true
+        })
 
         cancelWork(apiToken, [id])
         .then(() => {

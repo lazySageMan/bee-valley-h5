@@ -33,7 +33,7 @@ export default class PointTask extends Component {
 
       if (this.work.length > 0) {
         // TODO fix potential bug here
-        this.work.forEach(item => this.getImgFile(item.id));
+        this.getImgFile(this.work[this.work.length - 1].id)
         this.nextWork()
       }
     })
@@ -43,6 +43,10 @@ export default class PointTask extends Component {
 
     if (this.work.length > 0) {
       let nowWork = this.work.pop();
+
+      if (this.work.length > 0) {
+          this.getImgFile(this.work[this.work.length - 1].id)
+      }
 
       if (this.isMobile) {
         let { imageWidth, imageHeight } = nowWork.meta;
@@ -58,6 +62,7 @@ export default class PointTask extends Component {
       this.setState({
         currentWork: nowWork
       })
+      Taro.hideLoading()
     } else {
       this.fetchWork();
     }
@@ -103,6 +108,10 @@ export default class PointTask extends Component {
     let { apiToken } = this;
     let { id } = this.state.currentWork;
     if (!id) return;
+    Taro.showLoading({
+      title: 'loading',
+      mask: true
+    })
     cancelWork(apiToken, [id])
     .then(() => this.nextWork())
     .catch(() => Taro.navigateBack({
@@ -115,6 +124,10 @@ export default class PointTask extends Component {
     let { id, pointPosition } = this.state.currentWork;
     if (!id) return;
     if (pointPosition.length > 0) {
+      Taro.showLoading({
+        title: 'loading',
+        mask: true
+      })
       submitWork(apiToken, id, pointPosition)
       .then(() => this.nextWork())
       .catch(() => Taro.navigateBack({
@@ -161,6 +174,18 @@ export default class PointTask extends Component {
     })
   }
 
+  componentWillUnmount() {
+    if (this.work) {
+        let toCancel = this.work.map(w => w.id)
+        if (this.state.currentWork) {
+            toCancel.push(this.state.currentWork.id)
+        }
+        if (toCancel.length > 0) {
+            cancelWork(this.apiToken, toCancel)
+        }
+    } 
+  }
+    
   changeLine = (eventX, eventY) => {
     let {lineWidth, pointRadius} = this.state;
     let hengX1 = eventX - pointRadius;
@@ -171,10 +196,10 @@ export default class PointTask extends Component {
 
     this.setState({
       lineData: [
-        {x1: hengX1, x2: hengX1 - lineWidth, y1: eventY, y2: eventY},
-        {x1: hengX2, x2: hengX2 + lineWidth, y1: eventY, y2: eventY},
-        {x1: eventX, x2: eventX, y1: shuY1, y2: shuY1 - lineWidth},
-        {x1: eventX, x2: eventX, y1: shuY2, y2: shuY2 + lineWidth}
+        {x1: hengX1, x2: eventX - lineWidth, y1: eventY, y2: eventY},
+        {x1: hengX2, x2: eventX + lineWidth, y1: eventY, y2: eventY},
+        {x1: eventX, x2: eventX, y1: shuY1, y2: eventY - lineWidth},
+        {x1: eventX, x2: eventX, y1: shuY2, y2: eventY + lineWidth}
       ]
     });
   }
@@ -209,14 +234,12 @@ export default class PointTask extends Component {
       update.attr("cx", function (d) { return d.x; })
         .attr("cy", function (d) { return d.y; })
         .attr("r", pointRadius)
-        .style('opacity', 0.5);
 
       update.enter().append("circle")
         .attr("r", pointRadius)
         .attr("fill", "red")
         .attr("cx", function (d) { return d.x; })
         .attr("cy", function (d) { return d.y; })
-        .style('opacity', 0.5)
         .on('click', (datum) => {
 
           d3.event.stopPropagation();
@@ -237,7 +260,7 @@ export default class PointTask extends Component {
   }
 
   changeR = (ev) => {
-    this.setState({lineWidth: Number(ev.target.value)});
+    this.setState({lineWidth: parseFloat(ev.target.value)});
   }
 
   render() {
@@ -249,6 +272,9 @@ export default class PointTask extends Component {
     if (this.svg && currentWork) {
       this.svg.attr("width", currentWork.meta.imageWidth)
       .attr("height", currentWork.meta.imageHeight);
+    }
+
+    if (lineData) {
       this.updateLine(lineData)
     }
 
@@ -264,7 +290,7 @@ export default class PointTask extends Component {
         <View className='btnItem'>
           <Button type='primary' onClick={this.submitWork}>提交</Button>
           <Button type='warn' onClick={this.cancelWork}>放弃</Button>
-          <Input placeholder="十字标的半径" className="changeR" onChange={this.changeR} value={this.state.lineWidth}></Input>
+          <Input placeholder="十字标的半径" className="changeR" onChange={this.changeR}></Input>
         </View>
       </View>
     )
