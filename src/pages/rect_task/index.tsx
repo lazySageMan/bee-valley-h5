@@ -339,6 +339,18 @@ export default class RectTask extends Component {
 
     }
 
+    componentWillUnmount() {
+        if (this.work) {
+            let toCancel = this.work.map(w => w.id)
+            if (this.state.currentWork) {
+                toCancel.push(this.state.currentWork.id)
+            }
+            if (toCancel.length > 0) {
+                cancelWork(this.apiToken, toCancel)
+            }
+        }
+    }
+
     calculateWorkarea = (imageWidth, imageHeight, anchorX, anchorY, windowWidth, windowHeight) => {
         var x;
         if (anchorX < windowWidth / 2) {
@@ -360,12 +372,12 @@ export default class RectTask extends Component {
     }
 
     submitWork = () => {
-        let { rectPosition, id } = this.state.currentWork;
+        let { rectPosition, id, anchorX, anchorY, xOffset, yOffset } = this.state.currentWork;
         let { apiToken } = this;
-        // TODO missing offset handling
-        // TODO should check whether rect include prerequisite point
-        if (rectPosition) {
-            let rectData = [{ x: rectPosition.xMin, y: rectPosition.yMin }, { x: rectPosition.xMax, y: rectPosition.yMax }];
+        let relativeAnchorX = anchorX - xOffset;
+        let relativeAnchorY = anchorY - yOffset;
+        if (rectPosition && relativeAnchorX > rectPosition.xMin && relativeAnchorX < rectPosition.xMax && relativeAnchorY > rectPosition.yMin && relativeAnchorY < rectPosition.yMax) {
+            let rectData = [{ x: rectPosition.xMin + xOffset, y: rectPosition.yMin + yOffset}, { x: rectPosition.xMax + xOffset, y: rectPosition.yMax + yOffset}];
             Taro.showLoading({
               title: 'loading',
               mask: true
@@ -378,7 +390,7 @@ export default class RectTask extends Component {
                 delta: 1
             }))
         } else {
-            alert("请标注框");
+            alert("请框中圆点标记目标");
         }
     }
 

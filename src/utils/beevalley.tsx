@@ -13,9 +13,10 @@ function handleError(res) {
     } else if (res.statusCode === 401) {
         Taro.removeStorageSync('login')
         Taro.removeStorageSync('apiToken')
-        Taro.navigateBack({
-                url: '/pages/login/index'
+        Taro.redirectTo({
+                url: '/'
             })
+        throw 'unauthorized'
     } else if (res.statusCode === 403) {
         throw 'forbidden'
     } else if (res.statusCode === 429) {
@@ -159,7 +160,11 @@ function listAuthorizedWorkType(token) {
             'Authorization': 'Bearer ' + token
         },
         responseType: 'text'
-    }).then(handleRes).then((data) => JSON.parse(data))
+    }).then(handleRes).then(parseJson)
+}
+
+function parseJson(str) {
+    return str ? JSON.parse(str) : null
 }
 
 function checkDveice(res) {

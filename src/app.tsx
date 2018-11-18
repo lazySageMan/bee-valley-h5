@@ -14,14 +14,12 @@ class App extends Component {
    */
   config: Config = {
     pages: [
-      
-      '/pages/login/index',
+      '/pages/index/login',
+      '/pages/index/index',
       '/pages/rect_task/index',
       '/pages/rect_review/index',
-      '/pages/task_list/index',
       '/pages/count_task/index',
-      '/pages/count_review/index',
-      '/pages/index/index',
+      '/pages/count_review/index'
     ],
     window: {
       backgroundTextStyle: 'light',

@@ -174,6 +174,18 @@ export default class PointTask extends Component {
     })
   }
 
+  componentWillUnmount() {
+    if (this.work) {
+        let toCancel = this.work.map(w => w.id)
+        if (this.state.currentWork) {
+            toCancel.push(this.state.currentWork.id)
+        }
+        if (toCancel.length > 0) {
+            cancelWork(this.apiToken, toCancel)
+        }
+    } 
+  }
+    
   changeLine = (eventX, eventY) => {
     let {lineWidth, pointRadius} = this.state;
     let hengX1 = eventX - pointRadius;

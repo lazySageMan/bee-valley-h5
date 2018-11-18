@@ -1,0 +1,25 @@
+.wrapList{
+    margin:auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    border-top: 1px solid #f1f1f1;
+}
+.task_wrap{
+    width: 90%;
+    height: 100px;
+    margin: auto;
+    border-bottom: 1px solid #f1f1f1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .task_wrap_btn{
+        font-size: 30px;
+        color: #3C3C3C;
+    }
+    .task_wrap_text{
+        font-size: 30px;
+        color: #00CC88;
+    }
+}

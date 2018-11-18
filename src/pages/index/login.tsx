@@ -1,7 +1,7 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Text, Button, Input, Image } from '@tarojs/components'
 import { phoneLogin, wechatLogin } from '../../utils/beevalley'
-import './index.scss'
+import './login.scss'
 import wechat from '../../image/wechat.png'
 
 export default class Login extends Component {
@@ -41,7 +41,7 @@ export default class Login extends Component {
         let code = url.searchParams.get('code');
 
         if(!code){
-            var redirect_uri = encodeURIComponent('http://bee-valley.todview.com');
+            var redirect_uri = encodeURIComponent('http://bee-valley.todview.com/v2/index.html');
             var state = Math.ceil(Math.random()*1000);
             window.location = 'https://open.weixin.qq.com/connect/qrconnect?appid=wx325f7c60ccdd70ed&redirect_uri='+redirect_uri+'&response_type=code&scope=snsapi_login&state='+state+'#wechat_redirect';
         }
@@ -71,7 +71,7 @@ export default class Login extends Component {
                             Taro.setStorageSync('apiToken', token)
                             Taro.setStorageSync('login', true)
 
-                            Taro.navigateTo({
+                            Taro.redirectTo({
                                 url: '/pages/index/index'
                             })
                         }
