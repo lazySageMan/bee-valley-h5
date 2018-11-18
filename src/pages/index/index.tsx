@@ -2,7 +2,7 @@ import Taro from '@tarojs/taro'
 import { View } from '@tarojs/components'
 import { AtTabs, AtTabsPane } from 'taro-ui'
 import TaskList from './task_list'
-import { listAuthorizedWorkType, checkDveice } from '../../utils/beevalley'
+import { listAuthorizedWork, listAuthorizedReview, checkDveice } from '../../utils/beevalley'
 import './index.scss'
 
 export default class CountTabs extends Taro.Component {
@@ -23,12 +23,21 @@ export default class CountTabs extends Taro.Component {
       let res = Taro.getSystemInfoSync()
       this.isMobile = checkDveice(res)
 
-      listAuthorizedWorkType(this.apiToken).then((taskList) => {
+      listAuthorizedWork(this.apiToken).then((taskList) => {
           if(this.isMobile){
               taskList = taskList.filter((item) => item.typeCode !== "count")
           }
           this.setState({
               taskList: taskList
+          })
+      })
+
+      listAuthorizedReview(this.apiToken).then((reviewList) => {
+          if(this.isMobile){
+              reviewList = reviewList.filter((item) => item.typeCode !== "count")
+          }
+          this.setState({
+              reviewList: reviewList
           })
       })
 

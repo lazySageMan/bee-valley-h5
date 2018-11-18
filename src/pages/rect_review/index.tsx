@@ -17,7 +17,7 @@ export default class RectReview extends Component {
 
     fetchWorks = () => {
         let { apiToken } = this;
-        fetchReview(apiToken, 'rect', 4).then((res) => {
+        fetchReview(apiToken, 'rect', 4, this.packageId).then((res) => {
             this.work = res;
 
             if (this.work.length > 0) {
@@ -109,6 +109,7 @@ export default class RectReview extends Component {
     }
 
     componentDidMount() {
+        this.packageId = this.$router.params.packageId;
         this.fetchWorks();
         Taro.getSystemInfo({
             success: (res) => {
@@ -143,8 +144,8 @@ export default class RectReview extends Component {
         return { x: Math.floor(x), y: Math.floor(y), width: windowWidth, height: windowHeight };
     }
 
-    updateReact = () => {
-        let currentWork = this.state;
+    updateReact = (currentWork) => {
+        // let currentWork = this.state;
         let rectData = {};
         if (this.isMobile) {
             rectData = {
@@ -189,9 +190,9 @@ export default class RectReview extends Component {
         if (currentWork.src) {
             this.svg = d3.select(".workImg")
                 .append("svg")
-                .attr("width", this.state.currentWork.meta.imageWidth)
-                .attr("height", this.state.currentWork.meta.imageHeight);
-            this.updateReact();
+                .attr("width", currentWork.meta.imageWidth)
+                .attr("height", currentWork.meta.imageHeight);
+            this.updateReact(currentWork);
         }
 
         return (

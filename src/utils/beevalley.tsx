@@ -81,13 +81,14 @@ function submitWork(token, workId, result) {
     }).then(handleRes)
 }
 
-function fetchReview(token, type, num) {
+function fetchReview(token, type, num, packageId) {
     return Taro.request({
         url: `${host}reviews/fetch`,
         method: 'POST',
         data: {
             type: type,
-            num: num
+            num: num,
+            packages: [packageId]
         },
         header: {
             'content-type': 'application/json',
@@ -151,9 +152,21 @@ function wechatLogin(code) {
     }).then(handleRes)
 }
 
-function listAuthorizedWorkType(token) {
+function listAuthorizedWork(token) {
     return Taro.request({
         url: `${host}works/authorizations`,
+        method: 'GET',
+        dataType: 'text',
+        header: {
+            'Authorization': 'Bearer ' + token
+        },
+        responseType: 'text'
+    }).then(handleRes).then(parseJson)
+}
+
+function listAuthorizedReview(token) {
+    return Taro.request({
+        url: `${host}reviews/authorizations`,
         method: 'GET',
         dataType: 'text',
         header: {
@@ -171,4 +184,4 @@ function checkDveice(res) {
     return (res.model !== null) ? true : false;
 }
 
-export {fetchWork, downloadWorkFile, cancelWork, submitWork, fetchReview, downloadReviewFile, submitReview, phoneLogin, wechatLogin, listAuthorizedWorkType, checkDveice};
+export {fetchWork, downloadWorkFile, cancelWork, submitWork, fetchReview, downloadReviewFile, submitReview, phoneLogin, wechatLogin, listAuthorizedWork, listAuthorizedReview, checkDveice};

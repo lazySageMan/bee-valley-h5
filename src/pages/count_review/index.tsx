@@ -20,7 +20,7 @@ export default class PointReview extends Component {
 
     fetchWorks = () => {
         let { apiToken } = this;
-        fetchReview(apiToken, 'count', 4).then((res) => {
+        fetchReview(apiToken, 'count', 4, this.packageId).then((res) => {
             this.work = res;
 
             if (this.work.length > 0) {
@@ -99,6 +99,7 @@ export default class PointReview extends Component {
     }
 
     componentDidMount() {
+        this.packageId = this.$router.params.packageId;
         this.fetchWorks();
         Taro.getSystemInfo({
             success: (res) => {
