@@ -1,5 +1,5 @@
 import Taro from '@tarojs/taro'
-import { View, Image, Text} from '@tarojs/components'
+import { View, Image, Text, Camera} from '@tarojs/components'
 import { AtButton, AtIcon } from 'taro-ui'
 import './index.scss'
 import testImg from '../../image/1.jpeg'
@@ -40,8 +40,10 @@ export default class DataAcquistion extends Taro.Component {
                                 <Image src={testImg} className="img"></Image>
                             </View>
                             <View className="img-item">
-                                <AtIcon size="60" value="camera" color="orange"></AtIcon>
-                                添加图片
+                                {/* <Camera devicePosition="back" ></Camera> */}
+                                    <AtIcon size="60" value="camera" color="orange"></AtIcon>
+                                    添加图片
+                                
                             </View>
                         </View>
                         <View className="info">请拍摄紫色车辆</View>

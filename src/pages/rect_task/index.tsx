@@ -64,17 +64,20 @@ export default class RectTask extends Component {
     fetchWorks = () => {
         let { apiToken } = this;
         fetchWork(apiToken, 'rect', 4, this.packageId).then((res) => {
-
             this.work = res.map(item => this.preprocessWork(item));
-
             if (this.work.length > 0) {
                 this.downloadWorkFile(this.work[this.work.length - 1]);
                 this.nextWork();
             } else {
-                // TODO show toast
+                Taro.showLoading({
+                    title: 'loading',
+                    mask: true
+                })
+                Taro.navigateBack({
+                    delta: 1
+                })
 
             }
-
         })
     }
 
@@ -100,7 +103,6 @@ export default class RectTask extends Component {
 
     downloadWorkFile = (work) => {
         let { apiToken } = this;
-        // console.log(work)
         downloadWorkFile(apiToken, work.id, work.downloadOptions)
         .then((res) => {
             let imgBase64 = 'data:image/jpeg;base64,' + Taro.arrayBufferToBase64(new Uint8Array(res));

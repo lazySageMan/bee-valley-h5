@@ -24,8 +24,12 @@ export default class PointReview extends Component {
             this.work = res;
 
             if (this.work.length > 0) {
-                this.work.forEach(item => this.getImgFile(item.id));
+                this.getImgFile(this.work[this.work.length - 1].id)
                 this.nextWork()
+            }else{
+                Taro.navigateBack({
+                    delta: 1
+                })
             }
         })
     }
@@ -33,16 +37,8 @@ export default class PointReview extends Component {
     nextWork = () => {
         if (this.work.length > 0) {
             let nowWork = this.work.pop();
-
-            if (this.isMobile) {
-                let { imageWidth, imageHeight } = nowWork.meta;
-                let ratio = imageWidth / imageHeight;
-                let newHeight = this.screenWidth / ratio;
-
-                nowWork.meta = {
-                    imageWidth: this.screenWidth,
-                    imageHeight: newHeight
-                }
+            if (this.work.length > 0) {
+                this.getImgFile(this.work[this.work.length - 1].id)
             }
             this.setState({
                 currentWork: nowWork
@@ -128,6 +124,18 @@ export default class PointReview extends Component {
 
         if (process.env.TARO_ENV === 'weapp') {
         } else if (process.env.TARO_ENV === 'h5') {
+        }
+    }
+
+    componentWillUnmount() {
+        if (this.work) {
+            let toCancel = this.work.map(w => w.id)
+            if (this.state.currentWork) {
+                toCancel.push(this.state.currentWork.id)
+            }
+            if (toCancel.length > 0) {
+                cancelWork(this.apiToken, toCancel)
+            }
         }
     }
 
