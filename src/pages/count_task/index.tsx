@@ -268,7 +268,7 @@ export default class PointTask extends Component {
     }
 
     return (
-      <View className='index'>
+      <View className='count'>
         <View className='imgItem'>
           {currentWork.src && (
             <Image src={currentWork.src} style={`width:${currentWork.meta.imageWidth}px;height:${currentWork.meta.imageHeight}px;`}></Image>

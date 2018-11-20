@@ -1,6 +1,7 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Image } from '@tarojs/components'
 import * as d3 from 'd3'
+import { AtNavBar } from 'taro-ui'
 import { fetchWork, downloadWorkFile, cancelWork, submitWork ,checkDveice} from '../../utils/beevalley'
 import './index.scss'
 
@@ -245,6 +246,7 @@ export default class RectTask extends Component {
         let res = Taro.getSystemInfoSync()
         this.screenWidth = res.windowWidth;
         this.screenHeight = Math.floor(res.windowHeight * 0.85);
+        this.cengHeight = this.screenHeight *0.07;
         this.isMobile = checkDveice(res)
 
         if (process.env.TARO_ENV === 'weapp') {
@@ -262,7 +264,7 @@ export default class RectTask extends Component {
                     let updated = Object.assign({}, this.state.currentWork, {
                         rectPosition: {
                             xMin: d3.event.targetTouches[0].clientX,
-                            yMin: d3.event.targetTouches[0].clientY
+                            yMin: d3.event.targetTouches[0].clientY - this.cengHeight
                         }
                     });
                     this.setState({ currentWork: updated });
@@ -270,16 +272,16 @@ export default class RectTask extends Component {
 
                 this.startRect = {
                     x: d3.event.targetTouches[0].clientX,
-                    y: d3.event.targetTouches[0].clientY
+                    y: d3.event.targetTouches[0].clientY - this.cengHeight
                 };
 
             });
 
             this.svg.on("touchmove", () => {
                 if (this.rectInitialized) {
-                    this.adjustRect(d3.event.targetTouches[0].clientX, d3.event.targetTouches[0].clientY);
+                    this.adjustRect(d3.event.targetTouches[0].clientX, d3.event.targetTouches[0].clientY - this.cengHeight);
                 } else {
-                    this.initializeRect(d3.event.targetTouches[0].clientX, d3.event.targetTouches[0].clientY);
+                    this.initializeRect(d3.event.targetTouches[0].clientX, d3.event.targetTouches[0].clientY - this.cengHeight);
                 }
             })
 
@@ -379,7 +381,8 @@ export default class RectTask extends Component {
         let relativeAnchorX = anchorX - xOffset;
         let relativeAnchorY = anchorY - yOffset;
         if (rectPosition && relativeAnchorX > rectPosition.xMin && relativeAnchorX < rectPosition.xMax && relativeAnchorY > rectPosition.yMin && relativeAnchorY < rectPosition.yMax) {
-            let rectData = [{ x: rectPosition.xMin + xOffset, y: rectPosition.yMin + yOffset}, { x: rectPosition.xMax + xOffset, y: rectPosition.yMax + yOffset}];
+            let cengHeight = this.isMobile ? this.cengHeight : 0
+            let rectData = [{ x: rectPosition.xMin + xOffset, y: rectPosition.yMin + yOffset + cengHeight}, { x: rectPosition.xMax + xOffset, y: rectPosition.yMax + yOffset + cengHeight}];
             Taro.showLoading({
               title: 'loading',
               mask: true
@@ -413,10 +416,14 @@ export default class RectTask extends Component {
             delta: 1
         }))
     }
+    handleClick = () => {
+        Taro.navigateBack({
+            delta: 1
+        })
+    }
 
     render() {
         let { currentWork } = this.state;
-
         if (this.svg && currentWork) {
             this.svg.attr("width", currentWork.meta.imageWidth)
                 .attr("height", currentWork.meta.imageHeight);
@@ -429,8 +436,20 @@ export default class RectTask extends Component {
             this.changePosition(currentWork.rectPosition);
         }
 
+        
+
         return (
-            <View className='index'>
+            <View className='rect'>
+                <View className="backBtn">
+                    <AtNavBar
+                        onClickRgIconSt={this.handleClick}
+                        onClickLeftIcon={this.handleClick}
+                        leftIconType="chevron-left"
+                        color='#000'
+                        title='画框任务'
+                        leftText='返回'
+                    />
+                </View>
                 <View className='imgItem' id='workearea'>
                     {currentWork.src && (
                         <Image src={currentWork.src} style={`width:${currentWork.meta.imageWidth}px;height:${currentWork.meta.imageHeight}px;`}></Image>

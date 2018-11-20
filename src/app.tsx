@@ -13,14 +13,14 @@ class App extends Component {
    * 提示和声明 navigationBarTextStyle: 'black' | 'white' 类型冲突, 需要显示声明类型
    */
   config: Config = {
-    pages: ['/pages/data_acquistion/index',
+    pages: [
       '/pages/index/login',
       '/pages/index/index',
       '/pages/rect_task/index',
       '/pages/rect_review/index',
       '/pages/count_task/index',
       '/pages/count_review/index',
-      
+      '/pages/data_acquistion/index',
     ],
     window: {
       backgroundTextStyle: 'light',

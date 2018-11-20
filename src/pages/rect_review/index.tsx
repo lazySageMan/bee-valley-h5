@@ -1,5 +1,6 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Image } from '@tarojs/components'
+import { AtNavBar } from 'taro-ui'
 import * as d3 from 'd3'
 import { fetchReview, downloadReviewFile, submitReview, cancelWork, checkDveice } from '../../utils/beevalley'
 import './index.scss'
@@ -240,6 +241,12 @@ export default class RectReview extends Component {
             .attr("height", (d) => d.height);
     }
 
+    handleClick = () => {
+        Taro.navigateBack({
+            delta: 1
+        })
+    }
+
     render() {
 
         let { currentWork } = this.state;
@@ -252,8 +259,19 @@ export default class RectReview extends Component {
         }
 
         return (
-            <View className='index'>
+            <View className='rect'>
+                <View className="backBtn">
+                    <AtNavBar
+                        onClickRgIconSt={this.handleClick}
+                        onClickLeftIcon={this.handleClick}
+                        leftIconType="chevron-left"
+                        color='#000'
+                        title='方框审核'
+                        leftText='返回'
+                    />
+                </View>
                 <View className='imgItem' id='workearea'>
+                    <View className="cengHeight"></View>
                     {currentWork.src && (
                         <Image src={currentWork.src} style={`width:${currentWork.meta.imageWidth}px;height:${currentWork.meta.imageHeight}px;`}></Image>
                     )
