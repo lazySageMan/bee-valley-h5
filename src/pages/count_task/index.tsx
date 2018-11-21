@@ -1,7 +1,7 @@
 import Taro, { Component, Config } from '@tarojs/taro'
 import { View, Button, Image, Input} from '@tarojs/components'
 import * as d3 from 'd3'
-import BackBtn from '../component/backBtn/backBtn'
+import NavBar from '../component/navBar/index'
 import { fetchWork, downloadWorkFile, cancelWork, submitWork, checkDveice} from '../../utils/beevalley'
 import './index.scss'
 
@@ -33,8 +33,8 @@ export default class PointTask extends Component {
         this.getImgFile(this.work[this.work.length - 1].id)
         this.nextWork()
       }else{
-        Taro.navigateBack({
-            delta: 1
+        Taro.showToast({
+            title: '没有任务了'
         })
       }
     })
@@ -129,15 +129,12 @@ export default class PointTask extends Component {
   }
 
   componentDidMount() {
-    this.packageId = this.$router.params.packageId;
-    this.fetchWork();
+    this.packageId = this.$router.params.packageId
+    
 
-    Taro.getSystemInfo({
-      success: (res) => {
-        this.screenWidth = res.windowWidth;
-        this.isMobile = checkDveice(res)
-      }
-    })
+    let res = Taro.getSystemInfoSync()
+    this.screenWidth = res.windowWidth;
+    this.isMobile = checkDveice(res)
 
     if (process.env.TARO_ENV === 'weapp') {
     } else if (process.env.TARO_ENV === 'h5') {
@@ -162,12 +159,19 @@ export default class PointTask extends Component {
         })
       })
     })
+
+    Taro.showLoading({
+      title: 'loading',
+      mask: true
+    })
+
+    this.fetchWork()
   }
 
   componentWillUnmount() {
     if (this.work) {
         let toCancel = this.work.map(w => w.id)
-        if (this.state.currentWork) {
+        if (this.state.currentWork && this.state.currentWork.id) {
             toCancel.push(this.state.currentWork.id)
         }
         if (toCancel.length > 0) {
@@ -270,7 +274,7 @@ export default class PointTask extends Component {
 
     return (
       <View className='count'>
-        <BackBtn title="目标任务" />
+        <NavBar title="目标定位任务" />
         <View className='imgItem'>
           {currentWork.src && (
             <Image src={currentWork.src} style={`width:${currentWork.meta.imageWidth}px;height:${currentWork.meta.imageHeight}px;`}></Image>

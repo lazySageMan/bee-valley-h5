@@ -1,7 +1,7 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Image } from '@tarojs/components'
 import * as d3 from 'd3'
-import BackBtn from '../component/backBtn/backBtn'
+import NavBar from '../component/navBar/index'
 import { fetchWork, downloadWorkFile, cancelWork, submitWork ,checkDveice} from '../../utils/beevalley'
 import './index.scss'
 
@@ -70,14 +70,9 @@ export default class RectTask extends Component {
                 this.downloadWorkFile(this.work[this.work.length - 1]);
                 this.nextWork();
             } else {
-                Taro.showLoading({
-                    title: 'loading',
-                    mask: true
+                Taro.showToast({
+                    title: '没有任务了'
                 })
-                Taro.navigateBack({
-                    delta: 1
-                })
-
             }
         })
     }
@@ -347,7 +342,7 @@ export default class RectTask extends Component {
     componentWillUnmount() {
         if (this.work) {
             let toCancel = this.work.map(w => w.id)
-            if (this.state.currentWork) {
+            if (this.state.currentWork && this.state.currentWork.id) {
                 toCancel.push(this.state.currentWork.id)
             }
             if (toCancel.length > 0) {
@@ -417,11 +412,6 @@ export default class RectTask extends Component {
             delta: 1
         }))
     }
-    handleClick = () => {
-        Taro.navigateBack({
-            delta: 1
-        })
-    }
 
     render() {
         let { currentWork } = this.state;
@@ -437,11 +427,9 @@ export default class RectTask extends Component {
             this.changePosition(currentWork.rectPosition);
         }
 
-        
-
         return (
             <View className='rect'>
-                <BackBtn title="方框任务" />
+                <NavBar title="方框任务" />
                 <View className='imgItem' id='workearea'>
                     {currentWork.src && (
                         <Image src={currentWork.src} style={`width:${currentWork.meta.imageWidth}px;height:${currentWork.meta.imageHeight}px;`}></Image>

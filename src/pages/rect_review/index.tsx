@@ -2,7 +2,7 @@ import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Image } from '@tarojs/components'
 import * as d3 from 'd3'
 import { fetchReview, downloadReviewFile, submitReview, cancelWork, checkDveice } from '../../utils/beevalley'
-import BackBtn from '../component/backBtn/backBtn'
+import NavBar from '../component/navBar/index'
 import './index.scss'
 
 export default class RectReview extends Component {
@@ -22,12 +22,8 @@ export default class RectReview extends Component {
                 this.getImgFile(this.work[this.work.length - 1]);
                 this.nextWork()
             } else {
-                Taro.showLoading({
-                    title: 'loading',
-                    mask: true
-                })
-                Taro.navigateBack({
-                    delta: 1
+                Taro.showToast({
+                    title: '没有任务了'
                 })
             }
         })
@@ -164,25 +160,28 @@ export default class RectReview extends Component {
 
     componentDidMount() {
         this.packageId = this.$router.params.packageId;
-        this.fetchWorks();
         this.svg = d3.select(".workImg").append("svg");
-        Taro.getSystemInfo({
-            success: (res) => {
-                this.screenWidth = res.windowWidth;
-                this.screenHeight = Math.floor(res.windowHeight * 0.85);
-                this.isMobile = checkDveice(res)
-            }
-        })
+        let res = Taro.getSystemInfoSync()
+        this.screenWidth = res.windowWidth;
+        this.screenHeight = Math.floor(res.windowHeight * 0.85);
+        this.isMobile = checkDveice(res)
 
         if (process.env.TARO_ENV === 'weapp') {
         } else if (process.env.TARO_ENV === 'h5') {
         }
+        
+        Taro.showLoading({
+          title: 'loading',
+          mask: true
+        })
+        this.fetchWorks();
+
     }
 
     componentWillUnmount() {
         if (this.work) {
             let toCancel = this.work.map(w => w.id)
-            if (this.state.currentWork) {
+            if (this.state.currentWork && this.state.currentWork.id) {
                 toCancel.push(this.state.currentWork.id)
             }
             if (toCancel.length > 0) {
@@ -254,7 +253,7 @@ export default class RectReview extends Component {
 
         return (
             <View className='rect'>
-                <BackBtn title="方框审核" />
+                <NavBar title="方框审核" />
                 <View className='imgItem' id='workearea'>
                     {currentWork.src && (
                         <Image src={currentWork.src} style={`width:${currentWork.meta.imageWidth}px;height:${currentWork.meta.imageHeight}px;`}></Image>
@@ -263,7 +262,7 @@ export default class RectReview extends Component {
                     <View className='workImg'></View>
                 </View>
                 <View className='btnItem'>
-                    <Button type='primary' onClick={this.submitWork}>提交</Button>
+                    <Button type='primary' onClick={this.submitWork}>通过</Button>
                     <Button type='warn' onClick={this.rejectWork}>驳回</Button>
                     <Button style='background: #FFCC00;' type='warn' onClick={this.cancelWork}>放弃</Button>
                 </View>

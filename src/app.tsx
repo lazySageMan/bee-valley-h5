@@ -20,7 +20,7 @@ class App extends Component {
       '/pages/rect_review/index',
       '/pages/count_task/index',
       '/pages/count_review/index',
-      '/pages/data_acquistion/index',
+      '/pages/data_acquistion_task/index',
     ],
     window: {
       backgroundTextStyle: 'light',

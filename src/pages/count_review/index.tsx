@@ -1,7 +1,7 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Image, Input } from '@tarojs/components'
 import * as d3 from 'd3'
-import BackBtn from '../component/backBtn/backBtn'
+import NavBar from '../component/navBar/index'
 import { fetchReview, downloadReviewFile, submitReview, cancelWork, checkDveice } from '../../utils/beevalley'
 import './index.scss'
 
@@ -11,7 +11,7 @@ export default class PointReview extends Component {
         super(props);
 
         this.state = {
-            currentWork: [],
+            currentWork: {},
             lineData:[],
             lineWidth: 50
         }
@@ -28,8 +28,8 @@ export default class PointReview extends Component {
                 this.getImgFile(this.work[this.work.length - 1].id)
                 this.nextWork()
             }else{
-                Taro.navigateBack({
-                    delta: 1
+                Taro.showToast({
+                    title: '没有任务了'
                 })
             }
         })
@@ -97,13 +97,9 @@ export default class PointReview extends Component {
 
     componentDidMount() {
         this.packageId = this.$router.params.packageId;
-        this.fetchWorks();
-        Taro.getSystemInfo({
-            success: (res) => {
-                this.screenWidth = res.windowWidth;
-                this.isMobile = checkDveice(res)
-            }
-        })
+        let res = Taro.getSystemInfoSync()
+        this.screenWidth = res.windowWidth;
+        this.isMobile = checkDveice(res)
 
         this.svg = d3.select(".workImg").append("svg");
 
@@ -126,12 +122,19 @@ export default class PointReview extends Component {
         if (process.env.TARO_ENV === 'weapp') {
         } else if (process.env.TARO_ENV === 'h5') {
         }
+
+        Taro.showLoading({
+          title: 'loading',
+          mask: true
+        })
+
+        this.fetchWorks()
     }
 
     componentWillUnmount() {
         if (this.work) {
             let toCancel = this.work.map(w => w.id)
-            if (this.state.currentWork) {
+            if (this.state.currentWork && this.state.currentWork.id) {
                 toCancel.push(this.state.currentWork.id)
             }
             if (toCancel.length > 0) {
@@ -217,7 +220,7 @@ export default class PointReview extends Component {
 
         return (
             <View className='count'>
-                <BackBtn title="目标审核" />
+                <NavBar title="目标定位审核" />
                 <View className='imgItem'>
                     {currentWork.src && (
                         <Image src={currentWork.src} style={`width:${currentWork.meta.imageWidth}px;height:${currentWork.meta.imageHeight}px;`}></Image>
@@ -229,7 +232,7 @@ export default class PointReview extends Component {
                     <Button type='primary' onClick={this.submitWork}>通过</Button>
                     <Button type='warn' onClick={this.rejectWork}>驳回</Button>
                     <Button style='background: #FFCC00;' type='warn' onClick={this.cancelWork}>放弃</Button>
-                    <Input placeholder="十字标的半径" className="changeR" onChange={this.changeR} value={this.state.lineWidth}></Input>
+                    <Input placeholder="十字标的半径" className="changeR" onChange={this.changeR}></Input>
                 </View>
             </View>
         )
