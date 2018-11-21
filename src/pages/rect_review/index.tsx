@@ -1,5 +1,6 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Image } from '@tarojs/components'
+import { AtNavBar } from 'taro-ui'
 import * as d3 from 'd3'
 import { fetchReview, downloadReviewFile, submitReview, cancelWork, checkDveice } from '../../utils/beevalley'
 import './index.scss'
@@ -7,27 +8,27 @@ import './index.scss'
 export default class RectReview extends Component {
     constructor(props) {
         super(props);
-
         this.state = {
             currentWork: {}
         }
-
         this.apiToken = Taro.getStorageSync('apiToken');
     }
 
     fetchWorks = () => {
         let { apiToken } = this;
         fetchReview(apiToken, 'rect', 4, this.packageId).then((res) => {
-            this.work = res;
-
+            this.work = res.map((item) => this.preprocessWork(item))
             if (this.work.length > 0) {
-
-                if (this.isMobile) {
-                    this.work = this.work.map((item) => this.preprocessWork(item))
-                }
-
-                this.work.forEach(item => this.getImgFile(item));
+                this.getImgFile(this.work[this.work.length - 1]);
                 this.nextWork()
+            } else {
+                Taro.showLoading({
+                    title: 'loading',
+                    mask: true
+                })
+                Taro.navigateBack({
+                    delta: 1
+                })
             }
         })
     }
@@ -35,15 +36,19 @@ export default class RectReview extends Component {
     preprocessWork = (work) => {
         let anchorX = Math.floor(work.work.result[0][0].x + (work.work.result[0][1].x - work.work.result[0][0].x) / 2);
         let anchorY = Math.floor(work.work.result[0][0].y + (work.work.result[0][1].y - work.work.result[0][0].y) / 2);
-
-        let options = this.calculateWorkarea(work.meta.imageWidth, work.meta.imageHeight, anchorX, anchorY, this.screenWidth, this.screenHeight);
-        options['format'] = 'jpeg';
-
-        work['xOffset'] = options.x;
-        work['yOffset'] = options.y;
         work['anchorX'] = anchorX;
         work['anchorY'] = anchorY;
-        work['downloadOptions'] = options;
+
+        if (this.isMobile) {
+            let options = this.calculateWorkarea(work.meta.imageWidth, work.meta.imageHeight, anchorX, anchorY, this.screenWidth, this.screenHeight);
+            options['format'] = 'jpeg';
+            work['xOffset'] = options.x;
+            work['yOffset'] = options.y;
+            work['downloadOptions'] = options;
+        } else {
+            work['xOffset'] = 0;
+            work['yOffset'] = 0;
+        }
 
         return work;
 
@@ -51,16 +56,33 @@ export default class RectReview extends Component {
 
     nextWork = () => {
         if (this.work.length > 0) {
-            let nowWork = this.work.pop();
+            let currentWork = this.work.pop();
+
+            if (this.work.length > 0) {
+                this.getImgFile(this.work[this.work.length - 1]);
+            }
             if (this.isMobile) {
-                nowWork.meta = {
+                currentWork.meta = {
                     imageWidth: this.screenWidth,
                     imageHeight: this.screenHeight
                 }
             }
+
+            if (currentWork.work.result) {
+
+                let rectData = {
+                    xMin: currentWork.work.result[0][0].x - currentWork.xOffset,
+                    yMin: currentWork.work.result[0][0].y - currentWork.yOffset,
+                    xMax: currentWork.work.result[0][1].x - currentWork.xOffset,
+                    yMax: currentWork.work.result[0][1].y - currentWork.yOffset,
+                };
+                currentWork.rectPosition = rectData;
+            }
             this.setState({
-                currentWork: nowWork
+                currentWork: currentWork
             })
+            Taro.hideLoading();
+
         } else {
             this.fetchWorks();
         }
@@ -72,7 +94,6 @@ export default class RectReview extends Component {
             let imgBase64 = 'data:image/jpeg;base64,' + Taro.arrayBufferToBase64(new Uint8Array(res));
             if (work.id === this.state.currentWork.id) {
                 let current = Object.assign({}, this.state.currentWork, { src: imgBase64 });
-
                 this.setState({
                     currentWork: current
                 })
@@ -83,34 +104,68 @@ export default class RectReview extends Component {
                     this.work[foundIndex].src = imgBase64;
                 }
             }
-        });
+        }).catch(() => Taro.navigateBack({
+            delta: 1
+        }));
 
     }
 
     submitWork = () => {
         let { currentWork } = this.state;
-        if (!currentWork.id) return;
-        submitReview(this.apiToken, currentWork.id, true);
-        this.nextWork();
+        Taro.showLoading({
+            title: 'loading',
+            mask: true
+        })
+        submitReview(this.apiToken, currentWork.id, true)
+            .then(() => {
+                this.nextWork();
+            })
+            .catch(() => {
+                Taro.navigateBack({
+                    delta: 1
+                })
+            })
     }
 
     rejectWork = () => {
         let { currentWork } = this.state;
-        if (!currentWork.id) return;
-        submitReview(this.apiToken, currentWork.id, false);
-        this.nextWork();
+
+        Taro.showLoading({
+            title: 'loading',
+            mask: true
+        })
+        submitReview(this.apiToken, currentWork.id, false).then(() => {
+            this.nextWork();
+        })
+            .catch(() => {
+                Taro.navigateBack({
+                    delta: 1
+                })
+            })
     }
 
     cancelWork = () => {
-        let { currentWork } = this.state;
-        if (!currentWork.id) return;
-        cancelWork(this.apiToken, [currentWork.id]);
-        this.nextWork();
+        let { id } = this.state.currentWork;
+        let { apiToken } = this;
+
+        Taro.showLoading({
+            title: 'loading',
+            mask: true
+        })
+
+        cancelWork(apiToken, [id])
+            .then(() => {
+                this.nextWork();
+            })
+            .catch(() => Taro.navigateBack({
+                delta: 1
+            }))
     }
 
     componentDidMount() {
         this.packageId = this.$router.params.packageId;
         this.fetchWorks();
+        this.svg = d3.select(".workImg").append("svg");
         Taro.getSystemInfo({
             success: (res) => {
                 this.screenWidth = res.windowWidth;
@@ -121,6 +176,18 @@ export default class RectReview extends Component {
 
         if (process.env.TARO_ENV === 'weapp') {
         } else if (process.env.TARO_ENV === 'h5') {
+        }
+    }
+
+    componentWillUnmount() {
+        if (this.work) {
+            let toCancel = this.work.map(w => w.id)
+            if (this.state.currentWork) {
+                toCancel.push(this.state.currentWork.id)
+            }
+            if (toCancel.length > 0) {
+                cancelWork(this.apiToken, toCancel)
+            }
         }
     }
 
@@ -145,27 +212,18 @@ export default class RectReview extends Component {
     }
 
     updateReact = (currentWork) => {
-        // let currentWork = this.state;
+        let { rectPosition } = currentWork;
         let rectData = {};
-        if (this.isMobile) {
+        if (rectPosition && rectPosition.xMin && rectPosition.yMin && rectPosition.xMax && rectPosition.yMax) {
             rectData = {
-                x: currentWork.work.result[0][0].x - currentWork.xOffset,
-                y: currentWork.work.result[0][0].y - currentWork.yOffset,
-                width: currentWork.work.result[0][1].x - currentWork.work.result[0][0].x,
-                height: currentWork.work.result[0][1].y - currentWork.work.result[0][0].y
-            }
-        } else {
-            rectData = {
-                x: currentWork.work.result[0][0].x,
-                y: currentWork.work.result[0][0].y,
-                width: currentWork.work.result[0][1].x - currentWork.work.result[0][0].x,
-                height: currentWork.work.result[0][1].y - currentWork.work.result[0][0].y
+                x: rectPosition.xMin,
+                y: rectPosition.yMin,
+                width: rectPosition.xMax - rectPosition.xMin,
+                height: rectPosition.yMax - rectPosition.yMin
             }
         }
-
         let rect = this.svg.selectAll("rect");
         let update = rect.data([rectData]);
-
         update.exit().remove();
         update.enter().append("rect")
             .attr("fill", "yellow")
@@ -183,21 +241,37 @@ export default class RectReview extends Component {
             .attr("height", (d) => d.height);
     }
 
+    handleClick = () => {
+        Taro.navigateBack({
+            delta: 1
+        })
+    }
+
     render() {
 
         let { currentWork } = this.state;
 
-        if (currentWork.src) {
-            this.svg = d3.select(".workImg")
-                .append("svg")
+        if (currentWork.src && this.svg) {
+            this.svg
                 .attr("width", currentWork.meta.imageWidth)
                 .attr("height", currentWork.meta.imageHeight);
             this.updateReact(currentWork);
         }
 
         return (
-            <View className='index'>
+            <View className='rect'>
+                <View className="backBtn">
+                    <AtNavBar
+                        onClickRgIconSt={this.handleClick}
+                        onClickLeftIcon={this.handleClick}
+                        leftIconType="chevron-left"
+                        color='#000'
+                        title='方框审核'
+                        leftText='返回'
+                    />
+                </View>
                 <View className='imgItem' id='workearea'>
+                    <View className="cengHeight"></View>
                     {currentWork.src && (
                         <Image src={currentWork.src} style={`width:${currentWork.meta.imageWidth}px;height:${currentWork.meta.imageHeight}px;`}></Image>
                     )

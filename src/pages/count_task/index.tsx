@@ -1,6 +1,5 @@
 import Taro, { Component, Config } from '@tarojs/taro'
 import { View, Button, Image, Input} from '@tarojs/components'
-import {  AtTabs, AtTabsPane } from 'taro-ui'
 import * as d3 from 'd3'
 import { fetchWork, downloadWorkFile, cancelWork, submitWork, checkDveice} from '../../utils/beevalley'
 import './index.scss'
@@ -23,9 +22,6 @@ export default class PointTask extends Component {
     this.apiToken = Taro.getStorageSync('apiToken');
   }
 
-  componentWillMount() {
-  }
-
   fetchWork = () => {
     let { apiToken } = this;
     fetchWork(apiToken, 'count', 4, this.packageId).then((res) => {
@@ -35,6 +31,10 @@ export default class PointTask extends Component {
         // TODO fix potential bug here
         this.getImgFile(this.work[this.work.length - 1].id)
         this.nextWork()
+      }else{
+        Taro.navigateBack({
+            delta: 1
+        })
       }
     })
   }
@@ -46,17 +46,6 @@ export default class PointTask extends Component {
 
       if (this.work.length > 0) {
           this.getImgFile(this.work[this.work.length - 1].id)
-      }
-
-      if (this.isMobile) {
-        let { imageWidth, imageHeight } = nowWork.meta;
-        let ratio = imageWidth / imageHeight;
-        let newHeight = this.screenWidth / ratio;
-
-        nowWork.meta = {
-          imageWidth: this.screenWidth,
-          imageHeight: newHeight
-        }
       }
       nowWork.pointPosition = [];
       this.setState({
@@ -183,7 +172,7 @@ export default class PointTask extends Component {
         if (toCancel.length > 0) {
             cancelWork(this.apiToken, toCancel)
         }
-    } 
+    }
   }
     
   changeLine = (eventX, eventY) => {
@@ -279,7 +268,7 @@ export default class PointTask extends Component {
     }
 
     return (
-      <View className='index'>
+      <View className='count'>
         <View className='imgItem'>
           {currentWork.src && (
             <Image src={currentWork.src} style={`width:${currentWork.meta.imageWidth}px;height:${currentWork.meta.imageHeight}px;`}></Image>
