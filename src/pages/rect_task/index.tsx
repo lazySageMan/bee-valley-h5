@@ -258,7 +258,7 @@ export default class RectTask extends Component {
        
         if (this.isMobile) {
             this.svg.on("touchstart", () => {
-
+                d3.event.preventDefault();
                 if (!this.rectInitialized) {
                     console.log(d3.event)
                     let updated = Object.assign({}, this.state.currentWork, {
@@ -278,6 +278,7 @@ export default class RectTask extends Component {
             });
 
             this.svg.on("touchmove", () => {
+                d3.event.preventDefault();
                 if (this.rectInitialized) {
                     this.adjustRect(d3.event.targetTouches[0].clientX, d3.event.targetTouches[0].clientY - this.cengHeight);
                 } else {
