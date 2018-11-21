@@ -49,6 +49,7 @@ export default class Login extends Component {
 
     componentDidMount(){
         const login = Taro.getStorageSync('login')
+        let res = Taro.getSystemInfoSync()
         if(login === true) {
             Taro.navigateTo({
                 url: '/pages/index/index'
@@ -91,7 +92,6 @@ export default class Login extends Component {
     }
 
     render() {
-
 
         return (
             <View className='wrap'>

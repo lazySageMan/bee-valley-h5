@@ -1,7 +1,7 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Image } from '@tarojs/components'
 import * as d3 from 'd3'
-import { AtNavBar } from 'taro-ui'
+import BackBtn from '../component/backBtn/backBtn'
 import { fetchWork, downloadWorkFile, cancelWork, submitWork ,checkDveice} from '../../utils/beevalley'
 import './index.scss'
 
@@ -441,16 +441,7 @@ export default class RectTask extends Component {
 
         return (
             <View className='rect'>
-                <View className="backBtn">
-                    <AtNavBar
-                        onClickRgIconSt={this.handleClick}
-                        onClickLeftIcon={this.handleClick}
-                        leftIconType="chevron-left"
-                        color='#000'
-                        title='画框任务'
-                        leftText='返回'
-                    />
-                </View>
+                <BackBtn title="方框任务" />
                 <View className='imgItem' id='workearea'>
                     {currentWork.src && (
                         <Image src={currentWork.src} style={`width:${currentWork.meta.imageWidth}px;height:${currentWork.meta.imageHeight}px;`}></Image>

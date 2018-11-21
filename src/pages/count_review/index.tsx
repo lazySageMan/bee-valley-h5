@@ -1,6 +1,7 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Image, Input } from '@tarojs/components'
 import * as d3 from 'd3'
+import BackBtn from '../component/backBtn/backBtn'
 import { fetchReview, downloadReviewFile, submitReview, cancelWork, checkDveice } from '../../utils/beevalley'
 import './index.scss'
 
@@ -216,6 +217,7 @@ export default class PointReview extends Component {
 
         return (
             <View className='count'>
+                <BackBtn title="目标审核" />
                 <View className='imgItem'>
                     {currentWork.src && (
                         <Image src={currentWork.src} style={`width:${currentWork.meta.imageWidth}px;height:${currentWork.meta.imageHeight}px;`}></Image>
