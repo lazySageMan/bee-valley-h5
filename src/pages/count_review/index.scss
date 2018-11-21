@@ -4,12 +4,23 @@
     .count{
         width: 100vw;
         display: flex;
+        flex-direction: column;
+        align-items: center;
+        .backBtn{
+            width: 90vw;
+            height: 7vh;
+            position: absolute;
+            top:0;
+            left: 0;
+        }
         .imgItem{
             width: 90vw;
-            height: 100vh;
+            height: 93vh;
             overflow: scroll;
             background: gray;
-            position: relative;
+            position: absolute;
+            top: 7vh;
+            left: 0;
             img{
                 position: absolute;
                 top: 0;
@@ -23,15 +34,25 @@
             }
         }
         .btnItem{
-            width: 9.95vw;
-            height: 100vh;
+            width: 9vw;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
+            position: absolute;
+            top: 7vh;
+            right: 0;
             Button{
                 width: 7vw;
                 margin-top: 30px;
+            }
+            .changeR{
+                font-size: 15px;
+                border: 1px solid black;
+                width: 7vw;
+                margin-top: 30px;
+                text-indent: .2em;
+                height: 35px;
             }
         }
     }

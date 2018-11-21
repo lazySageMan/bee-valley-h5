@@ -26,9 +26,17 @@ export default class TaskList extends Component {
             )
         })
 
+        let showImgData = this.props.isMobile ?  (
+                <View className='task_wrap' onClick={this.props.handleClick.bind(this, "data_acquistion")}>
+                    <Text className='task_wrap_btn'>测试:老人图像采集</Text>
+                    <Text className='task_wrap_text'>10元/张</Text>
+                </View>
+            ) :  '';
+
         return (
             <View className='wrapList'>
                 {taskList}
+                {showImgData}
             </View>
         )
     }

@@ -1,7 +1,6 @@
 import Taro from '@tarojs/taro'
-import { View } from '@tarojs/components'
 import { AtTabs, AtTabsPane } from 'taro-ui'
-import TaskList from './task_list'
+import TaskList from '../component/taskList/task_list'
 import { listAuthorizedWork, listAuthorizedReview, checkDveice } from '../../utils/beevalley'
 import './index.scss'
 
@@ -44,9 +43,16 @@ export default class CountTabs extends Taro.Component {
   }
 
   navigateToTask = (item) => {
-      Taro.navigateTo({
-          url: `/pages/${item.typeCode}_task/index?packageId=${item.packageId}`
-      })
+      if(item === "data_acquistion"){
+        Taro.navigateTo({
+            url: `/pages/data_acquistion/index`
+        })
+      }else{
+        Taro.navigateTo({
+            url: `/pages/${item.typeCode}_task/index?packageId=${item.packageId}`
+        })
+      }
+    
   }
 
   navigateToReview = (item) => {
@@ -66,7 +72,7 @@ export default class CountTabs extends Taro.Component {
     return (
       <AtTabs current={this.state.current} tabList={tabList} onClick={this.handleClick.bind(this)}>
         <AtTabsPane current={this.state.current} index={0} >
-            <TaskList taskList={this.state.taskList} handleClick={this.navigateToTask} ></TaskList>
+            <TaskList isMobile={this.isMobile} taskList={this.state.taskList} handleClick={this.navigateToTask} ></TaskList>
         </AtTabsPane>
         <AtTabsPane current={this.state.current} index={1}>
             {/* 审核列表 */}
