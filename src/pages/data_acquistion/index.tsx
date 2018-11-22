@@ -21,6 +21,13 @@ export default class DataAcquistion extends Taro.Component {
         }
     }
 
+    getImg = () => {
+        // Taro.chooseImage().then((item) => {
+        //     console.log(item)
+        // })
+        console.log(12)
+    }
+
     render() {
 
         let { imgArr } = this.state;
@@ -31,7 +38,7 @@ export default class DataAcquistion extends Taro.Component {
                         <View className="eg-item">示例</View>
                         <Image src={item} className="img"></Image>
                     </View>
-                    <View className="img-item">
+                    <View className="img-item" onClick={this.getImg}>
                         {/* <Camera devicePosition="back" ></Camera> */}
                         <AtIcon size="60" value="camera" color="orange"></AtIcon>
                         添加图片

@@ -1,8 +1,8 @@
 import Taro, { Component, Config } from '@tarojs/taro'
-import { View, Button, Image, Input} from '@tarojs/components'
+import { View, Button, Image, Input } from '@tarojs/components'
 import * as d3 from 'd3'
 import BackBtn from '../component/backBtn/backBtn'
-import { fetchWork, downloadWorkFile, cancelWork, submitWork, checkDveice} from '../../utils/beevalley'
+import { fetchWork, downloadWorkFile, cancelWork, submitWork, checkDveice } from '../../utils/beevalley'
 import './index.scss'
 
 export default class PointTask extends Component {
@@ -17,7 +17,7 @@ export default class PointTask extends Component {
     this.state = {
       currentWork: {},
       pointRadius: 10,
-      lineData:[],
+      lineData: [],
       lineWidth: 50
     }
     this.apiToken = Taro.getStorageSync('apiToken');
@@ -32,9 +32,9 @@ export default class PointTask extends Component {
         // TODO fix potential bug here
         this.getImgFile(this.work[this.work.length - 1].id)
         this.nextWork()
-      }else{
+      } else {
         Taro.navigateBack({
-            delta: 1
+          delta: 1
         })
       }
     })
@@ -46,9 +46,11 @@ export default class PointTask extends Component {
       let nowWork = this.work.pop();
 
       if (this.work.length > 0) {
-          this.getImgFile(this.work[this.work.length - 1].id)
+        this.getImgFile(this.work[this.work.length - 1].id)
+        nowWork.pointPosition = nowWork.previousWork === null ? [] : [...nowWork.previousWork.result]
+      } else {
+        nowWork.pointPosition = []
       }
-      nowWork.pointPosition = [];
       this.setState({
         currentWork: nowWork
       })
@@ -61,25 +63,25 @@ export default class PointTask extends Component {
   getImgFile = (imgId) => {
     let { apiToken } = this;
     downloadWorkFile(apiToken, imgId)
-    .then((res) => {
-      let imgBase64 = 'data:image/jpeg;base64,' + Taro.arrayBufferToBase64(new Uint8Array(res));
-      if (imgId === this.state.currentWork.id) {
-        let current = Object.assign({}, this.state.currentWork, { src: imgBase64 });
+      .then((res) => {
+        let imgBase64 = 'data:image/jpeg;base64,' + Taro.arrayBufferToBase64(new Uint8Array(res));
+        if (imgId === this.state.currentWork.id) {
+          let current = Object.assign({}, this.state.currentWork, { src: imgBase64 });
 
-        this.setState({
-          currentWork: current
-        })
-      } else {
-        let foundIndex = this.work.findIndex(item => item.id === imgId);
+          this.setState({
+            currentWork: current
+          })
+        } else {
+          let foundIndex = this.work.findIndex(item => item.id === imgId);
 
-        if (foundIndex >= 0) {
-          this.work[foundIndex].src = imgBase64;
+          if (foundIndex >= 0) {
+            this.work[foundIndex].src = imgBase64;
+          }
         }
-      }
-    })
-    .catch(() => Taro.navigateBack({
+      })
+      .catch(() => Taro.navigateBack({
         delta: 1
-    }))
+      }))
 
   }
 
@@ -103,10 +105,10 @@ export default class PointTask extends Component {
       mask: true
     })
     cancelWork(apiToken, [id])
-    .then(() => this.nextWork())
-    .catch(() => Taro.navigateBack({
+      .then(() => this.nextWork())
+      .catch(() => Taro.navigateBack({
         delta: 1
-    }))
+      }))
   }
 
   submitWork = () => {
@@ -119,10 +121,10 @@ export default class PointTask extends Component {
         mask: true
       })
       submitWork(apiToken, id, pointPosition)
-      .then(() => this.nextWork())
-      .catch(() => Taro.navigateBack({
+        .then(() => this.nextWork())
+        .catch(() => Taro.navigateBack({
           delta: 1
-      }))
+        }))
     } else {
       alert("请标注点")
     }
@@ -166,18 +168,18 @@ export default class PointTask extends Component {
 
   componentWillUnmount() {
     if (this.work) {
-        let toCancel = this.work.map(w => w.id)
-        if (this.state.currentWork) {
-            toCancel.push(this.state.currentWork.id)
-        }
-        if (toCancel.length > 0) {
-            cancelWork(this.apiToken, toCancel)
-        }
+      let toCancel = this.work.map(w => w.id)
+      if (this.state.currentWork) {
+        toCancel.push(this.state.currentWork.id)
+      }
+      if (toCancel.length > 0) {
+        cancelWork(this.apiToken, toCancel)
+      }
     }
   }
-    
+
   changeLine = (eventX, eventY) => {
-    let {lineWidth, pointRadius} = this.state;
+    let { lineWidth, pointRadius } = this.state;
     let hengX1 = eventX - pointRadius;
     let hengX2 = eventX + pointRadius;
 
@@ -186,21 +188,21 @@ export default class PointTask extends Component {
 
     this.setState({
       lineData: [
-        {x1: hengX1, x2: eventX - lineWidth, y1: eventY, y2: eventY},
-        {x1: hengX2, x2: eventX + lineWidth, y1: eventY, y2: eventY},
-        {x1: eventX, x2: eventX, y1: shuY1, y2: eventY - lineWidth},
-        {x1: eventX, x2: eventX, y1: shuY2, y2: eventY + lineWidth}
+        { x1: hengX1, x2: eventX - lineWidth, y1: eventY, y2: eventY },
+        { x1: hengX2, x2: eventX + lineWidth, y1: eventY, y2: eventY },
+        { x1: eventX, x2: eventX, y1: shuY1, y2: eventY - lineWidth },
+        { x1: eventX, x2: eventX, y1: shuY2, y2: eventY + lineWidth }
       ]
     });
   }
 
   updateLine = (lineData) => {
-    if(this.svg){
+    if (this.svg) {
       let line = this.svg.selectAll("line");
       let update = line.data(lineData);
 
       update.exit().remove();
-      
+
       update.enter().append("line")
         .attr("x1", (d) => d.x1)
         .attr("y1", (d) => d.y1)
@@ -250,7 +252,7 @@ export default class PointTask extends Component {
   }
 
   changeR = (ev) => {
-    this.setState({lineWidth: parseFloat(ev.target.value)});
+    this.setState({ lineWidth: parseFloat(ev.target.value) });
   }
 
   render() {
@@ -258,10 +260,10 @@ export default class PointTask extends Component {
     if (currentWork.pointPosition) {
       this.renderDthree(currentWork.pointPosition, pointRadius);
     }
-    
+
     if (this.svg && currentWork) {
       this.svg.attr("width", currentWork.meta.imageWidth)
-      .attr("height", currentWork.meta.imageHeight);
+        .attr("height", currentWork.meta.imageHeight);
     }
 
     if (lineData) {
