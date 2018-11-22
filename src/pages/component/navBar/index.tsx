@@ -19,7 +19,6 @@ export default class NavBar extends Component {
         return (
             <View className="backBtn">
                 <AtNavBar
-                    onClickRgIconSt={this.handleClick}
                     onClickLeftIcon={this.handleClick}
                     leftIconType="chevron-left"
                     color='#000'

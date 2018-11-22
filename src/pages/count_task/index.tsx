@@ -263,7 +263,7 @@ export default class PointTask extends Component {
       this.renderDthree(currentWork.pointPosition, pointRadius);
     }
     
-    if (this.svg && currentWork) {
+    if (this.svg && currentWork && currentWork.meta) {
       this.svg.attr("width", currentWork.meta.imageWidth)
       .attr("height", currentWork.meta.imageHeight);
     }
@@ -276,7 +276,7 @@ export default class PointTask extends Component {
       <View className='count'>
         <NavBar title="目标定位任务" />
         <View className='imgItem'>
-          {currentWork.src && (
+          {currentWork && currentWork.src && (
             <Image src={currentWork.src} style={`width:${currentWork.meta.imageWidth}px;height:${currentWork.meta.imageHeight}px;`}></Image>
           )
           }

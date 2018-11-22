@@ -44,6 +44,7 @@ export default class PointReview extends Component {
             this.setState({
                 currentWork: nowWork
             })
+            Taro.hideLoading()
         } else {
             this.fetchWorks();
         }
@@ -71,6 +72,10 @@ export default class PointReview extends Component {
     }
 
     submitWork = () => {
+        Taro.showLoading({
+            title: 'loading',
+            mask: true
+        })
         let { currentWork } = this.state;
         if (!currentWork.id) return;
         submitReview(this.apiToken, currentWork.id, true)
@@ -78,6 +83,10 @@ export default class PointReview extends Component {
     }
 
     rejectWork = () => {
+        Taro.showLoading({
+            title: 'loading',
+            mask: true
+        })
         let { currentWork } = this.state;
         if (!currentWork.id) return;
         submitReview(this.apiToken, currentWork.id, false)
@@ -85,10 +94,14 @@ export default class PointReview extends Component {
     }
 
     cancelWork = () => {
+        Taro.showLoading({
+            title: 'loading',
+            mask: true
+        })
         let { currentWork } = this.state;
         if (!currentWork.id) return;
-        cancelWork(this.apiToken, [currentWork.id]);
-        this.nextWork();
+        cancelWork(this.apiToken, [currentWork.id])
+        .then(() => this.nextWork())
     }
 
     imgLoad = () => {
