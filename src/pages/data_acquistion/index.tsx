@@ -1,5 +1,5 @@
 import Taro from '@tarojs/taro'
-import { View, Image, Text, Camera } from '@tarojs/components'
+import { View, Image, Text } from '@tarojs/components'
 import { AtButton, AtIcon } from 'taro-ui'
 import './index.scss'
 import img1 from '../../image/1.jpg'
@@ -21,11 +21,17 @@ export default class DataAcquistion extends Taro.Component {
         }
     }
 
-    getImg = () => {
-        // Taro.chooseImage().then((item) => {
-        //     console.log(item)
-        // })
-        console.log(12)
+    getImg = (event) => {
+        let files = event.target.files, file = '';
+        if (files && files.length > 0) {
+            file = files[0];
+            console.log(file)
+            try {    
+            }
+            catch (e) {
+            }
+        }
+
     }
 
     render() {
@@ -39,9 +45,9 @@ export default class DataAcquistion extends Taro.Component {
                         <Image src={item} className="img"></Image>
                     </View>
                     <View className="img-item" onClick={this.getImg}>
-                        {/* <Camera devicePosition="back" ></Camera> */}
                         <AtIcon size="60" value="camera" color="orange"></AtIcon>
                         添加图片
+                        <input type='file' accept="image/*" className="selectImg" onChange={this.getImg}/>
                     </View>
                 </View>
                 
