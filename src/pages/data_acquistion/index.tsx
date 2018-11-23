@@ -17,37 +17,78 @@ export default class DataAcquistion extends Taro.Component {
         super(...arguments)
 
         this.state = {
-            imgArr: [img1, img2, img3, img4, img5, img6, img7, img8, img9, img10]
+            imgArr: [{img:img1}, {img:img2}, {img:img3}, {img:img4}, {img:img5}, {img:img6}, {img:img7}, {img:img8}, {img:img9}, {img:img10}]
         }
     }
 
-    getImg = (event) => {
-        let files = event.target.files, file = '';
+    getImg = (index, event) => {
+        let files = event.target.files;
+        let file = '';
         if (files && files.length > 0) {
             file = files[0];
-            console.log(file)
-            try {    
-            }
-            catch (e) {
-            }
+            var reader = new FileReader();
+            reader.onload =  (ev)=> {
+                let {imgArr} = this.state;
+
+                imgArr.forEach((item, i) => {
+                    if(i === index){
+                        item.showImg = ev.target.result;
+                    }
+                })
+                    this.setState({
+                        imgArr: imgArr
+                    })
+
+            };
+            reader.readAsDataURL(file);
         }
 
+    }
+
+    delete = (index) => {
+        let {imgArr} = this.state;
+        imgArr.forEach((item, i) => {
+            if(index === i){
+                item.showImg = null
+            }
+        })
+
+        this.setState({
+            imgArr: imgArr
+        })
+    }
+
+    showOne = (mode, index) => {
+        if(mode){
+            return (
+                <View className="showImg">
+                    <AtIcon size="20" value="close-circle" color="red" onClick={this.delete.bind(this,index)}></AtIcon>
+                    <Image src={mode} className="img"></Image>
+                </View>
+            )
+        }else{
+            return (
+                <View className="showIcon" >
+                    <AtIcon size="60" value="camera" color="orange"></AtIcon>
+                    添加图片
+                    <input type='file' accept="image/*" className="selectImg" onChange={this.getImg.bind(this, index)}/>
+                </View>
+            )
+        }
     }
 
     render() {
 
         let { imgArr } = this.state;
-        let showImg = imgArr.map((item) => {
+        let showImg = imgArr.map((item, index) => {
             return (
                 <View className="show-item">
                     <View className="eg img-item">
                         <View className="eg-item">示例</View>
-                        <Image src={item} className="img"></Image>
+                        <Image src={item.img} className="img"></Image>
                     </View>
-                    <View className="img-item" onClick={this.getImg}>
-                        <AtIcon size="60" value="camera" color="orange"></AtIcon>
-                        添加图片
-                        <input type='file' accept="image/*" className="selectImg" onChange={this.getImg}/>
+                    <View className="img-item">
+                        {this.showOne(item.showImg, index)}
                     </View>
                 </View>
                 
