@@ -255,7 +255,6 @@ export default class RectTask extends Component {
             this.svg.on("touchstart", () => {
                 d3.event.preventDefault();
                 if (!this.rectInitialized) {
-                    console.log(d3.event)
                     let updated = Object.assign({}, this.state.currentWork, {
                         rectPosition: {
                             xMin: d3.event.targetTouches[0].clientX,
