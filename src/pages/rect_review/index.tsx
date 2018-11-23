@@ -80,6 +80,7 @@ export default class RectReview extends Component {
             Taro.hideLoading();
 
         } else {
+            this.setState({currentWork: {}})
             this.fetchWorks();
         }
     }

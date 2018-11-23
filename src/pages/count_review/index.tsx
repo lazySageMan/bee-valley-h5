@@ -46,6 +46,7 @@ export default class PointReview extends Component {
             })
             Taro.hideLoading()
         } else {
+            this.setState({currentWork: {}})
             this.fetchWorks();
         }
     }

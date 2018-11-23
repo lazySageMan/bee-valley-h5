@@ -34,7 +34,7 @@ export default class PointTask extends Component {
         this.nextWork()
       } else {
         Taro.showToast({
-            title: '没有任务�
+            title: '没有任务了'
         })
       }
     })
@@ -56,6 +56,7 @@ export default class PointTask extends Component {
       })
       Taro.hideLoading()
     } else {
+      this.setState({currentWork: {}})
       this.fetchWork();
     }
   }
@@ -126,7 +127,7 @@ export default class PointTask extends Component {
           delta: 1
         }))
     } else {
-      alert("请标注点")
+      alert("è¯·æ ‡æ³¨ç‚¹")
     }
   }
 
@@ -276,7 +277,7 @@ export default class PointTask extends Component {
 
     return (
       <View className='count'>
-        <NavBar title="目标定位任务" />
+        <NavBar title='目标定位任务' />
         <View className='imgItem'>
           {currentWork && currentWork.src && (
             <Image src={currentWork.src} style={`width:${currentWork.meta.imageWidth}px;height:${currentWork.meta.imageHeight}px;`}></Image>
