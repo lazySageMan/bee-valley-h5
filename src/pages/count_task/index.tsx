@@ -80,9 +80,7 @@ export default class PointTask extends Component {
           }
         }
       })
-      .catch(() => Taro.navigateBack({
-        delta: 1
-      }))
+      .catch(this.defaultErrorHandling)
 
   }
 
@@ -107,9 +105,7 @@ export default class PointTask extends Component {
     })
     cancelWork(apiToken, [id])
       .then(() => this.nextWork())
-      .catch(() => Taro.navigateBack({
-        delta: 1
-      }))
+      .catch(this.defaultErrorHandling)
   }
 
   submitWork = () => {
@@ -123,9 +119,7 @@ export default class PointTask extends Component {
       })
       submitWork(apiToken, id, pointPosition)
         .then(() => this.nextWork())
-        .catch(() => Taro.navigateBack({
-          delta: 1
-        }))
+        .catch(this.defaultErrorHandling)
     } else {
       alert("è¯·æ ‡æ³¨ç‚¹")
     }
@@ -258,6 +252,13 @@ export default class PointTask extends Component {
 
   changeR = (ev) => {
     this.setState({ lineWidth: parseFloat(ev.target.value) });
+  }
+
+  defaultErrorHandling = () => {
+      Taro.hideLoading()
+      Taro.navigateBack({
+              delta: 1
+          })
   }
 
   render() {

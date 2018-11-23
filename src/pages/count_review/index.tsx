@@ -81,6 +81,7 @@ export default class PointReview extends Component {
         if (!currentWork.id) return;
         submitReview(this.apiToken, currentWork.id, true)
         .then(() => this.nextWork())
+        .catch(this.defaultErrorHandling)
     }
 
     rejectWork = () => {
@@ -92,6 +93,7 @@ export default class PointReview extends Component {
         if (!currentWork.id) return;
         submitReview(this.apiToken, currentWork.id, false)
         .then(() => this.nextWork())
+        .catch(this.defaultErrorHandling)
     }
 
     cancelWork = () => {
@@ -103,6 +105,7 @@ export default class PointReview extends Component {
         if (!currentWork.id) return;
         cancelWork(this.apiToken, [currentWork.id])
         .then(() => this.nextWork())
+        .catch(this.defaultErrorHandling)
     }
 
     imgLoad = () => {
@@ -217,6 +220,13 @@ export default class PointReview extends Component {
 
     changeR = (ev) => {
         this.setState({lineWidth: parseFloat(ev.target.value)});
+    }
+
+    defaultErrorHandling = () => {
+      Taro.hideLoading()
+      Taro.navigateBack({
+              delta: 1
+          })
     }
 
     render() {

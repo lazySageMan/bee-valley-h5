@@ -120,9 +120,7 @@ export default class RectTask extends Component {
                 }
             }
         })
-        .catch(() => Taro.navigateBack({
-            delta: 1
-        }))
+        .catch(this.defaultErrorHandling)
     }
 
     changePosition = (rectPosition) => {
@@ -398,9 +396,7 @@ export default class RectTask extends Component {
                 .then(() => {
                     this.nextWork();
                 })
-                .catch(() => Taro.navigateBack({
-                    delta: 1
-                }))
+                .catch(this.defaultErrorHandling)
             } else {
                 alert("请框中圆点标记目标");
             }           
@@ -421,11 +417,16 @@ export default class RectTask extends Component {
             .then(() => {
                 this.nextWork();
             })
-            .catch(() => Taro.navigateBack({
-                delta: 1
-            }))
+            .catch(this.defaultErrorHandling)
         }
 
+    }
+
+    defaultErrorHandling = () => {
+        Taro.hideLoading()
+        Taro.navigateBack({
+                delta: 1
+            })
     }
 
     render() {

@@ -87,7 +87,8 @@ export default class RectReview extends Component {
 
     getImgFile = (work) => {
         let { apiToken } = this;
-        downloadReviewFile(apiToken, work.id, work.downloadOptions).then((res) => {
+        downloadReviewFile(apiToken, work.id, work.downloadOptions)
+        .then((res) => {
             let imgBase64 = 'data:image/jpeg;base64,' + Taro.arrayBufferToBase64(new Uint8Array(res));
             if (work.id === this.state.currentWork.id) {
                 let current = Object.assign({}, this.state.currentWork, { src: imgBase64 });
@@ -101,9 +102,8 @@ export default class RectReview extends Component {
                     this.work[foundIndex].src = imgBase64;
                 }
             }
-        }).catch(() => Taro.navigateBack({
-            delta: 1
-        }));
+        })
+        .catch(this.defaultErrorHandling)
 
     }
 
@@ -114,14 +114,8 @@ export default class RectReview extends Component {
             mask: true
         })
         submitReview(this.apiToken, currentWork.id, true)
-            .then(() => {
-                this.nextWork();
-            })
-            .catch(() => {
-                Taro.navigateBack({
-                    delta: 1
-                })
-            })
+            .then(() => this.nextWork())
+            .catch(this.defaultErrorHandling)
     }
 
     rejectWork = () => {
@@ -131,14 +125,9 @@ export default class RectReview extends Component {
             title: 'loading',
             mask: true
         })
-        submitReview(this.apiToken, currentWork.id, false).then(() => {
-            this.nextWork();
-        })
-            .catch(() => {
-                Taro.navigateBack({
-                    delta: 1
-                })
-            })
+        submitReview(this.apiToken, currentWork.id, false)
+        .then(() => this.nextWork())
+        .catch(this.defaultErrorHandling)
     }
 
     cancelWork = () => {
@@ -154,9 +143,14 @@ export default class RectReview extends Component {
             .then(() => {
                 this.nextWork();
             })
-            .catch(() => Taro.navigateBack({
+            .catch(this.defaultErrorHandling)
+    }
+
+    defaultErrorHandling = () => {
+        Taro.hideLoading()
+        Taro.navigateBack({
                 delta: 1
-            }))
+            })
     }
 
     componentDidMount() {
@@ -171,6 +165,12 @@ export default class RectReview extends Component {
         } else if (process.env.TARO_ENV === 'h5') {
         }
         
+        if (this.isMobile) {
+            this.svg.on("touchmove", () => {
+                d3.event.preventDefault();
+            }
+        }
+
         Taro.showLoading({
           title: 'loading',
           mask: true
