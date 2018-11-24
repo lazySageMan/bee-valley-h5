@@ -8,8 +8,16 @@ export default class BackBtn extends Component {
     }
 
     handleClick = () => {
-        Taro.navigateBack({
-            delta: 1
+        Taro.showModal({
+            title:'提示',
+            content:'任务正在进行中，是否确定退出',
+            success: (res) =>{
+                if(res.confirm){
+                    Taro.navigateBack({
+                        delta: 1
+                    })
+                }
+            }
         })
     }
 
