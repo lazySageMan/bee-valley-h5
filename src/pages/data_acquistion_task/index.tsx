@@ -17,7 +17,7 @@ export default class DataAcquistion extends Taro.Component {
         super(...arguments)
 
         this.state = {
-            imgArr: [{img:img1}, {img:img2}, {img:img3}, {img:img4}, {img:img5}, {img:img6}, {img:img7}, {img:img8}, {img:img9}, {img:img10}]
+            imgArr: [{ img: img1 }, { img: img2 }, { img: img3 }, { img: img4 }, { img: img5 }, { img: img6 }, { img: img7 }, { img: img8 }, { img: img9 }, { img: img10 }]
         }
     }
 
@@ -27,17 +27,17 @@ export default class DataAcquistion extends Taro.Component {
         if (files && files.length > 0) {
             file = files[0];
             var reader = new FileReader();
-            reader.onload =  (ev)=> {
-                let {imgArr} = this.state;
+            reader.onload = (ev) => {
+                let { imgArr } = this.state;
 
                 imgArr.forEach((item, i) => {
-                    if(i === index){
+                    if (i === index) {
                         item.showImg = ev.target.result;
                     }
                 })
-                    this.setState({
-                        imgArr: imgArr
-                    })
+                this.setState({
+                    imgArr: imgArr
+                })
 
             };
             reader.readAsDataURL(file);
@@ -46,9 +46,9 @@ export default class DataAcquistion extends Taro.Component {
     }
 
     delete = (index) => {
-        let {imgArr} = this.state;
+        let { imgArr } = this.state;
         imgArr.forEach((item, i) => {
-            if(index === i){
+            if (index === i) {
                 item.showImg = null
             }
         })
@@ -59,19 +59,19 @@ export default class DataAcquistion extends Taro.Component {
     }
 
     showOne = (mode, index) => {
-        if(mode){
+        if (mode) {
             return (
                 <View className="showImg">
-                    <AtIcon size="20" value="close-circle" color="red" onClick={this.delete.bind(this,index)}></AtIcon>
+                    <AtIcon size="20" value="close-circle" color="red" onClick={this.delete.bind(this, index)}></AtIcon>
                     <Image src={mode} className="img"></Image>
                 </View>
             )
-        }else{
+        } else {
             return (
                 <View className="showIcon" >
                     <AtIcon size="60" value="camera" color="orange"></AtIcon>
                     添加图片
-                    <input type='file' accept="image/*" className="selectImg" onChange={this.getImg.bind(this, index)}/>
+                    <input type='file' accept="image/*" className="selectImg" onChange={this.getImg.bind(this, index)} />
                 </View>
             )
         }
@@ -91,7 +91,7 @@ export default class DataAcquistion extends Taro.Component {
                         {this.showOne(item.showImg, index)}
                     </View>
                 </View>
-                
+
             )
         })
         return (

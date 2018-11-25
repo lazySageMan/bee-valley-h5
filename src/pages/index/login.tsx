@@ -13,6 +13,7 @@ export default class Login extends Component {
     login = () => {
         
         phoneLogin(this.state.username, this.state.password).then((token) => {
+            // console.log(JSON.parse(token.data).code === 1)
             if(!token) {
                 Taro.showToast({
                     title: '登陆失败',
