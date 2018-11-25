@@ -12,28 +12,38 @@ export default class Login extends Component {
     }
 
     login = () => {
-        
-        phoneLogin(this.state.username, this.state.password).then((token) => {
-            if(!token) {
-                Taro.showToast({
-                    title: '登陆失败',
-                    mask: true
-                })
-            }else{
-                Taro.showToast({
-                    title: '登陆成功',
-                    mask: true,
-                    success: () => {
-                        Taro.setStorageSync('apiToken', token)
-                        Taro.setStorageSync('login', true)
+        let {username, password} = this.state;
+        // console.log(username, password)
+        if(!username || !password){
+            Taro.showToast({
+                title: '账号或密码为空',
+                mask: true
+            })
 
-                        Taro.navigateTo({
-                            url: 'pages/index/index'
-                        })
-                    }
-                })
-            }
-        })
+            return;
+        }else{
+            phoneLogin(this.state.username, this.state.password).then((token) => {
+                if(!token) {
+                    Taro.showToast({
+                        title: '登陆失败',
+                        mask: true
+                    })
+                }else{
+                    Taro.showToast({
+                        title: '登陆成功',
+                        mask: true,
+                        success: () => {
+                            Taro.setStorageSync('apiToken', token)
+                            Taro.setStorageSync('login', true)
+    
+                            Taro.navigateTo({
+                                url: 'pages/index/index'
+                            })
+                        }
+                    })
+                }
+            })
+        }
     }
 
     wechatLogin = () => {
