@@ -3,16 +3,16 @@ import { View } from '@tarojs/components'
 import { AtNavBar } from 'taro-ui'
 
 export default class BackBtn extends Component {
-    constructor(props){
+    constructor(props) {
         super(props)
     }
 
     handleClick = () => {
         Taro.showModal({
-            title:'提示',
-            content:'任务正在进行中，是否确定退出',
-            success: (res) =>{
-                if(res.confirm){
+            title: '提示',
+            content: '任务正在进行中，是否确定退出',
+            success: (res) => {
+                if (res.confirm) {
                     Taro.navigateBack({
                         delta: 1
                     })
@@ -21,9 +21,9 @@ export default class BackBtn extends Component {
         })
     }
 
-    render(){
+    render() {
 
-        let {title} = this.props;
+        let { title } = this.props;
         return (
             <View className="backBtn">
                 <AtNavBar
