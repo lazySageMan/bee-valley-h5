@@ -376,11 +376,11 @@ export default class RectTask extends Component {
         if (currentWork) {
             let { rectPosition, id, anchorX, anchorY, xOffset, yOffset } = currentWork,
                 { apiToken } = this,
-                relativeAnchorX = anchorX - xOffset,
-                relativeAnchorY = anchorY - yOffset
+                relativeAnchorX = (anchorX - xOffset)/ratio,
+                relativeAnchorY = (anchorY - yOffset)/ratio
             if (rectPosition && relativeAnchorX > rectPosition.xMin && relativeAnchorX < rectPosition.xMax && relativeAnchorY > rectPosition.yMin && relativeAnchorY < rectPosition.yMax) {
                 let cengHeight = this.isMobile ? this.cengHeight : 0
-                let rectData = [{ x: rectPosition.xMin * ratio+ xOffset , y: rectPosition.yMin* ratio  + yOffset + cengHeight }, { x: rectPosition.xMax*ratio + xOffset, y: rectPosition.yMax* ratio  + yOffset+ cengHeight }];
+                let rectData = [{ x: rectPosition.xMin * ratio+ xOffset , y: rectPosition.yMin * ratio }, { x: rectPosition.xMax * ratio + xOffset, y: rectPosition.yMax * ratio  + yOffset }];
                 Taro.showLoading({
                     title: 'loading',
                     mask: true
