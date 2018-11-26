@@ -30,29 +30,13 @@ export default class RectTask extends Component {
 
             this.rectInitialized = false;
 
-            // TODO find better way to check mobile device
-            if (this.isMobile) {
+            // if (this.isMobile) {
+            //     currentWork.meta.imageWidth = this.screenWidth
+            //     currentWork.meta.imageHeight = this.screenHeight
+            // }
 
-                currentWork.meta = {
-                    imageWidth: this.screenWidth,
-                    imageHeight: this.screenHeight,
-                    oldImageWidth: currentWork.meta.imageWidth,
-                    oldImageHeight: currentWork.meta.imageHeight,
-                    index: currentWork.meta.index
-                }
-            }
-
-            if (currentWork.previousWork) {
-
-                let rectData = {
-                    xMin: currentWork.previousWork.result[0][0].x - currentWork.xOffset,
-                    yMin: currentWork.previousWork.result[0][0].y - currentWork.yOffset,
-                    xMax: currentWork.previousWork.result[0][1].x - currentWork.xOffset,
-                    yMax: currentWork.previousWork.result[0][1].y - currentWork.yOffset,
-                };
-
+            if (currentWork.rectPosition) {
                 this.rectInitialized = true;
-                currentWork.rectPosition = rectData;
             }
 
             this.setState({
@@ -87,20 +71,32 @@ export default class RectTask extends Component {
         let { ratio } = this.state;
         let anchorX = Math.floor(work.prerequisites[0].result[work.meta.index].x);
         let anchorY = Math.floor(work.prerequisites[0].result[work.meta.index].y);
-        let imageWidth = work.meta.oldImageWidth ? work.meta.oldImageWidth : work.meta.imageWidth;
-        let imageHeight = work.meta.oldImageHeight ? work.meta.oldImageHeight : work.meta.imageHeight;
-        work['anchorX'] = anchorX / ratio;
-        work['anchorY'] = anchorY / ratio;
+        let imageWidth = work.meta.imageWidth;
+        let imageHeight = work.meta.imageHeight;
+        work['anchorX'] = anchorX;
+        work['anchorY'] = anchorY;
 
         if (this.isMobile) {
             let options = this.calculateWorkarea(imageWidth, imageHeight, anchorX, anchorY, Math.round(this.screenWidth * ratio), Math.round(this.screenHeight * ratio));
             options['format'] = 'jpeg';
-            work['xOffset'] = options.x / ratio;
-            work['yOffset'] = options.y / ratio;
+            work['xOffset'] = options.x;
+            work['yOffset'] = options.y;
             work['downloadOptions'] = options;
         } else {
             work['xOffset'] = 0;
             work['yOffset'] = 0;
+        }
+
+        if (work.previousWork && !work.rectPosition) {
+
+            let rectData = {
+                xMin: (work.previousWork.result[0][0].x - work.xOffset) / ratio,
+                yMin: (work.previousWork.result[0][0].y - work.yOffset) / ratio,
+                xMax: (work.previousWork.result[0][1].x - work.xOffset) / ratio,
+                yMax: (work.previousWork.result[0][1].y - work.yOffset) / ratio,
+            };
+
+            work.rectPosition = rectData;
         }
 
         return work;
@@ -444,56 +440,66 @@ export default class RectTask extends Component {
     lessRatio = () => {
 
         let { currentWork, ratio } = this.state;
-        if (ratio >= 2.6) {
+        if (ratio <= 1) {
             Taro.showModal({
                 title: '提示',
                 content: '不能继续缩小'
             })
 
         } else {
-            ratio += 0.2;
+            ratio -= 1;
             this.setState({
                 ratio: ratio
             }, () => {
-                this.preprocessWork(currentWork);
-
-                this.downloadWorkFile(currentWork);
+                this.preprocessWork(currentWork)
+                this.downloadWorkFile(currentWork)
             })
         }
     }
 
     addRatio = () => {
         let { currentWork, ratio } = this.state;
-        if (ratio <= 0.6) {
+        if (this.screenWidth * (ratio + 1) > currentWork.meta.imageWidth || this.screenHeight * (ratio + 1) > currentWork.meta.imageHeight) {
             Taro.showModal({
                 title: '提示',
                 content: '不能继续放大'
             })
-
         } else {
-            ratio -= 0.2;
+        // if (ratio * currentWork.>= 3) {
+        //     Taro.showModal({
+        //         title: '提示',
+        //         content: '不能继续放大'
+        //     })
+
+        // } else {
+            ratio += 1;
             this.setState({
                 ratio: ratio
             }, () => {
-                this.preprocessWork(currentWork);
-
-                this.downloadWorkFile(currentWork);
-
+                this.preprocessWork(currentWork)
+                this.downloadWorkFile(currentWork)
             })
         }
     }
 
 
     render() {
-        let { currentWork } = this.state;
+        let { currentWork, ratio } = this.state;
+        let imageWidth = 0,
+            imageHeight = 0
+
         if (this.svg && currentWork) {
-            this.svg.attr("width", currentWork.meta.imageWidth)
-                .attr("height", currentWork.meta.imageHeight);
+            
+            imageWidth = this.isMobile ? this.screenWidth : currentWork.meta.imageWidth,
+            imageHeight = this.isMobile ? this.screenHeight : currentWork.meta.imageHeight
+
+            this.svg.attr("width", imageWidth)
+                .attr("height", imageHeight);
 
             if (currentWork.anchorX && currentWork.anchorY) {
                 let circleData = {
-                    x: currentWork.anchorX - currentWork.xOffset,
-                    y: currentWork.anchorY - currentWork.yOffset,
+                    x: (currentWork.anchorX - currentWork.xOffset) / ratio,
+                    y: (currentWork.anchorY - currentWork.yOffset) / ratio,
                 };
                 this.updateCircle([circleData])
             }
@@ -517,7 +523,7 @@ export default class RectTask extends Component {
                 <NavBar title="方框任务" />
                 <View className='imgItem' id='workearea'>
                     {currentWork && currentWork.src && (
-                        <Image src={currentWork.src} style={`width:${currentWork.meta.imageWidth}px;height:${currentWork.meta.imageHeight}px;`}></Image>
+                        <Image src={currentWork.src} style={`width:${imageWidth}px;height:${imageHeight}px;`}></Image>
                     )
                     }
                     <View className='workImg'></View>
