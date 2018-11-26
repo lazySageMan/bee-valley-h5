@@ -2,7 +2,7 @@ import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Image } from '@tarojs/components'
 import * as d3 from 'd3'
 import NavBar from '../component/navBar/index'
-import { fetchWork, downloadWorkFile, cancelWork, submitWork ,checkDveice} from '../../utils/beevalley'
+import { fetchWork, downloadWorkFile, cancelWork, submitWork, checkDveice } from '../../utils/beevalley'
 import './index.scss'
 
 export default class RectTask extends Component {
@@ -12,6 +12,7 @@ export default class RectTask extends Component {
 
         this.state = {
             // currentWork: {}
+            ratio: 1
         }
 
         this.apiToken = Taro.getStorageSync('apiToken');
@@ -34,7 +35,10 @@ export default class RectTask extends Component {
 
                 currentWork.meta = {
                     imageWidth: this.screenWidth,
-                    imageHeight: this.screenHeight
+                    imageHeight: this.screenHeight,
+                    oldImageWidth: currentWork.meta.imageWidth,
+                    oldImageHeight: currentWork.meta.imageHeight,
+                    index: currentWork.meta.index
                 }
             }
 
@@ -52,13 +56,14 @@ export default class RectTask extends Component {
             }
 
             this.setState({
-                currentWork: currentWork
+                currentWork: currentWork,
+                ratio: 1
             })
 
             Taro.hideLoading()
 
         } else {
-            this.setState({currentWork: null})
+            this.setState({ currentWork: null, ratio: 1 })
             this.fetchWorks();
         }
     }
@@ -79,16 +84,19 @@ export default class RectTask extends Component {
     }
 
     preprocessWork = (work) => {
+        let { ratio } = this.state;
         let anchorX = Math.floor(work.prerequisites[0].result[work.meta.index].x);
         let anchorY = Math.floor(work.prerequisites[0].result[work.meta.index].y);
-        work['anchorX'] = anchorX;
-        work['anchorY'] = anchorY;
+        let imageWidth = work.meta.oldImageWidth ? work.meta.oldImageWidth : work.meta.imageWidth;
+        let imageHeight = work.meta.oldImageHeight ? work.meta.oldImageHeight : work.meta.imageHeight;
+        work['anchorX'] = anchorX / ratio;
+        work['anchorY'] = anchorY / ratio;
 
         if (this.isMobile) {
-            let options = this.calculateWorkarea(work.meta.imageWidth, work.meta.imageHeight, anchorX, anchorY, this.screenWidth, this.screenHeight);
+            let options = this.calculateWorkarea(imageWidth, imageHeight, anchorX, anchorY, Math.round(this.screenWidth * ratio), Math.round(this.screenHeight * ratio));
             options['format'] = 'jpeg';
-            work['xOffset'] = options.x;
-            work['yOffset'] = options.y;
+            work['xOffset'] = options.x / ratio;
+            work['yOffset'] = options.y / ratio;
             work['downloadOptions'] = options;
         } else {
             work['xOffset'] = 0;
@@ -101,26 +109,26 @@ export default class RectTask extends Component {
     downloadWorkFile = (work) => {
         let { apiToken } = this;
         downloadWorkFile(apiToken, work.id, work.downloadOptions)
-        .then((res) => {
-            let imgBase64 = 'data:image/jpeg;base64,' + Taro.arrayBufferToBase64(new Uint8Array(res));
-            if (this.state.currentWork && work.id === this.state.currentWork.id) {
-                // let current = Object.assign({}, this.state.currentWork, { src: imgBase64 });
+            .then((res) => {
+                let imgBase64 = 'data:image/jpeg;base64,' + Taro.arrayBufferToBase64(new Uint8Array(res));
+                if (this.state.currentWork && work.id === this.state.currentWork.id) {
+                    // let current = Object.assign({}, this.state.currentWork, { src: imgBase64 });
 
-                this.setState(prevState => {
-                  let updated = prevState.currentWork
-                  updated['src'] = imgBase64
-                  return { currentWork: updated }
-                })
-                
-            } else {
-                let foundIndex = this.work.findIndex(item => item.id === work.id);
+                    this.setState(prevState => {
+                        let updated = prevState.currentWork
+                        updated['src'] = imgBase64
+                        return { currentWork: updated }
+                    })
 
-                if (foundIndex >= 0) {
-                    this.work[foundIndex].src = imgBase64;
+                } else {
+                    let foundIndex = this.work.findIndex(item => item.id === work.id);
+
+                    if (foundIndex >= 0) {
+                        this.work[foundIndex].src = imgBase64;
+                    }
                 }
-            }
-        })
-        .catch(this.defaultErrorHandling)
+            })
+            .catch(this.defaultErrorHandling)
     }
 
     changePosition = (rectPosition) => {
@@ -196,7 +204,7 @@ export default class RectTask extends Component {
         this.setState((prevState) => {
             let updated = prevState.currentWork
             updated['rectPosition'] = rectPosition
-            return { currentWork: updated }   
+            return { currentWork: updated }
         });
 
     }
@@ -230,7 +238,7 @@ export default class RectTask extends Component {
         //     rectPosition: rectPosition
         // });
 
-        this.setState(prevState => { currentWork: Object.assign(prevState.currentWork, { rectPosition: rectPosition })} );
+        this.setState(prevState => { currentWork: Object.assign(prevState.currentWork, { rectPosition: rectPosition }) });
 
         this.startRect = {
             x: Touchx,
@@ -246,7 +254,7 @@ export default class RectTask extends Component {
         let res = Taro.getSystemInfoSync()
         this.screenWidth = res.windowWidth;
         this.screenHeight = Math.floor(res.windowHeight * 0.85);
-        this.cengHeight = this.screenHeight *0.07;
+        this.cengHeight = this.screenHeight * 0.07;
         this.isMobile = checkDveice(res)
 
         if (process.env.TARO_ENV === 'weapp') {
@@ -255,18 +263,20 @@ export default class RectTask extends Component {
 
         this.svg = d3.select(".workImg")
             .append("svg");
-       
+
         if (this.isMobile) {
             this.svg.on("touchstart", () => {
                 d3.event.preventDefault();
                 if (!this.rectInitialized && this.state.currentWork) {
                     let touch0 = d3.event.targetTouches[0]
-                    this.setState(prevState => { currentWork: Object.assign(prevState.currentWork, {
-                        rectPosition: {
-                            xMin: touch0.clientX,
-                            yMin: touch0.clientY - this.cengHeight
-                        }
-                    }) });
+                    this.setState(prevState => {
+                        currentWork: Object.assign(prevState.currentWork, {
+                            rectPosition: {
+                                xMin: touch0.clientX,
+                                yMin: touch0.clientY - this.cengHeight
+                            }
+                        })
+                    });
                 }
 
                 this.startRect = {
@@ -302,12 +312,14 @@ export default class RectTask extends Component {
                     let offsetX = d3.event.offsetX
                     let offsetY = d3.event.offsetY
 
-                    this.setState(prevState => { currentWork: Object.assign(prevState.currentWork, {
-                        rectPosition: {
-                            xMin: offsetX,
-                            yMin: offsetY
-                        }
-                    })})
+                    this.setState(prevState => {
+                        currentWork: Object.assign(prevState.currentWork, {
+                            rectPosition: {
+                                xMin: offsetX,
+                                yMin: offsetY
+                            }
+                        })
+                    })
                 }
 
                 this.startRect = {
@@ -338,8 +350,8 @@ export default class RectTask extends Component {
         }
 
         Taro.showLoading({
-          title: 'loading',
-          mask: true
+            title: 'loading',
+            mask: true
         })
 
         this.fetchWorks();
@@ -387,20 +399,20 @@ export default class RectTask extends Component {
                 relativeAnchorY = anchorY - yOffset
             if (rectPosition && relativeAnchorX > rectPosition.xMin && relativeAnchorX < rectPosition.xMax && relativeAnchorY > rectPosition.yMin && relativeAnchorY < rectPosition.yMax) {
                 let cengHeight = this.isMobile ? this.cengHeight : 0
-                let rectData = [{ x: rectPosition.xMin + xOffset, y: rectPosition.yMin + yOffset + cengHeight}, { x: rectPosition.xMax + xOffset, y: rectPosition.yMax + yOffset + cengHeight}];
+                let rectData = [{ x: rectPosition.xMin + xOffset, y: rectPosition.yMin + yOffset + cengHeight }, { x: rectPosition.xMax + xOffset, y: rectPosition.yMax + yOffset + cengHeight }];
                 Taro.showLoading({
-                  title: 'loading',
-                  mask: true
+                    title: 'loading',
+                    mask: true
                 })
                 submitWork(apiToken, id, [rectData])
-                .then(() => {
-                    this.nextWork();
-                })
-                .catch(this.defaultErrorHandling)
+                    .then(() => {
+                        this.nextWork();
+                    })
+                    .catch(this.defaultErrorHandling)
             } else {
                 alert("请框中圆点标记目标");
-            }           
-        } 
+            }
+        }
     }
 
     cancelWork = () => {
@@ -409,15 +421,15 @@ export default class RectTask extends Component {
 
         if (currentWork) {
             Taro.showLoading({
-              title: 'loading',
-              mask: true
+                title: 'loading',
+                mask: true
             })
 
             cancelWork(apiToken, [currentWork.id])
-            .then(() => {
-                this.nextWork();
-            })
-            .catch(this.defaultErrorHandling)
+                .then(() => {
+                    this.nextWork();
+                })
+                .catch(this.defaultErrorHandling)
         }
 
     }
@@ -425,9 +437,52 @@ export default class RectTask extends Component {
     defaultErrorHandling = () => {
         Taro.hideLoading()
         Taro.navigateBack({
-                delta: 1
-            })
+            delta: 1
+        })
     }
+
+    lessRatio = () => {
+
+        let { currentWork, ratio } = this.state;
+        if (ratio >= 2.6) {
+            Taro.showModal({
+                title: '提示',
+                content: '不能继续缩小'
+            })
+
+        } else {
+            ratio += 0.2;
+            this.setState({
+                ratio: ratio
+            }, () => {
+                this.preprocessWork(currentWork);
+
+                this.downloadWorkFile(currentWork);
+            })
+        }
+    }
+
+    addRatio = () => {
+        let { currentWork, ratio } = this.state;
+        if (ratio <= 0.6) {
+            Taro.showModal({
+                title: '提示',
+                content: '不能继续放大'
+            })
+
+        } else {
+            ratio -= 0.2;
+            this.setState({
+                ratio: ratio
+            }, () => {
+                this.preprocessWork(currentWork);
+
+                this.downloadWorkFile(currentWork);
+
+            })
+        }
+    }
+
 
     render() {
         let { currentWork } = this.state;
@@ -442,9 +497,20 @@ export default class RectTask extends Component {
                 };
                 this.updateCircle([circleData])
             }
-
-            this.changePosition(currentWork.rectPosition);
+            
+            this.changePosition(currentWork.rectPosition)
+            
         }
+
+        let adjustBtn = this.isMobile ?
+            (
+                <View className="adjustBtn">
+                    <Button className="btn" onClick={this.lessRatio}>－</Button>
+                    <Button className="btn" onClick={this.addRatio}>＋</Button>
+                </View>
+            )
+            :
+            '';
 
         return (
             <View className='rect'>
@@ -459,6 +525,7 @@ export default class RectTask extends Component {
                 <View className='btnItem'>
                     <Button type='primary' onClick={this.submitWork}>提交</Button>
                     <Button type='warn' onClick={this.cancelWork}>放弃</Button>
+                    {adjustBtn}
                 </View>
             </View>
         )
