@@ -380,7 +380,7 @@ export default class RectTask extends Component {
                 relativeAnchorY = anchorY - yOffset
             if (rectPosition && relativeAnchorX > rectPosition.xMin && relativeAnchorX < rectPosition.xMax && relativeAnchorY > rectPosition.yMin && relativeAnchorY < rectPosition.yMax) {
                 let cengHeight = this.isMobile ? this.cengHeight : 0
-                let rectData = [{ x: (rectPosition.xMin + xOffset) * ratio, y: (rectPosition.yMin + yOffset) * ratio + cengHeight }, { x: (rectPosition.xMax + xOffset) * ratio, y: (rectPosition.yMax + yOffset) * ratio + cengHeight }];
+                let rectData = [{ x: rectPosition.xMin * ratio+ xOffset , y: rectPosition.yMin* ratio  + yOffset + cengHeight }, { x: rectPosition.xMax*ratio + xOffset, y: rectPosition.yMax* ratio  + yOffset+ cengHeight }];
                 Taro.showLoading({
                     title: 'loading',
                     mask: true
