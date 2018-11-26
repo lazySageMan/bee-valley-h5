@@ -43,16 +43,9 @@ export default class CountTabs extends Taro.Component {
   }
 
   navigateToTask = (item) => {
-      if(item === "data_acquistion"){
-        Taro.navigateTo({
-            url: `/pages/data_acquistion/index`
-        })
-      }else{
-        Taro.navigateTo({
-            url: `/pages/${item.typeCode}_task/index?packageId=${item.packageId}`
-        })
-      }
-    
+    Taro.navigateTo({
+        url: `/pages/${item.typeCode}_task/index?packageId=${item.packageId}`
+    })    
   }
 
   navigateToReview = (item) => {

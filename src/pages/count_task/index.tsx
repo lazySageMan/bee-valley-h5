@@ -1,7 +1,7 @@
 import Taro, { Component, Config } from '@tarojs/taro'
 import { View, Button, Image, Input } from '@tarojs/components'
 import * as d3 from 'd3'
-import BackBtn from '../component/backBtn/backBtn'
+import NavBar from '../component/navBar/index'
 import { fetchWork, downloadWorkFile, cancelWork, submitWork, checkDveice } from '../../utils/beevalley'
 import './index.scss'
 
@@ -33,8 +33,8 @@ export default class PointTask extends Component {
         this.getImgFile(this.work[this.work.length - 1].id)
         this.nextWork()
       } else {
-        Taro.navigateBack({
-          delta: 1
+        Taro.showToast({
+            title: '没有任务了'
         })
       }
     })
@@ -56,6 +56,7 @@ export default class PointTask extends Component {
       })
       Taro.hideLoading()
     } else {
+      this.setState({currentWork: {}})
       this.fetchWork();
     }
   }
@@ -79,9 +80,7 @@ export default class PointTask extends Component {
           }
         }
       })
-      .catch(() => Taro.navigateBack({
-        delta: 1
-      }))
+      .catch(this.defaultErrorHandling)
 
   }
 
@@ -106,9 +105,7 @@ export default class PointTask extends Component {
     })
     cancelWork(apiToken, [id])
       .then(() => this.nextWork())
-      .catch(() => Taro.navigateBack({
-        delta: 1
-      }))
+      .catch(this.defaultErrorHandling)
   }
 
   submitWork = () => {
@@ -122,24 +119,19 @@ export default class PointTask extends Component {
       })
       submitWork(apiToken, id, pointPosition)
         .then(() => this.nextWork())
-        .catch(() => Taro.navigateBack({
-          delta: 1
-        }))
+        .catch(this.defaultErrorHandling)
     } else {
-      alert("请标注点")
+      alert("è¯·æ ‡æ³¨ç‚¹")
     }
   }
 
   componentDidMount() {
-    this.packageId = this.$router.params.packageId;
-    this.fetchWork();
+    this.packageId = this.$router.params.packageId
+    
 
-    Taro.getSystemInfo({
-      success: (res) => {
-        this.screenWidth = res.windowWidth;
-        this.isMobile = checkDveice(res)
-      }
-    })
+    let res = Taro.getSystemInfoSync()
+    this.screenWidth = res.windowWidth;
+    this.isMobile = checkDveice(res)
 
     if (process.env.TARO_ENV === 'weapp') {
     } else if (process.env.TARO_ENV === 'h5') {
@@ -164,12 +156,19 @@ export default class PointTask extends Component {
         })
       })
     })
+
+    Taro.showLoading({
+      title: 'loading',
+      mask: true
+    })
+
+    this.fetchWork()
   }
 
   componentWillUnmount() {
     if (this.work) {
       let toCancel = this.work.map(w => w.id)
-      if (this.state.currentWork) {
+        if (this.state.currentWork && this.state.currentWork.id) {
         toCancel.push(this.state.currentWork.id)
       }
       if (toCancel.length > 0) {
@@ -255,13 +254,20 @@ export default class PointTask extends Component {
     this.setState({ lineWidth: parseFloat(ev.target.value) });
   }
 
+  defaultErrorHandling = () => {
+      Taro.hideLoading()
+      Taro.navigateBack({
+              delta: 1
+          })
+  }
+
   render() {
     let { currentWork, pointRadius, lineData } = this.state;
     if (currentWork.pointPosition) {
       this.renderDthree(currentWork.pointPosition, pointRadius);
     }
 
-    if (this.svg && currentWork) {
+    if (this.svg && currentWork && currentWork.meta) {
       this.svg.attr("width", currentWork.meta.imageWidth)
         .attr("height", currentWork.meta.imageHeight);
     }
@@ -272,9 +278,9 @@ export default class PointTask extends Component {
 
     return (
       <View className='count'>
-        <BackBtn title="目标任务" />
+        <NavBar title='目标定位任务' />
         <View className='imgItem'>
-          {currentWork.src && (
+          {currentWork && currentWork.src && (
             <Image src={currentWork.src} style={`width:${currentWork.meta.imageWidth}px;height:${currentWork.meta.imageHeight}px;`}></Image>
           )
           }

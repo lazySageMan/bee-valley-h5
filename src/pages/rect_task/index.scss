@@ -92,6 +92,23 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            .adjustBtn{
+                position: absolute;
+                right: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                .btn{
+                    width: 60px;
+                    text-align: center;
+                    margin:0;
+                    padding: 0;
+                    margin-left: 10px;  
+                    height: 60px;
+                    line-height: 60px; 
+                    outline: 0;                 
+                }
+            }
             Button{
                 width: 20vw;
                 height: 5vh;

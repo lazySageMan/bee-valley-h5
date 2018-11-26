@@ -74,10 +74,10 @@ const config = {
   h5: {
     publicPath: '/',
     staticDirectory: 'static',
-    devServer:{
-      host: '192.168.31.147',  //修改成你局域网ip 或localhost
-      port: 8080,
-    },
+    // devServer:{
+    //   host: '192.168.43.80',  //修改成你局域网ip 或localhost
+    //   port: 8080,
+    // },
     module: {
       postcss: {
         autoprefixer: {

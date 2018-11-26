@@ -2,8 +2,8 @@ import Taro, { Component } from '@tarojs/taro'
 import { View } from '@tarojs/components'
 import { AtNavBar } from 'taro-ui'
 
-export default class BackBtn extends Component {
-    constructor(props) {
+export default class NavBar extends Component {
+    constructor(props){
         super(props)
     }
 
@@ -27,7 +27,6 @@ export default class BackBtn extends Component {
         return (
             <View className="backBtn">
                 <AtNavBar
-                    onClickRgIconSt={this.handleClick}
                     onClickLeftIcon={this.handleClick}
                     leftIconType="chevron-left"
                     color='#000'
