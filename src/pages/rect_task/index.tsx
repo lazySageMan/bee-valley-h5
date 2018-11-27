@@ -11,7 +11,6 @@ export default class RectTask extends Component {
         super(props)
 
         this.state = {
-            // currentWork: {}
             ratio: 1
         }
 
@@ -29,11 +28,6 @@ export default class RectTask extends Component {
             }
 
             this.rectInitialized = false;
-
-            // if (this.isMobile) {
-            //     currentWork.meta.imageWidth = this.screenWidth
-            //     currentWork.meta.imageHeight = this.screenHeight
-            // }
 
             if (currentWork.rectPosition) {
                 this.rectInitialized = true;
@@ -108,7 +102,6 @@ export default class RectTask extends Component {
             .then((res) => {
                 let imgBase64 = 'data:image/jpeg;base64,' + Taro.arrayBufferToBase64(new Uint8Array(res));
                 if (this.state.currentWork && work.id === this.state.currentWork.id) {
-                    // let current = Object.assign({}, this.state.currentWork, { src: imgBase64 });
 
                     this.setState(prevState => {
                         let updated = prevState.currentWork
@@ -193,10 +186,6 @@ export default class RectTask extends Component {
             rectPosition.yMax = rectPosition.yMin;
             rectPosition.yMin = y;
         }
-
-        // let updated = Object.assign({}, this.state.currentWork, {
-        //     rectPosition: rectPosition
-        // });
         this.setState((prevState) => {
             let updated = prevState.currentWork
             updated['rectPosition'] = rectPosition
@@ -229,10 +218,6 @@ export default class RectTask extends Component {
                 rectPosition.yMin += (Touchy - y);
             }
         }
-
-        // let updated = Object.assign({}, this.state.currentWork, {
-        //     rectPosition: rectPosition
-        // });
 
         this.setState(prevState => { currentWork: Object.assign(prevState.currentWork, { rectPosition: rectPosition }) });
 
@@ -387,15 +372,15 @@ export default class RectTask extends Component {
     }
 
     submitWork = () => {
-        let currentWork = this.state.currentWork
+        let {currentWork, ratio} = this.state
         if (currentWork) {
             let { rectPosition, id, anchorX, anchorY, xOffset, yOffset } = currentWork,
                 { apiToken } = this,
-                relativeAnchorX = anchorX - xOffset,
-                relativeAnchorY = anchorY - yOffset
+                relativeAnchorX = (anchorX - xOffset)/ratio,
+                relativeAnchorY = (anchorY - yOffset)/ratio
             if (rectPosition && relativeAnchorX > rectPosition.xMin && relativeAnchorX < rectPosition.xMax && relativeAnchorY > rectPosition.yMin && relativeAnchorY < rectPosition.yMax) {
                 let cengHeight = this.isMobile ? this.cengHeight : 0
-                let rectData = [{ x: rectPosition.xMin + xOffset, y: rectPosition.yMin + yOffset + cengHeight }, { x: rectPosition.xMax + xOffset, y: rectPosition.yMax + yOffset + cengHeight }];
+                let rectData = [{ x: rectPosition.xMin * ratio+ xOffset , y: rectPosition.yMin * ratio }, { x: rectPosition.xMax * ratio + xOffset, y: rectPosition.yMax * ratio  + yOffset }];
                 Taro.showLoading({
                     title: 'loading',
                     mask: true
@@ -465,13 +450,6 @@ export default class RectTask extends Component {
                 content: '不能继续放大'
             })
         } else {
-        // if (ratio * currentWork.>= 3) {
-        //     Taro.showModal({
-        //         title: '提示',
-        //         content: '不能继续放大'
-        //     })
-
-        // } else {
             ratio += 1;
             this.setState({
                 ratio: ratio
