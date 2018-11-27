@@ -380,7 +380,7 @@ export default class RectTask extends Component {
                 relativeAnchorY = (anchorY - yOffset)/ratio
             if (rectPosition && relativeAnchorX > rectPosition.xMin && relativeAnchorX < rectPosition.xMax && relativeAnchorY > rectPosition.yMin && relativeAnchorY < rectPosition.yMax) {
                 let cengHeight = this.isMobile ? this.cengHeight : 0
-                let rectData = [{ x: rectPosition.xMin * ratio+ xOffset , y: rectPosition.yMin * ratio }, { x: rectPosition.xMax * ratio + xOffset, y: rectPosition.yMax * ratio  + yOffset }];
+                let rectData = [{ x: rectPosition.xMin * ratio+ xOffset , y: rectPosition.yMin * ratio + yOffset }, { x: rectPosition.xMax * ratio + xOffset, y: rectPosition.yMax * ratio + yOffset }];
                 Taro.showLoading({
                     title: 'loading',
                     mask: true
@@ -426,11 +426,9 @@ export default class RectTask extends Component {
 
         let { currentWork, ratio } = this.state;
         if (ratio <= 1) {
-            Taro.showModal({
-                title: '提示',
-                content: '不能继续缩小'
+            Taro.showToast({
+                title: '不能继续缩小'
             })
-
         } else {
             ratio -= 1;
             this.setState({
@@ -445,9 +443,8 @@ export default class RectTask extends Component {
     addRatio = () => {
         let { currentWork, ratio } = this.state;
         if (this.screenWidth * (ratio + 1) > currentWork.meta.imageWidth || this.screenHeight * (ratio + 1) > currentWork.meta.imageHeight) {
-            Taro.showModal({
-                title: '提示',
-                content: '不能继续放大'
+            Taro.showToast({
+                title: '不能继续放大'
             })
         } else {
             ratio += 1;
