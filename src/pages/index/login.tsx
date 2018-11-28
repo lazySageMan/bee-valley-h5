@@ -53,8 +53,11 @@ export default class Login extends Component {
         const login = Taro.getStorageSync('login')
         
             let res = Taro.getSystemInfoSync()
-            this.isMobile = checkDveice(res)
-        
+            let isMobile = checkDveice(res)
+            this.setState({
+                isMobile: isMobile
+            })
+            //console.log(this.isMobile)
     
         if(login === true) {
             Taro.navigateTo({
@@ -98,7 +101,7 @@ export default class Login extends Component {
     }
 
     render() {
-
+        let {isMobile} = this.state;
         return (
             <View className='wrap'>
                 <Text className='title'>用户登录</Text>
@@ -112,7 +115,7 @@ export default class Login extends Component {
                 <View className='iconMenu'>
                     <View className='iconTitle'>其他方式登录</View>
                 </View>
-                { this.isMobile &&
+                { !isMobile &&
                     <View className='icon' onClick={this.wechatLogin}>
                         <Image style='width:50px;height:50px;' src={wechat}></Image>
                     </View>
