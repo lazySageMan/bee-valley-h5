@@ -1,6 +1,7 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Text, Button, Input, Image } from '@tarojs/components'
 import { phoneLogin, wechatLogin } from '../../utils/beevalley'
+import { checkDveice } from '../../utils/beevalley'
 import './login.scss'
 import wechat from '../../image/wechat.png'
 
@@ -50,7 +51,11 @@ export default class Login extends Component {
 
     componentDidMount(){
         const login = Taro.getStorageSync('login')
-        let res = Taro.getSystemInfoSync()
+        
+            let res = Taro.getSystemInfoSync()
+            this.isMobile = checkDveice(res)
+        
+    
         if(login === true) {
             Taro.navigateTo({
                 url: '/pages/index/index'
@@ -107,9 +112,12 @@ export default class Login extends Component {
                 <View className='iconMenu'>
                     <View className='iconTitle'>其他方式登录</View>
                 </View>
-                <View className='icon' onClick={this.wechatLogin}>
-                    <Image style='width:50px;height:50px;' src={wechat}></Image>
-                </View>
+                { this.isMobile &&
+                    <View className='icon' onClick={this.wechatLogin}>
+                        <Image style='width:50px;height:50px;' src={wechat}></Image>
+                    </View>
+                }
+               
             </View>
         )
     }

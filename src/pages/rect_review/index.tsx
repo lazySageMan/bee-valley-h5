@@ -13,7 +13,7 @@ export default class RectReview extends Component {
         }
         this.apiToken = Taro.getStorageSync('apiToken');
     }
-
+    
     fetchWorks = () => {
         let { apiToken } = this;
         fetchReview(apiToken, 'rect', 4, this.packageId).then((res) => {
