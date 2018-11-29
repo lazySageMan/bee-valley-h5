@@ -54,7 +54,7 @@ export default class PointTask extends Component {
       this.setState({
         currentWork: nowWork
       })
-      Taro.hideLoading()
+      // Taro.hideLoading()
     } else {
       this.setState({currentWork: {}})
       this.fetchWork();
@@ -103,6 +103,7 @@ export default class PointTask extends Component {
       title: 'loading',
       mask: true
     })
+    this.setState({currentWork: {}})
     cancelWork(apiToken, [id])
       .then(() => this.nextWork())
       .catch(this.defaultErrorHandling)
@@ -117,11 +118,12 @@ export default class PointTask extends Component {
         title: 'loading',
         mask: true
       })
+      this.setState({currentWork: {}})
       submitWork(apiToken, id, pointPosition)
         .then(() => this.nextWork())
         .catch(this.defaultErrorHandling)
     } else {
-      alert("è¯·æ ‡æ³¨ç‚¹")
+      alert('请标注点')
     }
   }
 
@@ -263,6 +265,11 @@ export default class PointTask extends Component {
 
   render() {
     let { currentWork, pointRadius, lineData } = this.state;
+
+    if (currentWork && currentWork.src) {
+        Taro.hideLoading()
+    }
+
     if (currentWork.pointPosition) {
       this.renderDthree(currentWork.pointPosition, pointRadius);
     }

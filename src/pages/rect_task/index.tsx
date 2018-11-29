@@ -19,7 +19,6 @@ export default class RectTask extends Component {
     }
 
     nextWork = () => {
-
         if (this.work.length > 0) {
             let currentWork = this.work.pop();
 
@@ -38,10 +37,9 @@ export default class RectTask extends Component {
                 ratio: 1
             })
 
-            Taro.hideLoading()
-
         } else {
             this.setState({ currentWork: null, ratio: 1 })
+
             this.fetchWorks();
         }
     }
@@ -380,11 +378,12 @@ export default class RectTask extends Component {
                 relativeAnchorY = (anchorY - yOffset)/ratio
             if (rectPosition && relativeAnchorX > rectPosition.xMin && relativeAnchorX < rectPosition.xMax && relativeAnchorY > rectPosition.yMin && relativeAnchorY < rectPosition.yMax) {
                 let cengHeight = this.isMobile ? this.cengHeight : 0
-                let rectData = [{ x: rectPosition.xMin * ratio+ xOffset , y: rectPosition.yMin * ratio + yOffset }, { x: rectPosition.xMax * ratio + xOffset, y: rectPosition.yMax * ratio + yOffset }];
+                let rectData = [{ x: rectPosition.xMin * ratio + xOffset , y: rectPosition.yMin * ratio + yOffset }, { x: rectPosition.xMax * ratio + xOffset, y: rectPosition.yMax * ratio + yOffset }];
                 Taro.showLoading({
                     title: 'loading',
                     mask: true
                 })
+                this.setState({currentWork: null})
                 submitWork(apiToken, id, [rectData])
                     .then(() => {
                         this.nextWork();
@@ -405,7 +404,7 @@ export default class RectTask extends Component {
                 title: 'loading',
                 mask: true
             })
-
+            this.setState({currentWork: null})
             cancelWork(apiToken, [currentWork.id])
                 .then(() => {
                     this.nextWork();
@@ -462,6 +461,10 @@ export default class RectTask extends Component {
         let { currentWork, ratio } = this.state;
         let imageWidth = 0,
             imageHeight = 0
+
+        if (currentWork && currentWork.src) {
+            Taro.hideLoading()
+        }
 
         if (this.svg && currentWork) {
             
