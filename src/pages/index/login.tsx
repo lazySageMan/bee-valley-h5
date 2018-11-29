@@ -14,7 +14,6 @@ export default class Login extends Component {
     login = () => {
         
         phoneLogin(this.state.username, this.state.password).then((token) => {
-            // console.log(JSON.parse(token.data).code === 1)
             if(!token) {
                 Taro.showToast({
                     title: '登陆失败',
@@ -25,7 +24,6 @@ export default class Login extends Component {
                     title: '登陆成功',
                     mask: true,
                     success: () => {
-
                         Taro.setStorageSync('apiToken', token)
                         Taro.setStorageSync('login', true)
 
@@ -100,6 +98,12 @@ export default class Login extends Component {
         this.setState({password: event.target.value});
     }
 
+    toRegister = () => {
+        Taro.redirectTo({
+            url: '/pages/index/register'
+        })
+    }
+
     render() {
         let {isMobile} = this.state;
         return (
@@ -107,10 +111,10 @@ export default class Login extends Component {
                 <Text className='title'>用户登录</Text>
                 <Input className='inputText' type='text' placeholder='手机号/邮箱/用户名' onChange={this.handleUsernameChange} />
                 <Input className='inputText' type='password' placeholder='密码' onChange={this.handlePasswordChange} />
-                <Button style='background:orangered;margin-top:3vh;' type='warn' onClick={this.login}>登录</Button>
+                <Button className="btn" onClick={this.login}>立即登录</Button>
                 <View className='viewText'>
                     <Text>忘记密码？</Text>
-                    <Text>还没有账号？<Text className='onResiges'>立即注册</Text></Text>
+                    <Text>还没有账号？<Text className='onResiges' onClick={this.toRegister}>立即注册</Text></Text>
                 </View>
                 <View className='iconMenu'>
                     <View className='iconTitle'>其他方式登录</View>

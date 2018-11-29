@@ -1,0 +1,147 @@
+// pc端样式
+
+@media screen and (min-width:640px) {
+    .register-wrap{
+        width: 350px;
+        height: 400px;
+        background: white;
+        margin: 0 auto;
+        border: 1px solid black;
+        margin-top: 150px;
+        padding: 10px 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        .title{
+            font-size: 32px;
+        }
+        .inputText{
+            border: 1px solid black;
+            border-radius: 5px;
+            font-size: 20px;
+            width: 100%;
+            height: 50px;
+            text-indent: 1em;
+            margin-top: 20px;
+        }
+        .identCode{
+            width: 100%;
+            height: 50px;
+            margin-top: 20px;
+            font-size: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            .code{
+                width: 35%;
+                height: 48px;
+                border: 1px solid black;
+                border-radius: 5px;
+                text-indent: 1em;
+            }
+            .codeBtn{
+                width: 55%;
+                height: 50px;
+                background: orangered;
+                border: none;
+                outline: none;
+                margin: 0;
+                color: #fff;
+            }
+        }
+        .register-btn{
+            width: 100%;
+            height: 55px;
+            background: orangered;
+            border: none;
+            outline: none;
+            margin-top: 20px;
+            color: #fff;
+        }
+        .viewText{
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-top: 20px;
+            .onLogin{
+                color: blue;
+            }
+        }
+    }
+}
+
+//h5样式
+
+@media screen and (min-width: 320px) and (max-width: 640px){
+    .register-wrap{
+        width: 70vw;
+        height: 600px;
+        background: white;
+        margin: 0 auto;
+        border: 1px solid black;
+        margin-top: 100px;
+        padding: 10px 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        .title{
+            font-size: 32px;
+        }
+        .inputText{
+            border: 2px solid black;
+            border-radius: 5px;
+            font-size: 20px;
+            width: 100%;
+            height: 65px;
+            text-indent: 1em;
+            margin-top: 40px;
+        }
+        .identCode{
+            width: 100%;
+            height: 65px;
+            margin-top: 40px;
+            font-size: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            .code{
+                width: 35%;
+                height: 61px;
+                border: 2px solid black;
+                border-radius: 5px;
+                text-indent: 1em;
+            }
+            .codeBtn{
+                width: 55%;
+                height: 65px;
+                line-height: 65px;
+                background: orangered;
+                border: none;
+                outline: none;
+                margin: 0;
+                color: #fff;
+            }
+        }
+        .register-btn{
+            width: 100%;
+            height: 80px;
+            line-height: 80px;
+            border: none;
+            outline: none;
+            margin-top: 40px;
+            color: #fff;
+        }
+
+        .viewText{
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            font-size: 20px;
+            margin-top: 40px;
+            .onLogin{
+                color: blue;
+            }
+        }
+    }
+}

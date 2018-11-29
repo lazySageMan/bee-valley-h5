@@ -3,7 +3,7 @@
 @media screen and (min-width:640px) {
     .wrap{
         width: 370px;
-        height: 450px;
+        height: 430px;
         background: white;
         margin: 0 auto;
         border: 1px solid black;
@@ -31,6 +31,7 @@
             border: none;
             outline: none;
             margin-top: 2vh;
+            color: #ffffff;
         }
 
         .viewText{
@@ -108,20 +109,23 @@
             text-indent: 1em;
             margin-top: 40px;
         }
+        
         .btn{
             width: 100%;
-            height: 65px;
+            height: 70px;
             background: orangered;
             border: none;
             outline: none;
             margin-top: 40px;
+            line-height: 65px;
+            color: #ffffff;
         }
 
         .viewText{
             width: 100%;
             display: flex;
             justify-content: space-between;
-            font-size: 12px;
+            font-size: 20px;
             margin-top: 40px;
             .onResiges{
                 color: blue;

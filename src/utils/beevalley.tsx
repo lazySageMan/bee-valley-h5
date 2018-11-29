@@ -176,6 +176,37 @@ function listAuthorizedReview(token) {
     }).then(handleRes).then(parseJson)
 }
 
+function sendMobileCode(mobile){
+    return Taro.request({
+        url: `${host}mobile/send`,
+        method: 'POST',
+        header: {
+            'content-type': 'application/json'
+        },
+        data: {
+            "mobile": mobile, 
+            "region": "CN", 
+            "topic": "signup"
+        }
+    }).then(handleRes).then(parseJson)
+}
+
+function register(mobile, passwd, code){
+    return Taro.request({
+        url: `${host}signup/mobile`,
+        method: 'POST',
+        header: {
+            'content-type': 'application/json'
+        },
+        data: {
+            "mobile": mobile, 
+            "password": passwd, 
+            "code": code,
+            "region": "CN"
+        }
+    }).then((res) => res).then((err) => err)
+}
+
 function parseJson(str) {
     return str ? JSON.parse(str) : null
 }
@@ -184,4 +215,19 @@ function checkDveice(res) {
     return (res.model !== null) ? true : false;
 }
 
-export {fetchWork, downloadWorkFile, cancelWork, submitWork, fetchReview, downloadReviewFile, submitReview, phoneLogin, wechatLogin, listAuthorizedWork, listAuthorizedReview, checkDveice};
+export {
+    fetchWork, 
+    downloadWorkFile, 
+    cancelWork, 
+    submitWork, 
+    fetchReview, 
+    downloadReviewFile, 
+    submitReview, 
+    phoneLogin, 
+    wechatLogin, 
+    listAuthorizedWork, 
+    listAuthorizedReview, 
+    checkDveice,
+    sendMobileCode,
+    register
+};
