@@ -53,7 +53,7 @@ export default class RectTask extends Component {
                 this.nextWork();
             } else {
                 Taro.showToast({
-                    title: '没有任务了'
+                    title: '没有任务�
                 })
             }
         })
@@ -377,7 +377,7 @@ export default class RectTask extends Component {
                 relativeAnchorX = (anchorX - xOffset)/ratio,
                 relativeAnchorY = (anchorY - yOffset)/ratio
             if (rectPosition && relativeAnchorX > rectPosition.xMin && relativeAnchorX < rectPosition.xMax && relativeAnchorY > rectPosition.yMin && relativeAnchorY < rectPosition.yMax) {
-                let cengHeight = this.isMobile ? this.cengHeight : 0
+                
                 let rectData = [{ x: rectPosition.xMin * ratio + xOffset , y: rectPosition.yMin * ratio + yOffset }, { x: rectPosition.xMax * ratio + xOffset, y: rectPosition.yMax * ratio + yOffset }];
                 Taro.showLoading({
                     title: 'loading',
@@ -390,7 +390,7 @@ export default class RectTask extends Component {
                     })
                     .catch(this.defaultErrorHandling)
             } else {
-                alert("请框中圆点标记目标");
+                alert("请框中圆点标记目�);
             }
         }
     }
@@ -489,8 +489,8 @@ export default class RectTask extends Component {
         let adjustBtn = this.isMobile ?
             (
                 <View className="adjustBtn">
-                    <Button className="btn" onClick={this.lessRatio}>－</Button>
-                    <Button className="btn" onClick={this.addRatio}>＋</Button>
+                    <Button className="btn" onClick={this.lessRatio}>�/Button>
+                    <Button className="btn" onClick={this.addRatio}>�/Button>
                 </View>
             )
             :

@@ -1,6 +1,7 @@
 import Taro from '@tarojs/taro'
 import { View, Image, Text } from '@tarojs/components'
 import { AtButton, AtIcon } from 'taro-ui'
+import NavBar from '../component/navBar/index'
 import './index.scss'
 import img1 from '../../image/1.jpg'
 import img2 from '../../image/2.jpg'
@@ -12,6 +13,7 @@ import img7 from '../../image/7.jpg'
 import img8 from '../../image/8.jpg'
 import img9 from '../../image/9.jpg'
 import img10 from '../../image/10.jpg'
+import NavBar from '../../../.temp/pages/component/navBar/index';
 export default class DataAcquistion extends Taro.Component {
     constructor() {
         super(...arguments)
@@ -129,6 +131,7 @@ export default class DataAcquistion extends Taro.Component {
                 </View>
                 <View className="cengHeight"></View>
                 <View className="top">
+                    <NavBar title="老人图像采集任务"></NavBar>
                     <View className="top-info">0/1 已添加</View>
                 </View>
 
