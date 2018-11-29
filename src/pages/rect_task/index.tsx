@@ -53,7 +53,7 @@ export default class RectTask extends Component {
                 this.nextWork();
             } else {
                 Taro.showToast({
-                    title: '没有任务�
+                    title: '没有任务了'
                 })
             }
         })
@@ -390,7 +390,7 @@ export default class RectTask extends Component {
                     })
                     .catch(this.defaultErrorHandling)
             } else {
-                alert("请框中圆点标记目�);
+                alert("请框中圆点标记目标")
             }
         }
     }
@@ -489,8 +489,8 @@ export default class RectTask extends Component {
         let adjustBtn = this.isMobile ?
             (
                 <View className="adjustBtn">
-                    <Button className="btn" onClick={this.lessRatio}>�/Button>
-                    <Button className="btn" onClick={this.addRatio}>�/Button>
+                    <Button className="btn" onClick={this.lessRatio}>-</Button>
+                    <Button className="btn" onClick={this.addRatio}>+</Button>
                 </View>
             )
             :
@@ -498,7 +498,7 @@ export default class RectTask extends Component {
 
         return (
             <View className='rect'>
-                <NavBar title="方框任务" />
+                <NavBar title='方框任务' />
                 <View className='imgItem' id='workearea'>
                     {currentWork && currentWork.src && (
                         <Image src={currentWork.src} style={`width:${imageWidth}px;height:${imageHeight}px;`}></Image>
