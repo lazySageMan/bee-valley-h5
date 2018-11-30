@@ -12,30 +12,30 @@ export default class Login extends Component {
     }
 
     login = () => {
-        
-        phoneLogin(this.state.username, this.state.password).then((token) => {
-            if(!token) {
-                Taro.showToast({
-                    title: '登陆失败',
-                    mask: true
-                })
-            }else{
-                // TODO Report Taro Bug
-                
-                // Taro.showToast({
-                //     title: '登陆成功',
-                //     mask: true,
-                //     success: () => {
-                        Taro.setStorageSync('apiToken', token)
-                        Taro.setStorageSync('login', true)
-
-                        Taro.redirectTo({
-                            url: '/pages/index/index'
-                        })
-                //     }
-                // })
-            }
-        })
+        let {username, password} = this.state;
+        if(!username || !password){
+            Taro.showToast({
+                title: '账号或密码为空',
+                mask: true
+            })
+        }else{
+            phoneLogin(this.state.username, this.state.password).then((token) => {
+                if(!token) {
+                    Taro.showToast({
+                        title: '登陆失败',
+                        mask: true
+                    })
+                }else{
+                    
+                    Taro.setStorageSync('apiToken', token)
+                    Taro.setStorageSync('login', true)
+    
+                    Taro.redirectTo({
+                        url: '/pages/index/index'
+                    })
+                }
+            })
+        }
     }
 
     wechatLogin = () => {
@@ -74,18 +74,12 @@ export default class Login extends Component {
                         mask: true
                     })
                 }else{
-                    // Taro.showToast({
-                    //     title: '登陆成功',
-                    //     mask: true,
-                    //     success: () => {
                             Taro.setStorageSync('apiToken', token)
                             Taro.setStorageSync('login', true)
 
                             Taro.redirectTo({
                                 url: '/pages/index/index'
                             })
-                    //     }
-                    // })
                 }
             })
         }        

@@ -10,7 +10,7 @@ export default class NavBar extends Component {
     handleClick = () => {
         Taro.showModal({
             title: '提示',
-            content: '任务正在进行中，是否确定退出',
+            content: '是否确定退出',
             success: (res) => {
                 if (res.confirm) {
                     Taro.navigateBack({
