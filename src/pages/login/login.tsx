@@ -13,14 +13,11 @@ export default class Login extends Component {
 
     login = () => {
         let {username, password} = this.state;
-        // console.log(username, password)
         if(!username || !password){
             Taro.showToast({
                 title: '账号或密码为空',
                 mask: true
             })
-
-            return;
         }else{
             phoneLogin(this.state.username, this.state.password).then((token) => {
                 if(!token) {
@@ -29,17 +26,12 @@ export default class Login extends Component {
                         mask: true
                     })
                 }else{
-                    Taro.showToast({
-                        title: '登陆成功',
-                        mask: true,
-                        success: () => {
-                            Taro.setStorageSync('apiToken', token)
-                            Taro.setStorageSync('login', true)
+                    
+                    Taro.setStorageSync('apiToken', token)
+                    Taro.setStorageSync('login', true)
     
-                            Taro.navigateTo({
-                                url: 'pages/index/index'
-                            })
-                        }
+                    Taro.redirectTo({
+                        url: '/pages/index/index'
                     })
                 }
             })
@@ -51,7 +43,7 @@ export default class Login extends Component {
         let code = url.searchParams.get('code');
 
         if(!code){
-            var redirect_uri = encodeURIComponent('http://bee-valley.todview.com/v2/index.html');
+            var redirect_uri = encodeURIComponent('http://bee-valley.todview.com');
             var state = Math.ceil(Math.random()*1000);
             window.location = 'https://open.weixin.qq.com/connect/qrconnect?appid=wx325f7c60ccdd70ed&redirect_uri='+redirect_uri+'&response_type=code&scope=snsapi_login&state='+state+'#wechat_redirect';
         }
@@ -68,7 +60,7 @@ export default class Login extends Component {
             //console.log(this.isMobile)
     
         if(login === true) {
-            Taro.navigateTo({
+            Taro.redirectTo({
                 url: '/pages/index/index'
             })
         }
@@ -82,18 +74,12 @@ export default class Login extends Component {
                         mask: true
                     })
                 }else{
-                    Taro.showToast({
-                        title: '登陆成功',
-                        mask: true,
-                        success: () => {
                             Taro.setStorageSync('apiToken', token)
                             Taro.setStorageSync('login', true)
 
                             Taro.redirectTo({
                                 url: '/pages/index/index'
                             })
-                        }
-                    })
                 }
             })
         }        
@@ -110,7 +96,7 @@ export default class Login extends Component {
 
     toRegister = () => {
         Taro.redirectTo({
-            url: '/pages/index/register'
+            url: '/pages/signup/register'
         })
     }
 

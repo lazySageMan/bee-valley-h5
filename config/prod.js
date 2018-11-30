@@ -6,6 +6,6 @@ module.exports = {
   },
   weapp: {},
   h5: {
-  	publicPath: '/v2/',
+  	publicPath: '/',
   }
 }

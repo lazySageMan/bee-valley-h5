@@ -44,7 +44,7 @@ export default class PointReview extends Component {
             this.setState({
                 currentWork: nowWork
             })
-            Taro.hideLoading()
+            // Taro.hideLoading()
         } else {
             this.setState({currentWork: {}})
             this.fetchWorks();
@@ -73,36 +73,41 @@ export default class PointReview extends Component {
     }
 
     submitWork = () => {
+        let { currentWork } = this.state;
+        if (!currentWork.id) return;
         Taro.showLoading({
             title: 'loading',
             mask: true
         })
-        let { currentWork } = this.state;
-        if (!currentWork.id) return;
+        this.setState({currentWork: {}})
         submitReview(this.apiToken, currentWork.id, true)
         .then(() => this.nextWork())
         .catch(this.defaultErrorHandling)
     }
 
     rejectWork = () => {
+
+        let { currentWork } = this.state;
+        if (!currentWork.id) return;
         Taro.showLoading({
             title: 'loading',
             mask: true
         })
-        let { currentWork } = this.state;
-        if (!currentWork.id) return;
+        this.setState({currentWork: {}})
         submitReview(this.apiToken, currentWork.id, false)
         .then(() => this.nextWork())
         .catch(this.defaultErrorHandling)
     }
 
     cancelWork = () => {
+
+        let { currentWork } = this.state;
+        if (!currentWork.id) return;
         Taro.showLoading({
             title: 'loading',
             mask: true
         })
-        let { currentWork } = this.state;
-        if (!currentWork.id) return;
+        this.setState({currentWork: {}})
         cancelWork(this.apiToken, [currentWork.id])
         .then(() => this.nextWork())
         .catch(this.defaultErrorHandling)
@@ -232,6 +237,10 @@ export default class PointReview extends Component {
     render() {
 
         let { currentWork, lineData } = this.state;
+
+        if (currentWork && currentWork.src) {
+            Taro.hideLoading()
+        }
 
         if (currentWork.src && this.svg) {
 

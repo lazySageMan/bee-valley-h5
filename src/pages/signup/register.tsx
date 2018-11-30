@@ -29,7 +29,7 @@ export default class Register extends Component {
 
     toLogin = () => {
         Taro.redirectTo({
-            url: '/pages/index/login'
+            url: '/pages/login/login'
         })
     }
 

@@ -77,7 +77,7 @@ export default class RectReview extends Component {
             this.setState({
                 currentWork: currentWork
             })
-            Taro.hideLoading();
+            // Taro.hideLoading();
 
         } else {
             this.setState({currentWork: {}})
@@ -109,41 +109,49 @@ export default class RectReview extends Component {
 
     submitWork = () => {
         let { currentWork } = this.state;
-        Taro.showLoading({
-            title: 'loading',
-            mask: true
-        })
-        submitReview(this.apiToken, currentWork.id, true)
-            .then(() => this.nextWork())
-            .catch(this.defaultErrorHandling)
+        if (currentWork && currentWork.id) {
+            Taro.showLoading({
+                title: 'loading',
+                mask: true
+            })
+            this.setState({currentWork: {})
+            submitReview(this.apiToken, currentWork.id, true)
+                .then(() => this.nextWork())
+                .catch(this.defaultErrorHandling)            
+        }
+
     }
 
     rejectWork = () => {
         let { currentWork } = this.state;
-
-        Taro.showLoading({
-            title: 'loading',
-            mask: true
-        })
-        submitReview(this.apiToken, currentWork.id, false)
-        .then(() => this.nextWork())
-        .catch(this.defaultErrorHandling)
+        if (currentWork && currentWork.id) {
+            Taro.showLoading({
+                title: 'loading',
+                mask: true
+            })
+            this.setState({currentWork: {})
+            submitReview(this.apiToken, currentWork.id, false)
+            .then(() => this.nextWork())
+            .catch(this.defaultErrorHandling)
+        }
     }
 
     cancelWork = () => {
-        let { id } = this.state.currentWork;
+        let { currentWork } = this.state;
         let { apiToken } = this;
 
-        Taro.showLoading({
-            title: 'loading',
-            mask: true
-        })
-
-        cancelWork(apiToken, [id])
-            .then(() => {
-                this.nextWork();
+        if (currentWork && currentWork.id) {
+            Taro.showLoading({
+                title: 'loading',
+                mask: true
             })
-            .catch(this.defaultErrorHandling)
+            this.setState({currentWork: {})
+            cancelWork(apiToken, [currentWork.id])
+                .then(() => {
+                    this.nextWork();
+                })
+                .catch(this.defaultErrorHandling)            
+            }
     }
 
     defaultErrorHandling = () => {
@@ -153,30 +161,26 @@ export default class RectReview extends Component {
             })
     }
 
-    componentDidMount() {
+    componentWillMount() {
         this.packageId = this.$router.params.packageId;
-        this.svg = d3.select(".workImg").append("svg");
         let res = Taro.getSystemInfoSync()
         this.screenWidth = res.windowWidth;
         this.screenHeight = Math.floor(res.windowHeight * 0.85);
         this.isMobile = checkDveice(res)
+    }
 
-        if (process.env.TARO_ENV === 'weapp') {
-        } else if (process.env.TARO_ENV === 'h5') {
-        }
-        
+    componentDidMount() {
+        this.svg = d3.select(".workImg").append("svg");
         if (this.isMobile) {
             this.svg.on("touchmove", () => {
                 d3.event.preventDefault();
             }
         }
-
         Taro.showLoading({
-          title: 'loading',
-          mask: true
-        })
-        this.fetchWorks();
-
+                title: 'loading',
+                mask: true
+            })
+        this.fetchWorks()
     }
 
     componentWillUnmount() {
@@ -213,44 +217,51 @@ export default class RectReview extends Component {
 
     updateReact = (currentWork) => {
         let { rectPosition } = currentWork;
-        let rectData = {};
+        let rectData = [];
         if (rectPosition && rectPosition.xMin && rectPosition.yMin && rectPosition.xMax && rectPosition.yMax) {
-            rectData = {
+            rectData = [{
                 x: rectPosition.xMin,
                 y: rectPosition.yMin,
                 width: rectPosition.xMax - rectPosition.xMin,
                 height: rectPosition.yMax - rectPosition.yMin
-            }
+            }]
         }
-        let rect = this.svg.selectAll("rect");
-        let update = rect.data([rectData]);
-        update.exit().remove();
-        update.enter().append("rect")
-            .attr("fill", "yellow")
-            .attr("fill-opacity", 0.1)
-            .attr("stroke", "green")
-            .attr("stroke-width", "2px")
-            .attr("x", (d) => d.x)
-            .attr("y", (d) => d.y)
-            .attr("width", (d) => d.width)
-            .attr("height", (d) => d.height);
+        if (this.svg) {
+            let rect = this.svg.selectAll("rect");
+            let update = rect.data(rectData);
+            update.exit().remove();
+            update.enter().append("rect")
+                .attr("fill", "yellow")
+                .attr("fill-opacity", 0.1)
+                .attr("stroke", "green")
+                .attr("stroke-width", "2px")
+                .attr("x", (d) => d.x)
+                .attr("y", (d) => d.y)
+                .attr("width", (d) => d.width)
+                .attr("height", (d) => d.height);
 
-        update.attr("x", (d) => d.x)
-            .attr("y", (d) => d.y)
-            .attr("width", (d) => d.width)
-            .attr("height", (d) => d.height);
+            update.attr("x", (d) => d.x)
+                .attr("y", (d) => d.y)
+                .attr("width", (d) => d.width)
+                .attr("height", (d) => d.height);            
+            }
     }
 
     render() {
 
         let { currentWork } = this.state;
 
-        if (currentWork.src && this.svg) {
+        if (currentWork && currentWork.src) {
+            Taro.hideLoading()
+        }
+
+        if (currentWork.meta && this.svg) {
             this.svg
                 .attr("width", currentWork.meta.imageWidth)
                 .attr("height", currentWork.meta.imageHeight);
-            this.updateReact(currentWork);
         }
+
+        this.updateReact(currentWork)
 
         return (
             <View className='rect'>

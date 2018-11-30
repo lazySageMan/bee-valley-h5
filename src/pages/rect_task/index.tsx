@@ -19,7 +19,6 @@ export default class RectTask extends Component {
     }
 
     nextWork = () => {
-
         if (this.work.length > 0) {
             let currentWork = this.work.pop();
 
@@ -38,10 +37,9 @@ export default class RectTask extends Component {
                 ratio: 1
             })
 
-            Taro.hideLoading()
-
         } else {
             this.setState({ currentWork: null, ratio: 1 })
+
             this.fetchWorks();
         }
     }
@@ -380,18 +378,19 @@ export default class RectTask extends Component {
                 relativeAnchorY = (anchorY - yOffset)/ratio
             if (rectPosition && relativeAnchorX > rectPosition.xMin && relativeAnchorX < rectPosition.xMax && relativeAnchorY > rectPosition.yMin && relativeAnchorY < rectPosition.yMax) {
                 
-                let rectData = [{ x: rectPosition.xMin * ratio+ xOffset , y: rectPosition.yMin * ratio + yOffset }, { x: rectPosition.xMax * ratio + xOffset, y: rectPosition.yMax * ratio + yOffset }];
+                let rectData = [{ x: rectPosition.xMin * ratio + xOffset , y: rectPosition.yMin * ratio + yOffset }, { x: rectPosition.xMax * ratio + xOffset, y: rectPosition.yMax * ratio + yOffset }];
                 Taro.showLoading({
                     title: 'loading',
                     mask: true
                 })
+                this.setState({currentWork: null})
                 submitWork(apiToken, id, [rectData])
                     .then(() => {
                         this.nextWork();
                     })
                     .catch(this.defaultErrorHandling)
             } else {
-                alert("请框中圆点标记目标");
+                alert("请框中圆点标记目标")
             }
         }
     }
@@ -405,7 +404,7 @@ export default class RectTask extends Component {
                 title: 'loading',
                 mask: true
             })
-
+            this.setState({currentWork: null})
             cancelWork(apiToken, [currentWork.id])
                 .then(() => {
                     this.nextWork();
@@ -463,6 +462,10 @@ export default class RectTask extends Component {
         let imageWidth = 0,
             imageHeight = 0
 
+        if (currentWork && currentWork.src) {
+            Taro.hideLoading()
+        }
+
         if (this.svg && currentWork) {
             
             imageWidth = this.isMobile ? this.screenWidth : currentWork.meta.imageWidth,
@@ -486,8 +489,8 @@ export default class RectTask extends Component {
         let adjustBtn = this.isMobile ?
             (
                 <View className="adjustBtn">
-                    <Button className="btn" onClick={this.lessRatio}>－</Button>
-                    <Button className="btn" onClick={this.addRatio}>＋</Button>
+                    <Button className="btn" onClick={this.lessRatio}>-</Button>
+                    <Button className="btn" onClick={this.addRatio}>+</Button>
                 </View>
             )
             :
@@ -495,7 +498,7 @@ export default class RectTask extends Component {
 
         return (
             <View className='rect'>
-                <NavBar title="方框任务" />
+                <NavBar title='方框任务' />
                 <View className='imgItem' id='workearea'>
                     {currentWork && currentWork.src && (
                         <Image src={currentWork.src} style={`width:${imageWidth}px;height:${imageHeight}px;`}></Image>
