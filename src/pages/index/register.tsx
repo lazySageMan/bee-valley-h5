@@ -1,5 +1,5 @@
 import Taro, { Component } from '@tarojs/taro'
-import { View, Text, Button, Input, Image } from '@tarojs/components'
+import { View, Text, Button, Input } from '@tarojs/components'
 import { sendMobileCode, register } from '../../utils/beevalley'
 import './register.scss'
 
@@ -81,7 +81,15 @@ export default class Register extends Component {
     register = () =>{
         let { userPhone, userPasswd, userCode, userTime } = this.state
 
-        console.log(userPhone, userPasswd, userCode, userTime)
+        // console.log(userPhone, userPasswd, userCode, userTime)
+        if(userPhone === '' || userPasswd === '' || userCode === ''){
+            Taro.showToast({
+                title: '手机号，或者密码为空',
+                mask: true
+            })
+            return;
+        }
+
         if(userTime === "发送验证码" || userTime === "重新发送"){
             Taro.showToast({
                 title: '验证码已近过期，重新获取验证码',
