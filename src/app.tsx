@@ -15,6 +15,7 @@ class App extends Component {
   config: Config = {
     pages: [
       '/pages/login/login',
+      '/pages/data_acquistion_review/index',
       '/pages/signup/register',
       '/pages/index/index',
       '/pages/rect_task/index',

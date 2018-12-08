@@ -1,0 +1,41 @@
+.at-checkbox__option_wrap{
+    padding: 0;
+    border: none;
+    outline: 0;
+}
+
+.at-checkbox__option{
+    padding: 0;
+    border: none;
+    outline: 0;
+    
+}
+
+.at-checkbox__option_container{
+    display: flex;
+    align-items: center;
+    background: transparent;
+    display: flex;
+}
+
+.at-checkbox{
+    background: transparent;
+    display: inline;
+}
+
+.data-wrap .bottom-btn {
+    display: flex;
+    justify-content: space-around;
+    .btn1{
+        width: 35vw;
+        height: 7vh;
+        line-height: 7vh;
+        outline: none;
+        border: none;
+        background: red;
+        color: #fff;
+    }
+    .btn1:last-child{
+        background: #FFCC00;
+    }
+}
