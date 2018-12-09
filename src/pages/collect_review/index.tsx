@@ -85,7 +85,8 @@ export default class reviewDAata extends Taro.Component {
     }
 
     submitWork = () => {
-        if (!this.reviewId) return;
+        let rejected = this.state.images.filter(item => item.checked.length > 0).map(item => item.id)
+        if (!this.reviewId || rejected.length > 0) return;
         Taro.showLoading({
             title: 'loading',
             mask: true
