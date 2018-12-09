@@ -1,3 +1,3 @@
 module.exports = {
-    host: 'https://api.todview.com/v1/'
+    host: 'https://api-uat.todview.com/v1/'
 }

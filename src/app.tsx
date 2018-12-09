@@ -15,14 +15,14 @@ class App extends Component {
   config: Config = {
     pages: [
       '/pages/login/login',
-      '/pages/data_acquistion_review/index',
       '/pages/signup/register',
       '/pages/index/index',
       '/pages/rect_task/index',
       '/pages/rect_review/index',
       '/pages/count_task/index',
       '/pages/count_review/index',
-      '/pages/data_acquistion_task/index',
+      '/pages/collect_task/index',
+      '/pages/collect_review/index'
     ],
     window: {
       backgroundTextStyle: 'light',

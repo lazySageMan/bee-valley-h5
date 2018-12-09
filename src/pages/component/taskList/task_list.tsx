@@ -11,9 +11,9 @@ export default class TaskList extends Component {
     render() {
         let { taskList } = this.props;
 
-        let newTaskList = this.props.isMobile ? taskList.concat([{packageId: 'data_acquistion', typeCode: 'data_acquistion', packageName: '测试', typeName: '老人图像采集', priceRange: '10'}]) : taskList
+        // let newTaskList = this.props.isMobile ? taskList.concat([{packageId: 'data_acquistion', typeCode: 'data_acquistion', packageName: '测试', typeName: '老人图像采集', priceRange: '10'}]) : taskList
 
-        let taskItems = newTaskList.map((item) => {
+        let taskItems = taskList.map((item) => {
             return (
                 <View
                   key={item.packageId + '_' + item.typeCode}

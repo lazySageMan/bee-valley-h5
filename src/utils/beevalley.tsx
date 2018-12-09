@@ -54,6 +54,16 @@ function downloadWorkFile(token, workId, options) {
     }).then(handleRes)
 }
 
+function downloadReviewFiles(token, reviewId, fileId) {
+    return Taro.request({
+        url: `${host}reviews/${reviewId}/files/${fileId}`,
+        method: 'GET',
+        header: {
+            'Authorization': 'Bearer ' + token
+        },
+        responseType: 'arraybuffer'
+    }).then(handleRes)
+}
 function cancelWork(token, workId) {
     return Taro.request({
         url: `${host}works/${workId.join(',')}/cancel`,
@@ -79,6 +89,10 @@ function submitWork(token, workId, result) {
             'Authorization': 'Bearer ' + token
         }
     }).then(handleRes)
+}
+
+function submitWorkFile(token, workId, result) {
+    // TODO
 }
 
 function fetchReview(token, type, num, packageId) {
@@ -110,13 +124,14 @@ function downloadReviewFile(token, reviewId, options) {
     }).then(handleRes)
 }
 
-function submitReview(token, reviewId, result) {
+function submitReview(token, reviewId, result, detail) {
     return Taro.request({
         url: `${host}reviews`,
         method: 'POST',
         data: {
             'id': reviewId,
-            'result': result
+            'result': result,
+            'detail': detail
         },
         header: {
             'content-type': 'application/json',
@@ -220,6 +235,7 @@ export {
     downloadWorkFile, 
     cancelWork, 
     submitWork, 
+    submitWorkFile,
     fetchReview, 
     downloadReviewFile, 
     submitReview, 
@@ -229,5 +245,6 @@ export {
     listAuthorizedReview, 
     checkDveice,
     sendMobileCode,
-    register
+    register,
+    downloadReviewFiles
 };

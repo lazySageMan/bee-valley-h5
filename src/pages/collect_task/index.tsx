@@ -3,24 +3,30 @@ import { View, Image, Text } from '@tarojs/components'
 import { AtButton, AtIcon } from 'taro-ui'
 import NavBar from '../component/navBar/index'
 import './index.scss'
-import img1 from '../../image/1.jpg'
-import img2 from '../../image/2.jpg'
-import img3 from '../../image/3.jpg'
-import img4 from '../../image/4.jpg'
-import img5 from '../../image/5.jpg'
-import img6 from '../../image/6.jpg'
-import img7 from '../../image/7.jpg'
-import img8 from '../../image/8.jpg'
-import img9 from '../../image/9.jpg'
-import img10 from '../../image/10.jpg'
-import NavBar from '../../../.temp/pages/component/navBar/index';
+
+import { fetchWork, submitWork } from '../../utils/beevalley'
+
+
 export default class DataAcquistion extends Taro.Component {
+
     constructor() {
         super(...arguments)
+        this.apiToken = Taro.getStorageSync('apiToken');
+    }
 
-        this.state = {
-            imgArr: [{ img: img1 }, { img: img2 }, { img: img3 }, { img: img4 }, { img: img5 }, { img: img6 }, { img: img7 }, { img: img8 }, { img: img9 }, { img: img10 }]
-        }
+    componentDidMount() {
+        this.packageId = this.$router.params.packageId
+        fetchWork(this.apiToken, 'collect', 1, this.packageId).then(res => {
+          if (res.length > 0) {
+            // TODO fix potential bug here
+            this.workId = res[0].id
+            this.setState({sampleImages: res[0].meta.samples, selectedImages: new Array(res[0].meta.samples.length)})
+          } else {
+            Taro.showToast({
+                title: '没有任务了'
+            })
+          }
+        })
     }
 
     getImg = (index, event) => {
@@ -30,42 +36,30 @@ export default class DataAcquistion extends Taro.Component {
             file = files[0];
             var reader = new FileReader();
             reader.onload = (ev) => {
-                let { imgArr } = this.state;
-
-                imgArr.forEach((item, i) => {
-                    if (i === index) {
-                        item.showImg = ev.target.result;
-                    }
-                })
-                this.setState({
-                    imgArr: imgArr
-                })
-
+                this.setState(prevState => {
+                        let selectedImages = prevState.selectedImages
+                        selectedImages[index] = ev.target.result
+                        return { selectedImages: selectedImages }
+                    })
             };
             reader.readAsDataURL(file);
         }
-
     }
 
     delete = (index) => {
-        let { imgArr } = this.state;
-        imgArr.forEach((item, i) => {
-            if (index === i) {
-                item.showImg = null
-            }
-        })
-
-        this.setState({
-            imgArr: imgArr
-        })
+        this.setState(prevState => {
+                let selectedImages = prevState.selectedImages
+                selectedImages[index] = null
+                return { selectedImages: selectedImages }
+            })
     }
 
-    showOne = (mode, index) => {
-        if (mode) {
+    showOne = (selectedImage, index) => {
+        if (selectedImage) {
             return (
                 <View className="showImg">
                     <AtIcon size="20" value="close-circle" color="red" onClick={this.delete.bind(this, index)}></AtIcon>
-                    <Image src={mode} className="img"></Image>
+                    <Image src={selectedImage} className="img"></Image>
                 </View>
             )
         } else {
@@ -79,28 +73,35 @@ export default class DataAcquistion extends Taro.Component {
         }
     }
 
+    submitWork = () => {
+        
+    }
+
     render() {
 
-        let { imgArr } = this.state;
-        let showImg = imgArr.map((item, index) => {
-            return (
-                <View className="show-item">
-                    <View className="eg img-item">
-                        <View className="eg-item">示例</View>
-                        <Image src={item.img} className="img"></Image>
+        let { sampleImages, selectedImages } = this.state;
+        let sampleImageView
+        if (sampleImages && selectedImages) {
+            sampleImageView = sampleImages.map((item, index) => {
+                return (
+                    <View className="show-item">
+                        <View className="eg img-item">
+                            <View className="eg-item">示例</View>
+                            <Image src={item} className="img"></Image>
+                        </View>
+                        <View className="img-item">
+                            {this.showOne(selectedImages[index], index)}
+                        </View>
                     </View>
-                    <View className="img-item">
-                        {this.showOne(item.showImg, index)}
-                    </View>
-                </View>
 
-            )
-        })
+                )
+            })
+        }
+
         return (
             <View className="data-wrap">
                 <View className="main-content">
                     <View className="task_demand">
-                        <View className="panel__title">第1步</View>
                         <View className="title">任务要求</View>
                         <View className="content-list">
                             <View className="list-item">1 每组图片10张以上，同一组目标对象必须是同一个老年人；</View>
@@ -111,9 +112,7 @@ export default class DataAcquistion extends Taro.Component {
                             <View className="list-item">6 所有图片的人脸角度差异性越大越好（比如在保证五官清晰的前提下，有不同角度的侧脸、低头、抬头等）；</View>
                             <View className="list-item">7 同一张图片内若有多张人脸，目标人脸必须最大。</View>
                         </View>
-                        <View className="content-img">
-                            <Image src={img1} className="img"></Image>
-                        </View>
+
                     </View>
                 </View>
                 <View className="user-photo">
@@ -123,7 +122,7 @@ export default class DataAcquistion extends Taro.Component {
                             <Text className="font">拍摄第一张照片</Text>
                         </View>
                         <View className="take-photo">
-                            {showImg}
+                            {sampleImageView}
                         </View>
                         <View className="info">请拍摄10组照片</View>
                         <View className="cenggao"></View>
@@ -136,7 +135,7 @@ export default class DataAcquistion extends Taro.Component {
                 </View>
 
                 <View className="bottom-btn">
-                    <AtButton type="primary" circle className="btn">提交审核</AtButton>
+                    <AtButton type="primary" circle className="btn" onClick={this.submitWork}>提交审核</AtButton>
                 </View>
             </View>
         )

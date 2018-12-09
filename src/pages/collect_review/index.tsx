@@ -3,70 +3,131 @@ import { View, Image, Text } from '@tarojs/components'
 import { AtButton, AtIcon, AtCheckbox } from 'taro-ui'
 import NavBar from '../component/navBar/index'
 import './index.scss'
-import img1 from '../../image/1.jpg'
-import img2 from '../../image/2.jpg'
-import img3 from '../../image/3.jpg'
-import img4 from '../../image/4.jpg'
-import img5 from '../../image/5.jpg'
-import img6 from '../../image/6.jpg'
-import img7 from '../../image/7.jpg'
-import img8 from '../../image/8.jpg'
-import img9 from '../../image/9.jpg'
-import img10 from '../../image/10.jpg'
-import NavBar from '../../../.temp/pages/component/navBar/index';
-import { fetchWork } from '../../utils/beevalley'
+import { fetchReview, downloadReviewFiles, submitReview } from '../../utils/beevalley'
 export default class reviewDAata extends Taro.Component {
     constructor() {
         super(...arguments)
 
         this.state = {
-            imgArr: [{ img: img1 }, { img: img2 }, { img: img3 }, { img: img4 }, { img: img5 }, { img: img6 }, { img: img7 }, { img: img8 }, { img: img9 }, { img: img10 }],
-            
-            checkedList: ['list1']
+            images: []
         }
 
         this.checkboxOption = [{
-                value: 'list1',
-                label: '选择',
+                value: 'checked',
+                label: '不合格',
             }
         ]
+
+        this.apiToken = Taro.getStorageSync('apiToken');
+
     }
 
-    handleChange (value) {
-        this.setState({
-            checkedList: value
+    handleChange (index, value) {
+        this.setState(prevState => {
+            let updated = prevState.images
+            updated[index].checked = value
+            return {images: updated}
         })
     }
 
     componentDidMount () {
+        this.packageId = this.$router.params.packageId
+        Taro.showLoading({
+            title: 'loading',
+            mask: true
+        })
+        this.nextWork()
+    }
 
-        // fetchWork(this.apiToken, 'collect', 1 ,this.packageId).then(res => {
-        //     console.log(res)
-        // })
+    defaultErrorHandling = () => {
+      Taro.hideLoading()
+      Taro.navigateBack({
+              delta: 1
+          })
+    }
+
+    nextWork = () => {
+
+        this.setState({images: []})
+        this.reviewId = null
+        fetchReview(this.apiToken, 'collect', 1 ,this.packageId).then(res => {
+            // console.log(res)
+            if (res.length > 0) {
+                let review = res[0],
+                sampleImages = review.meta.samples,
+                imageFiles = review.work.result
+                this.reviewId = review.id
+                imageFiles.forEach((item, index) => {
+                    downloadReviewFiles(this.apiToken, review.id, item).then(res => {
+                        // TODO
+                        let imgBase64 = 'data:image/jpeg;base64,' + Taro.arrayBufferToBase64(new Uint8Array(res));
+                        this.setState(prevState => {
+                            let updated = prevState.images
+                            updated[index].candidate = imgBase64
+                            updated[index].id = item
+                            return {images: updated}
+                        })
+                    })                    
+                })
+                let images = sampleImages.map((item) => {
+                    return {sample: item, checked: []}
+                })
+                this.setState({images: images})
+                Taro.hideLoading()
+            } else {
+                Taro.hideLoading()
+                Taro.showToast({
+                    title: '没有任务了'
+                })
+            }
+        })
+
+    }
+
+    submitWork = () => {
+        if (!this.reviewId) return;
+        Taro.showLoading({
+            title: 'loading',
+            mask: true
+        })
+        submitReview(this.apiToken, this.reviewId, true)
+        .then(() => this.nextWork())
+        .catch(this.defaultErrorHandling)
+    }
+
+    rejectWork = () => {
+        let rejected = this.state.images.filter(item => item.checked.length > 0).map(item => item.id)
+        if (!this.reviewId || rejected.length === 0) return;
+        Taro.showLoading({
+            title: 'loading',
+            mask: true
+        })
+        submitReview(this.apiToken, this.reviewId, false, rejected)
+        .then(() => this.nextWork())
+        .catch(this.defaultErrorHandling)
     }
 
     render() {
 
-        let { imgArr } = this.state;
-        let showImg = imgArr.map((item, index) => {
+        let { images } = this.state;
+        let showImg = images.map((item, index) => {
             return (
                 <View className="show-item">
                     <View className="eg img-item">
                         <View className="eg-item">示例</View>
-                        <Image src={item.img} className="img"></Image>
+                        <Image src={item.sample} className="img"></Image>
                     </View>
                     <View className="img-item">
                         <View className="showImg">
                             <AtCheckbox 
                                 options={this.checkboxOption}
-                                selectedList={this.state.checkedList}
-                                onChange={this.handleChange.bind(this)}
+                                selectedList={item.checked}
+                                onChange={this.handleChange.bind(this, index)}
                             />
-                            <Image src={item.img} className="img"></Image>
+                            <Image src={item.candidate} className="img"></Image>
                         </View>
                     </View>
                 </View>
-
             )
         })
         return (
@@ -84,9 +145,7 @@ export default class reviewDAata extends Taro.Component {
                             <View className="list-item">6 所有图片的人脸角度差异性越大越好（比如在保证五官清晰的前提下，有不同角度的侧脸、低头、抬头等）；</View>
                             <View className="list-item">7 同一张图片内若有多张人脸，目标人脸必须最大。</View>
                         </View>
-                        <View className="content-img">
-                            <Image src={img1} className="img"></Image>
-                        </View>
+
                     </View>
                 </View>
                 <View className="user-photo">
@@ -109,8 +168,8 @@ export default class reviewDAata extends Taro.Component {
                 </View>
 
                 <View className="bottom-btn">
-                    <AtButton type="primary" circle className="btn1">通过</AtButton>
-                    <AtButton type="primary" circle className="btn1">驳回</AtButton>
+                    <AtButton type="primary" circle className="btn1" onClick={this.submitWork}>通过</AtButton>
+                    <AtButton type="primary" circle className="btn1" onClick={this.rejectWork}>驳回</AtButton>
                 </View>
             </View>
         )
