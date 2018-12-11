@@ -10,7 +10,13 @@ export default class reviewDAata extends Taro.Component {
 
         this.state = {
             images: [],
-            details: []
+            details: [],
+            showModeImg: {
+                src: '',
+                width: '',
+                height: '',
+                isOpened: false
+            }
         }
 
         this.checkboxOption = [{
@@ -120,15 +126,56 @@ export default class reviewDAata extends Taro.Component {
         .catch(this.defaultErrorHandling)
     }
 
+    onClose = () => {
+        let {showModeImg} = this.state;
+        showModeImg.isOpened = false
+        document.body.style.overflow = ""
+        this.setState({
+            showModeImg: showModeImg
+        })
+    }
+
+    showImg = (item) => {
+        let {showModeImg} = this.state;
+        showModeImg.src = item.candidate;
+        showModeImg.width = item.width;
+        showModeImg.height = item.height;
+        showModeImg.isOpened = true;
+        document.body.style.overflow = "hidden"
+        this.setState({
+            showModeImg: showModeImg
+        })
+    }
+
+    imgLoad = (index, ev) => {
+
+        let {images} = this.state;
+
+        if(ev.currentTarget.naturalHeight > 1080 || ev.currentTarget.naturalWidth > 1920){
+            let ratio = ev.currentTarget.naturalWidth / ev.currentTarget.naturalHeight;
+
+            images[index].width = 450;
+            images[index].height = 450 / ratio;
+        }else{
+            images[index].width = ev.currentTarget.naturalWidth;
+            images[index].height = ev.currentTarget.naturalHeight;
+        }
+        
+        this.setState({
+            images: images
+        })
+
+    }
+
     render() {
 
-        let { images, details } = this.state;
+        let { images, details, showModeImg } = this.state;
         let showImg = images.map((item, index) => {
             return (
                 <View className="show-item">
                     <View className="eg img-item">
                         <View className="eg-item">示例</View>
-                        <Image src={item.sample} className="img"></Image>
+                        <Image src={item.sample} className="img" mode="aspectFit"></Image>
                     </View>
                     <View className="img-item">
                         <View className="showImg">
@@ -137,7 +184,13 @@ export default class reviewDAata extends Taro.Component {
                                 selectedList={item.checked}
                                 onChange={this.handleChange.bind(this, index)}
                             />
-                            <Image src={item.candidate} className="img"></Image>
+                            <Image 
+                                src={item.candidate} 
+                                className="img" 
+                                mode="aspectFit" 
+                                onLoad={this.imgLoad.bind(this, index)}
+                                onClick={ this.showImg.bind(this, item)}
+                            ></Image>
                         </View>
                     </View>
                 </View>
@@ -145,6 +198,13 @@ export default class reviewDAata extends Taro.Component {
         })
         return (
             <View className="data-wrap">
+                {showModeImg.isOpened && (
+                    <View className="hide-wrap" onClick={this.onClose}>
+                        <View className="img-wrap" style={`width:${showModeImg.width}PX;height:${showModeImg.height}PX;margin:auto;`}>
+                            <Image src={showModeImg.src} style={`width:${showModeImg.width}PX;height:${showModeImg.height}PX`}></Image>
+                        </View>
+                    </View>
+                )}
                 <View className="main-content">
                     <View className="task_demand">
                         <View className="panel__title">第1步</View>
@@ -168,7 +228,7 @@ export default class reviewDAata extends Taro.Component {
                 <View className="cengHeight"></View>
                 <View className="top">
                     <NavBar title="老人图像审核"></NavBar>
-                    <View className="top-info">0/1 已添加</View>
+                    
                 </View>
 
                 <View className="bottom-btn">
