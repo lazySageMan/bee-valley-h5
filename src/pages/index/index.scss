@@ -1,7 +1,13 @@
 //pc端
-@media screen and (min-width:992px) {
-    .at-tabs{
-        margin: auto;
-        width: 992px;
-    }
+// @media screen and (min-width:992px) {
+//     .at-tabs{
+//         margin: auto;
+//         width: 992px;
+//     }
+// }
+
+.list-wrap{
+    max-width: 640PX;
+    margin: auto;
+    position: relative;
 }
