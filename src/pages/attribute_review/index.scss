@@ -1,0 +1,29 @@
+.showAttr{
+    min-width: 200px;
+    height: auto;
+    position: absolute;
+    right: 0;
+    top: 0;
+    font-size: 25px;
+    line-height: 40px;
+    color: red;
+    background: #fff;
+    margin-top: 20px;
+    margin-right: 20px;
+    .itemAttribute{
+        text-indent: 10px;
+    }
+}
+
+.imgItem1{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 90vw;
+    height: 93vh;
+    overflow: scroll;
+    background: gray;
+    position: absolute;
+    top: 7vh;
+    left: 0;
+}
