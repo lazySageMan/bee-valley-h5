@@ -22,13 +22,16 @@ export default class PointTask extends Component {
     }
 
     componentWillUnmount() {
-        let { currentWork } = this.state;
-        if(currentWork.id){
-            cancelWork(this.apiToken, [currentWork.id]).then(() => {
-            }).catch(() => {
-                this.defaultErrorHandling()
-            })
+        if (this.work) {
+            let toCancel = this.work.map(w => w.id)
+            if (this.state.currentWork && this.state.currentWork.id) {
+                toCancel.push(this.state.currentWork.id)
+            }
+            if (toCancel.length > 0) {
+                cancelWork(this.apiToken, toCancel)
+            }
         }
+        
     }
 
     defaultErrorHandling = () => {
