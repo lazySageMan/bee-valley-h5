@@ -21,6 +21,16 @@ export default class PointTask extends Component {
         this.nextReview();
     }
 
+    componentWillUnmount() {
+        let { currentWork } = this.state;
+        if(currentWork.id){
+            cancelWork(this.apiToken, [currentWork.id]).then(() => {
+            }).catch(() => {
+                this.defaultErrorHandling()
+            })
+        }
+    }
+
     defaultErrorHandling = () => {
         Taro.hideLoading()
         Taro.navigateBack({
