@@ -2,7 +2,7 @@ import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Image } from '@tarojs/components'
 import * as d3 from 'd3'
 import { fetchReview, downloadReviewFile, submitReview, cancelWork, checkDveice } from '../../utils/beevalley'
-import NavBar from '../component/navBar/index'
+import NavBar from '../../components/navBar/index'
 import './index.scss'
 
 export default class RectReview extends Component {
@@ -114,7 +114,7 @@ export default class RectReview extends Component {
                 title: 'loading',
                 mask: true
             })
-            this.setState({currentWork: {})
+            this.setState({currentWork: {}})
             submitReview(this.apiToken, currentWork.id, true)
                 .then(() => this.nextWork())
                 .catch(this.defaultErrorHandling)            
@@ -129,7 +129,7 @@ export default class RectReview extends Component {
                 title: 'loading',
                 mask: true
             })
-            this.setState({currentWork: {})
+            this.setState({currentWork: {}})
             submitReview(this.apiToken, currentWork.id, false)
             .then(() => this.nextWork())
             .catch(this.defaultErrorHandling)
@@ -145,7 +145,7 @@ export default class RectReview extends Component {
                 title: 'loading',
                 mask: true
             })
-            this.setState({currentWork: {})
+            this.setState({currentWork: {}})
             cancelWork(apiToken, [currentWork.id])
                 .then(() => {
                     this.nextWork();
@@ -174,7 +174,7 @@ export default class RectReview extends Component {
         if (this.isMobile) {
             this.svg.on("touchmove", () => {
                 d3.event.preventDefault();
-            }
+            })
         }
         Taro.showLoading({
                 title: 'loading',
@@ -265,7 +265,7 @@ export default class RectReview extends Component {
 
         return (
             <View className='rect'>
-                <NavBar title="方框审核" />
+                <NavBar title='方框审核' />
                 <View className='imgItem' id='workearea'>
                     {currentWork.src && (
                         <Image src={currentWork.src} style={`width:${currentWork.meta.imageWidth}px;height:${currentWork.meta.imageHeight}px;`}></Image>

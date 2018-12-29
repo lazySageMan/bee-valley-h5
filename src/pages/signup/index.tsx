@@ -1,7 +1,7 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Text, Button, Input } from '@tarojs/components'
 import { sendMobileCode, register } from '../../utils/beevalley'
-import './register.scss'
+import './index.scss'
 
 export default class Register extends Component {
     constructor(props) {
@@ -148,19 +148,19 @@ export default class Register extends Component {
         let { userPhone, userPasswd, userCode, userTime, bgcolor } = this.state
 
         return (
-            <View className="register-wrap">
-                <Text className="title">用户注册</Text>
+            <View className='register-wrap'>
+                <Text className='title'>用户注册</Text>
                 <Input className='inputText' type='text' value={userPhone} placeholder='手机号' onChange={this.handleUsernameChange} />
                 <Input className='inputText' type='password' value={userPasswd} placeholder='密码' onChange={this.handlePasswordChange} />
-                <View className="identCode">
+                <View className='identCode'>
                     <Input className='code' type='text' value={userCode} placeholder='验证码' onChange={this.changeCode} />
-                    <Button className="codeBtn" style={`background:${bgcolor}`} onClick={this.sendCode}>{userTime}</Button>
+                    <Button className='codeBtn' style={`background:${bgcolor}`} onClick={this.sendCode}>{userTime}</Button>
                 </View>
                 <View className='viewText'>
                     <Text>忘记密码？</Text>
                     <Text>已有账号？<Text className='onLogin' onClick={this.toLogin}>立即登录</Text></Text>
                 </View>
-                <Button className="register-btn" onClick={this.register}>立即注册</Button>
+                <Button className='register-btn' onClick={this.register}>立即注册</Button>
             </View>
         )
     }

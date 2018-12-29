@@ -74,6 +74,10 @@ const config = {
   h5: {
     publicPath: '/',
     staticDirectory: 'static',
+    output: {
+      filename: 'js/[name].[hash:8].js',
+      chunkFilename: 'js/[name].[chunkhash:8].js'
+    },
     // devServer:{
     //   host: '192.168.43.80',  //修改成你局域网ip 或localhost
     //   port: 8080,
@@ -84,7 +88,13 @@ const config = {
           enable: true
         }
       }
+    },
+
+    miniCssExtractPluginOption: {
+      filename: 'css/[name].[hash:8].css',
+      chunkFilename: 'css/[name].[chunkhash:8].css'
     }
+
   }
 }
 

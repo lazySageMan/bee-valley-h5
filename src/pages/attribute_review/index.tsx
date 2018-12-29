@@ -1,7 +1,7 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Image } from '@tarojs/components'
 import { fetchReview, downloadReviewFile, submitReview, cancelWork } from '../../utils/beevalley'
-import NavBar from '../component/navBar/index'
+import NavBar from '../../components/navBar/index'
 import './index.scss'
 
 export default class PointTask extends Component {
@@ -141,9 +141,9 @@ export default class PointTask extends Component {
         let showAttr = null;
         if (currentWork.src) {
 
-            showAttr = currentWork.work.result.map((v) => {
+            showAttr = currentWork.work.result.map((v, index) => {
                 return (
-                    <View className="itemAttribute">
+                    <View key={index}  className='itemAttribute'>
                         {`${v.attr}: ${v.value}`}
                     </View>
                 )
@@ -155,10 +155,10 @@ export default class PointTask extends Component {
                 <NavBar title='属性标注审核' />
                 <View className='imgItem1'>
                     {currentWork && currentWork.src && (
-                        <Image src={currentWork.src} mode="widthFix" style={`width:${currentWork.meta.imageWidth}PX;height:${currentWork.meta.imageHeight}PX;`}></Image>
+                        <Image src={currentWork.src} mode='widthFix' style={`width:${currentWork.meta.imageWidth}PX;height:${currentWork.meta.imageHeight}PX;`}></Image>
                     )
                     }
-                    <View className="showAttr">
+                    <View className='showAttr'>
                         {showAttr}
                     </View>
                 </View>

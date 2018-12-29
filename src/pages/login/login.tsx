@@ -1,7 +1,6 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Text, Button, Input, Image } from '@tarojs/components'
-import { phoneLogin, wechatLogin } from '../../utils/beevalley'
-import { checkDveice } from '../../utils/beevalley'
+import { phoneLogin, wechatLogin, checkDveice } from '../../utils/beevalley'
 import './login.scss'
 import wechat from '../../image/wechat.png'
 
@@ -96,7 +95,7 @@ export default class Login extends Component {
 
     toRegister = () => {
         Taro.redirectTo({
-            url: '/pages/signup/register'
+            url: '/pages/signup/index'
         })
     }
 
@@ -107,7 +106,7 @@ export default class Login extends Component {
                 <Text className='title'>用户登录</Text>
                 <Input className='inputText' type='text' placeholder='手机号/邮箱/用户名' onChange={this.handleUsernameChange} />
                 <Input className='inputText' type='password' placeholder='密码' onChange={this.handlePasswordChange} />
-                <Button className="btn" onClick={this.login}>立即登录</Button>
+                <Button className='btn' onClick={this.login}>立即登录</Button>
                 <View className='viewText'>
                     <Text>忘记密码？</Text>
                     <Text>还没有账号？<Text className='onResiges' onClick={this.toRegister}>立即注册</Text></Text>

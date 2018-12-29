@@ -1,7 +1,7 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Image } from '@tarojs/components'
 import * as d3 from 'd3'
-import NavBar from '../component/navBar/index'
+import NavBar from '../../components/navBar/index'
 import { fetchWork, downloadWorkFile, cancelWork, submitWork, checkDveice } from '../../utils/beevalley'
 import './index.scss'
 
@@ -488,9 +488,9 @@ export default class RectTask extends Component {
 
         let adjustBtn = this.isMobile ?
             (
-                <View className="adjustBtn">
-                    <Button className="btn" onClick={this.lessRatio}>-</Button>
-                    <Button className="btn" onClick={this.addRatio}>+</Button>
+                <View className='adjustBtn'>
+                    <Button className='btn' onClick={this.lessRatio}>-</Button>
+                    <Button className='btn' onClick={this.addRatio}>+</Button>
                 </View>
             )
             :

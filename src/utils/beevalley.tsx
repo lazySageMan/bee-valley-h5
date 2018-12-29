@@ -91,9 +91,9 @@ function submitWork(token, workId, result) {
     }).then(handleRes)
 }
 
-function submitWorkFile(token, workId, result) {
-    // TODO
-}
+// function submitWorkFile(token, workId, result) {
+//     // TODO
+// }
 
 function fetchReview(token, type, num, packageId) {
     return Taro.request({
@@ -235,7 +235,7 @@ export {
     downloadWorkFile, 
     cancelWork, 
     submitWork, 
-    submitWorkFile,
+    // submitWorkFile,
     fetchReview, 
     downloadReviewFile, 
     submitReview, 

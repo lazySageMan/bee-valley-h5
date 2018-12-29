@@ -1,10 +1,11 @@
 import Taro from '@tarojs/taro'
 import { View, Image, Text } from '@tarojs/components'
 import { AtButton, AtIcon, AtCheckbox } from 'taro-ui'
-import NavBar from '../component/navBar/index'
+import NavBar from '../../components/navBar/index'
 import './index.scss'
 import { fetchReview, downloadReviewFiles, submitReview } from '../../utils/beevalley'
-export default class reviewDAata extends Taro.Component {
+
+export default class reviewData extends Taro.Component {
     constructor() {
         super(...arguments)
 
@@ -65,9 +66,9 @@ export default class reviewDAata extends Taro.Component {
                 imageFiles = review.work.result
                 this.reviewId = review.id
                 imageFiles.forEach((item, index) => {
-                    downloadReviewFiles(this.apiToken, review.id, item).then(res => {
+                    downloadReviewFiles(this.apiToken, review.id, item).then(fileRes => {
                         // TODO
-                        let imgBase64 = 'data:image/jpeg;base64,' + Taro.arrayBufferToBase64(new Uint8Array(res));
+                        let imgBase64 = 'data:image/jpeg;base64,' + Taro.arrayBufferToBase64(new Uint8Array(fileRes));
                         this.setState(prevState => {
                             let updated = prevState.images
                             updated[index].candidate = imgBase64
@@ -89,17 +90,6 @@ export default class reviewDAata extends Taro.Component {
             }
         })
 
-    }
-
-    getMessage = (details) => {
-        return details.map((item, index) => {
-            return (
-                <View className="content-list">
-                    <View className="list-item">{index + 1} {item}；</View>
-                </View>
-            )
-        })
-        
     }
 
     submitWork = () => {
@@ -169,27 +159,39 @@ export default class reviewDAata extends Taro.Component {
 
     render() {
 
+
+        let getMessage = (details) => {
+            return details.map((item, index) => {
+                return (
+                    <View key={index} className='content-list'>
+                        <View className='list-item'>{index + 1} {item}；</View>
+                    </View>
+                )
+            })
+            
+        }
+
         let { images, details, showModeImg } = this.state;
         let showImg = images.map((item, index) => {
             return (
-                <View className="show-item">
-                    <View className="eg img-item">
-                        <View className="eg-item">示例</View>
-                        <Image src={item.sample} className="img" mode="aspectFit"></Image>
+                <View key={index} className='show-item'>
+                    <View className='eg img-item'>
+                        <View className='eg-item'>示例</View>
+                        <Image src={item.sample} className='img' mode='aspectFit'></Image>
                     </View>
-                    <View className="img-item">
-                        <View className="showImg">
+                    <View className='img-item'>
+                        <View className='showImg'>
                             <AtCheckbox 
-                                options={this.checkboxOption}
-                                selectedList={item.checked}
-                                onChange={this.handleChange.bind(this, index)}
+                              options={this.checkboxOption}
+                              selectedList={item.checked}
+                              onChange={this.handleChange.bind(this, index)}
                             />
                             <Image 
-                                src={item.candidate} 
-                                className="img" 
-                                mode="aspectFit" 
-                                onLoad={this.imgLoad.bind(this, index)}
-                                onClick={ this.showImg.bind(this, item)}
+                              src={item.candidate} 
+                              className='img' 
+                              mode='aspectFit' 
+                              onLoad={this.imgLoad.bind(this, index)}
+                              onClick={this.showImg.bind(this, item)}
                             ></Image>
                         </View>
                     </View>
@@ -197,43 +199,43 @@ export default class reviewDAata extends Taro.Component {
             )
         })
         return (
-            <View className="data-wrap">
+            <View className='data-wrap'>
                 {showModeImg.isOpened && (
-                    <View className="hide-wrap" onClick={this.onClose}>
-                        <View className="img-wrap" style={`width:${showModeImg.width}PX;height:${showModeImg.height}PX;margin:auto;`}>
+                    <View className='hide-wrap' onClick={this.onClose}>
+                        <View className='img-wrap' style={`width:${showModeImg.width}PX;height:${showModeImg.height}PX;margin:auto;`}>
                             <Image src={showModeImg.src} style={`width:${showModeImg.width}PX;height:${showModeImg.height}PX`}></Image>
                         </View>
                     </View>
                 )}
-                <View className="main-content">
-                    <View className="task_demand">
-                        <View className="panel__title">第1步</View>
-                        <View className="title">审核要求</View>
-                        {this.getMessage(details)}
+                <View className='main-content'>
+                    <View className='task_demand'>
+                        <View className='panel__title'>第1步</View>
+                        <View className='title'>审核要求</View>
+                        {getMessage(details)}
                     </View>
                 </View>
-                <View className="user-photo">
-                    <View className="user-photo-wrap">
-                        <View className="title">
-                            <AtIcon size="30" value="image" color="orange"></AtIcon>
-                            <Text className="font">审核下列图片</Text>
+                <View className='user-photo'>
+                    <View className='user-photo-wrap'>
+                        <View className='title'>
+                            <AtIcon size='30' value='image' color='orange'></AtIcon>
+                            <Text className='font'>审核下列图片</Text>
                         </View>
-                        <View className="take-photo">
+                        <View className='take-photo'>
                             {showImg}
                         </View>
-                        <View className="info">将不合格的图片勾选，并驳回</View>
-                        <View className="cenggao"></View>
+                        <View className='info'>将不合格的图片勾选，并驳回</View>
+                        <View className='cenggao'></View>
                     </View>
                 </View>
-                <View className="cengHeight"></View>
-                <View className="top">
-                    <NavBar title="老人图像审核"></NavBar>
+                <View className='cengHeight'></View>
+                <View className='top'>
+                    <NavBar title='老人图像审核'></NavBar>
                     
                 </View>
 
-                <View className="bottom-btn">
-                    <AtButton type="primary" circle className="btn1" onClick={this.submitWork}>通过</AtButton>
-                    <AtButton type="primary" circle className="btn1" onClick={this.rejectWork}>驳回</AtButton>
+                <View className='bottom-btn'>
+                    <AtButton type='primary' circle className='btn1' onClick={this.submitWork}>通过</AtButton>
+                    <AtButton type='primary' circle className='btn1' onClick={this.rejectWork}>驳回</AtButton>
                 </View>
             </View>
         )

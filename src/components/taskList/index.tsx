@@ -1,6 +1,6 @@
 import { Component } from '@tarojs/taro'
 import { View, Text } from '@tarojs/components'
-import './task_list.scss'
+import './index.scss'
 
 export default class TaskList extends Component {
 

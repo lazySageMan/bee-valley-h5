@@ -1,11 +1,11 @@
 import Taro from '@tarojs/taro'
 import { AtTabs, AtTabsPane } from 'taro-ui'
 import { View } from '@tarojs/components'
-import TaskList from '../component/taskList/task_list'
+import TaskList from '../../components/taskList/index'
 import { listAuthorizedWork, listAuthorizedReview, checkDveice } from '../../utils/beevalley'
 import './index.scss'
 
-export default class CountTabs extends Taro.Component {
+export default class Index extends Taro.Component {
 
   constructor () {
     super(...arguments)
@@ -64,7 +64,7 @@ export default class CountTabs extends Taro.Component {
   render () {
     const tabList = [{ title: '任务列表' }, { title: '审核列表' }]
     return (
-        <View className="list-wrap">
+        <View className='list-wrap'>
             <AtTabs current={this.state.current} tabList={tabList} onClick={this.handleClick.bind(this)}>
                 <AtTabsPane current={this.state.current} index={0} >
                     <TaskList isMobile={this.isMobile} taskList={this.state.taskList} handleClick={this.navigateToTask} ></TaskList>

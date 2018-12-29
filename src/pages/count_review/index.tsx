@@ -1,7 +1,7 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Image, Input } from '@tarojs/components'
 import * as d3 from 'd3'
-import NavBar from '../component/navBar/index'
+import NavBar from '../../components/navBar/index'
 import { fetchReview, downloadReviewFile, submitReview, cancelWork, checkDveice } from '../../utils/beevalley'
 import './index.scss'
 
@@ -253,7 +253,7 @@ export default class PointReview extends Component {
 
         return (
             <View className='count'>
-                <NavBar title="目标定位审核" />
+                <NavBar title='目标定位审核' />
                 <View className='imgItem'>
                     {currentWork.src && (
                         <Image src={currentWork.src} style={`width:${currentWork.meta.imageWidth}px;height:${currentWork.meta.imageHeight}px;`}></Image>
@@ -265,7 +265,7 @@ export default class PointReview extends Component {
                     <Button type='primary' onClick={this.submitWork}>通过</Button>
                     <Button type='warn' onClick={this.rejectWork}>驳回</Button>
                     <Button style='background: #FFCC00;' type='warn' onClick={this.cancelWork}>放弃</Button>
-                    <Input placeholder="十字标的半径" className="changeR" onChange={this.changeR}></Input>
+                    <Input placeholder='十字标的半径' className='changeR' onChange={this.changeR}></Input>
                 </View>
             </View>
         )
