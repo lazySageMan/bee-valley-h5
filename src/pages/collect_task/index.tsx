@@ -78,29 +78,30 @@ export default class DataAcquistion extends Taro.Component {
 
   render() {
 
-    let showOne = (selectedImage, index) => {
-      if (selectedImage) {
-        return (
-          <View className='showImg'>
-                    <AtIcon size='20' value='close-circle' color='red' onClick={this.delete.bind(this, index)}></AtIcon>
-                    <Image src={selectedImage} className='img'></Image>
-                </View>
-        )
-      } else {
-        return (
-          <View className='showIcon' >
-                    <AtIcon size='60' value='camera' color='orange'></AtIcon>
-                    添加图片
-                    <Input type='file' accept='image/*' className='selectImg' onChange={this.getImg.bind(this, index)} />
-                </View>
-        )
-      }
-    }
+    // let showOne = (selectedImage, index) => {
+    //   if (selectedImage) {
+    //     return (
+    //       <View className='showImg'>
+    //                 <AtIcon size='20' value='close-circle' color='red' onClick={this.delete.bind(this, index)}></AtIcon>
+    //                 <Image src={selectedImage} className='img'></Image>
+    //             </View>
+    //     )
+    //   } else {
+    //     return (
+    //       <View className='showIcon' >
+    //                 <AtIcon size='60' value='camera' color='orange'></AtIcon>
+    //                 添加图片
+    //                 <Input type='file' accept='image/*' className='selectImg' onChange={this.getImg.bind(this, index)} />
+    //             </View>
+    //     )
+    //   }
+    // }
 
     let {
       sampleImages,
       selectedImages
     } = this.state;
+
     let sampleImageView
     if (sampleImages && selectedImages) {
       sampleImageView = sampleImages.map((item, index) => {
@@ -111,7 +112,23 @@ export default class DataAcquistion extends Taro.Component {
                             <Image src={item} className='img'></Image>
                         </View>
                         <View className='img-item'>
-                            {showOne(selectedImages[index], index)}
+                            {
+                              selectedImages[index] ?
+                                      (
+                                        <View className='showImg'>
+                                                  <AtIcon size='20' value='close-circle' color='red' onClick={this.delete.bind(this, index)}></AtIcon>
+                                                  <Image src={selectedImages[index]} className='img'></Image>
+                                              </View>
+                                      )
+                                     :
+                                      (
+                                        <View className='showIcon' >
+                                                  <AtIcon size='60' value='camera' color='orange'></AtIcon>
+                                                  添加图片
+                                                  <Input type='file' accept='image/*' className='selectImg' onChange={this.getImg.bind(this, index)} />
+                                              </View>
+                                      )
+                            }
                         </View>
                     </View>
 

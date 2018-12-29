@@ -65,7 +65,7 @@ export default class Index extends Taro.Component {
     })
   }
 
-  handleClick(value) {
+  handleTabClick(value) {
     this.setState({
       current: value
     })
@@ -79,13 +79,13 @@ export default class Index extends Taro.Component {
     }]
     return (
       <View className='list-wrap'>
-            <AtTabs current={this.state.current} tabList={tabList} onClick={this.handleClick.bind(this)}>
+            <AtTabs current={this.state.current} tabList={tabList} onClick={this.handleTabClick.bind(this)}>
                 <AtTabsPane current={this.state.current} index={0} >
-                    <TaskList isMobile={this.isMobile} taskList={this.state.taskList} handleClick={this.navigateToTask} ></TaskList>
+                    <TaskList isMobile={this.isMobile} taskList={this.state.taskList} onClick={this.navigateToTask} ></TaskList>
                 </AtTabsPane>
                 <AtTabsPane current={this.state.current} index={1}>
                     {/* 审核列表 */}
-                    <TaskList taskList={this.state.reviewList} handleClick={this.navigateToReview} ></TaskList>
+                    <TaskList taskList={this.state.reviewList} onClick={this.navigateToReview} ></TaskList>
                 </AtTabsPane>
             </AtTabs>
       </View>

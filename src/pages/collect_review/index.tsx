@@ -189,17 +189,16 @@ export default class reviewData extends Taro.Component {
 
   render() {
 
+    // let getMessage = (details) => {
+    //   return details.map((item, index) => {
+    //     return (
+    //       <View key={index} className='content-list'>
+    //                     <View className='list-item'>{index + 1} {item}；</View>
+    //                 </View>
+    //     )
+    //   })
 
-    let getMessage = (details) => {
-      return details.map((item, index) => {
-        return (
-          <View key={index} className='content-list'>
-                        <View className='list-item'>{index + 1} {item}；</View>
-                    </View>
-        )
-      })
-
-    }
+    // }
 
     let {
       images,
@@ -245,7 +244,15 @@ export default class reviewData extends Taro.Component {
                     <View className='task_demand'>
                         <View className='panel__title'>第1步</View>
                         <View className='title'>审核要求</View>
-                        {getMessage(details)}
+                        {
+                          details.map((item, index) => {
+                                  return (
+                                    <View key={index} className='content-list'>
+                                                  <View className='list-item'>{index + 1} {item}；</View>
+                                              </View>
+                                  )
+                                }
+                        }
                     </View>
                 </View>
                 <View className='user-photo'>

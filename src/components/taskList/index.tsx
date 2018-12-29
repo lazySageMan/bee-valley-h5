@@ -18,7 +18,7 @@ export default class TaskList extends Component {
                 <View
                   key={item.packageId + '_' + item.typeCode}
                   className='task_wrap'
-                  onClick={this.props.handleClick.bind(this, item)}
+                  onClick={this.props.onClick.bind(this, item)}
                 >
                     <Text
                       className='task_wrap_btn'

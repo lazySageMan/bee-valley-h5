@@ -7,7 +7,7 @@ export default class NavBar extends Component {
         super(props)
     }
 
-    handleClick = () => {
+    handleNavBarClick = () => {
         Taro.showModal({
             title: '提示',
             content: '是否确定退出',
@@ -27,7 +27,7 @@ export default class NavBar extends Component {
         return (
             <View className="backBtn">
                 <AtNavBar
-                    onClickLeftIcon={this.handleClick}
+                    onClickLeftIcon={this.handleNavBarClick}
                     leftIconType="chevron-left"
                     color='#000'
                     title={title}
