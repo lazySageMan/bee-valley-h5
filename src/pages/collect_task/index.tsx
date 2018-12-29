@@ -1,92 +1,111 @@
 import Taro from '@tarojs/taro'
-import { View, Image, Text, Input } from '@tarojs/components'
-import { AtButton, AtIcon } from 'taro-ui'
+import {
+  View,
+  Image,
+  Text,
+  Input
+} from '@tarojs/components'
+import {
+  AtButton,
+  AtIcon
+} from 'taro-ui'
 import NavBar from '../../components/navBar/index'
+import {
+  fetchWork
+} from '../../utils/beevalley'
+
 import './index.scss'
-
-import { fetchWork } from '../../utils/beevalley'
-
 
 export default class DataAcquistion extends Taro.Component {
 
-    constructor() {
-        super(...arguments)
-        this.apiToken = Taro.getStorageSync('apiToken');
-    }
+  constructor() {
+    super(...arguments)
+    this.apiToken = Taro.getStorageSync('apiToken');
+  }
 
-    componentDidMount() {
-        this.packageId = this.$router.params.packageId
-        fetchWork(this.apiToken, 'collect', 1, this.packageId).then(res => {
-          if (res.length > 0) {
-            // TODO fix potential bug here
-            this.workId = res[0].id
-            this.setState({sampleImages: res[0].meta.samples, selectedImages: new Array(res[0].meta.samples.length)})
-          } else {
-            Taro.showToast({
-                title: '没有任务了'
-            })
+  componentDidMount() {
+    this.packageId = this.$router.params.packageId
+    fetchWork(this.apiToken, 'collect', 1, this.packageId).then(res => {
+      if (res.length > 0) {
+        // TODO fix potential bug here
+        this.workId = res[0].id
+        this.setState({
+          sampleImages: res[0].meta.samples,
+          selectedImages: new Array(res[0].meta.samples.length)
+        })
+      } else {
+        Taro.showToast({
+          title: '没有任务了'
+        })
+      }
+    })
+  }
+
+  getImg = (index, event) => {
+    let files = event.target.files;
+    let file = '';
+    if (files && files.length > 0) {
+      file = files[0];
+      var reader = new FileReader();
+      reader.onload = (ev) => {
+        this.setState(prevState => {
+          let selectedImages = prevState.selectedImages
+          selectedImages[index] = ev.target.result
+          return {
+            selectedImages: selectedImages
           }
         })
+      };
+      reader.readAsDataURL(file);
     }
+  }
 
-    getImg = (index, event) => {
-        let files = event.target.files;
-        let file = '';
-        if (files && files.length > 0) {
-            file = files[0];
-            var reader = new FileReader();
-            reader.onload = (ev) => {
-                this.setState(prevState => {
-                        let selectedImages = prevState.selectedImages
-                        selectedImages[index] = ev.target.result
-                        return { selectedImages: selectedImages }
-                    })
-            };
-            reader.readAsDataURL(file);
-        }
-    }
-
-    delete = (index) => {
-        this.setState(prevState => {
-                let selectedImages = prevState.selectedImages
-                selectedImages[index] = null
-                return { selectedImages: selectedImages }
-            })
-    }
+  delete = (index) => {
+    this.setState(prevState => {
+      let selectedImages = prevState.selectedImages
+      selectedImages[index] = null
+      return {
+        selectedImages: selectedImages
+      }
+    })
+  }
 
 
 
-    submitWork = () => {
-        
-    }
+  submitWork = () => {
 
-    render() {
+  }
+
+  render() {
 
     let showOne = (selectedImage, index) => {
-        if (selectedImage) {
-            return (
-                <View className='showImg'>
+      if (selectedImage) {
+        return (
+          <View className='showImg'>
                     <AtIcon size='20' value='close-circle' color='red' onClick={this.delete.bind(this, index)}></AtIcon>
                     <Image src={selectedImage} className='img'></Image>
                 </View>
-            )
-        } else {
-            return (
-                <View className='showIcon' >
+        )
+      } else {
+        return (
+          <View className='showIcon' >
                     <AtIcon size='60' value='camera' color='orange'></AtIcon>
                     添加图片
                     <Input type='file' accept='image/*' className='selectImg' onChange={this.getImg.bind(this, index)} />
                 </View>
-            )
-        }
+        )
+      }
     }
 
-        let { sampleImages, selectedImages } = this.state;
-        let sampleImageView
-        if (sampleImages && selectedImages) {
-            sampleImageView = sampleImages.map((item, index) => {
-                return (
-                    <View key={index} className='show-item'>
+    let {
+      sampleImages,
+      selectedImages
+    } = this.state;
+    let sampleImageView
+    if (sampleImages && selectedImages) {
+      sampleImageView = sampleImages.map((item, index) => {
+        return (
+          <View key={index} className='show-item'>
                         <View className='eg img-item'>
                             <View className='eg-item'>示例</View>
                             <Image src={item} className='img'></Image>
@@ -96,12 +115,12 @@ export default class DataAcquistion extends Taro.Component {
                         </View>
                     </View>
 
-                )
-            })
-        }
+        )
+      })
+    }
 
-        return (
-            <View className='data-wrap'>
+    return (
+      <View className='data-wrap'>
                 <View className='main-content'>
                     <View className='task_demand'>
                         <View className='title'>任务要求</View>
@@ -140,6 +159,6 @@ export default class DataAcquistion extends Taro.Component {
                     <AtButton type='primary' circle className='btn' onClick={this.submitWork}>提交审核</AtButton>
                 </View>
             </View>
-        )
-    }
+    )
+  }
 }

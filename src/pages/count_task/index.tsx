@@ -1,8 +1,23 @@
-import Taro, { Component, Config } from '@tarojs/taro'
-import { View, Button, Image, Input } from '@tarojs/components'
+import Taro, {
+  Component,
+  Config
+} from '@tarojs/taro'
+import {
+  View,
+  Button,
+  Image,
+  Input
+} from '@tarojs/components'
 import * as d3 from 'd3'
 import NavBar from '../../components/navBar/index'
-import { fetchWork, downloadWorkFile, cancelWork, submitWork, checkDveice } from '../../utils/beevalley'
+import {
+  fetchWork,
+  downloadWorkFile,
+  cancelWork,
+  submitWork,
+  checkDveice
+} from '../../utils/beevalley'
+
 import './index.scss'
 
 export default class PointTask extends Component {
@@ -24,7 +39,9 @@ export default class PointTask extends Component {
   }
 
   fetchWork = () => {
-    let { apiToken } = this;
+    let {
+      apiToken
+    } = this;
     fetchWork(apiToken, 'count', 4, this.packageId).then((res) => {
       this.work = res;
 
@@ -34,7 +51,7 @@ export default class PointTask extends Component {
         this.nextWork()
       } else {
         Taro.showToast({
-            title: '没有任务了'
+          title: '没有任务了'
         })
       }
     })
@@ -56,18 +73,24 @@ export default class PointTask extends Component {
       })
       // Taro.hideLoading()
     } else {
-      this.setState({currentWork: {}})
+      this.setState({
+        currentWork: {}
+      })
       this.fetchWork();
     }
   }
 
   getImgFile = (imgId) => {
-    let { apiToken } = this;
+    let {
+      apiToken
+    } = this;
     downloadWorkFile(apiToken, imgId)
       .then((res) => {
         let imgBase64 = 'data:image/jpeg;base64,' + Taro.arrayBufferToBase64(new Uint8Array(res));
         if (imgId === this.state.currentWork.id) {
-          let current = Object.assign({}, this.state.currentWork, { src: imgBase64 });
+          let current = Object.assign({}, this.state.currentWork, {
+            src: imgBase64
+          });
 
           this.setState({
             currentWork: current
@@ -91,34 +114,49 @@ export default class PointTask extends Component {
         x: ev.offsetX,
         y: ev.offsetY
       })
-      return { currentWork: updated }
+      return {
+        currentWork: updated
+      }
     })
   }
 
   cancelWork = () => {
-    let { apiToken } = this;
-    let { id } = this.state.currentWork;
+    let {
+      apiToken
+    } = this;
+    let {
+      id
+    } = this.state.currentWork;
     if (!id) return;
     Taro.showLoading({
       title: 'loading',
       mask: true
     })
-    this.setState({currentWork: {}})
+    this.setState({
+      currentWork: {}
+    })
     cancelWork(apiToken, [id])
       .then(() => this.nextWork())
       .catch(this.defaultErrorHandling)
   }
 
   submitWork = () => {
-    let { apiToken } = this;
-    let { id, pointPosition } = this.state.currentWork;
+    let {
+      apiToken
+    } = this;
+    let {
+      id,
+      pointPosition
+    } = this.state.currentWork;
     if (!id) return;
     if (pointPosition.length > 0) {
       Taro.showLoading({
         title: 'loading',
         mask: true
       })
-      this.setState({currentWork: {}})
+      this.setState({
+        currentWork: {}
+      })
       submitWork(apiToken, id, pointPosition)
         .then(() => this.nextWork())
         .catch(this.defaultErrorHandling)
@@ -129,15 +167,13 @@ export default class PointTask extends Component {
 
   componentDidMount() {
     this.packageId = this.$router.params.packageId
-    
+
 
     let res = Taro.getSystemInfoSync()
     this.screenWidth = res.windowWidth;
     this.isMobile = checkDveice(res)
 
-    if (process.env.TARO_ENV === 'weapp') {
-    } else if (process.env.TARO_ENV === 'h5') {
-    }
+    if (process.env.TARO_ENV === 'weapp') {} else if (process.env.TARO_ENV === 'h5') {}
     this.svg = d3.select(".workImg")
       .append("svg")
       .on('click', () => {
@@ -170,7 +206,7 @@ export default class PointTask extends Component {
   componentWillUnmount() {
     if (this.work) {
       let toCancel = this.work.map(w => w.id)
-        if (this.state.currentWork && this.state.currentWork.id) {
+      if (this.state.currentWork && this.state.currentWork.id) {
         toCancel.push(this.state.currentWork.id)
       }
       if (toCancel.length > 0) {
@@ -180,7 +216,10 @@ export default class PointTask extends Component {
   }
 
   changeLine = (eventX, eventY) => {
-    let { lineWidth, pointRadius } = this.state;
+    let {
+      lineWidth,
+      pointRadius
+    } = this.state;
     let hengX1 = eventX - pointRadius;
     let hengX2 = eventX + pointRadius;
 
@@ -188,12 +227,27 @@ export default class PointTask extends Component {
     let shuY2 = eventY + pointRadius;
 
     this.setState({
-      lineData: [
-        { x1: hengX1, x2: eventX - lineWidth, y1: eventY, y2: eventY },
-        { x1: hengX2, x2: eventX + lineWidth, y1: eventY, y2: eventY },
-        { x1: eventX, x2: eventX, y1: shuY1, y2: eventY - lineWidth },
-        { x1: eventX, x2: eventX, y1: shuY2, y2: eventY + lineWidth }
-      ]
+      lineData: [{
+        x1: hengX1,
+        x2: eventX - lineWidth,
+        y1: eventY,
+        y2: eventY
+      }, {
+        x1: hengX2,
+        x2: eventX + lineWidth,
+        y1: eventY,
+        y2: eventY
+      }, {
+        x1: eventX,
+        x2: eventX,
+        y1: shuY1,
+        y2: eventY - lineWidth
+      }, {
+        x1: eventX,
+        x2: eventX,
+        y1: shuY2,
+        y2: eventY + lineWidth
+      }]
     });
   }
 
@@ -224,15 +278,23 @@ export default class PointTask extends Component {
       let circle = this.svg.selectAll("circle");
       let update = circle.data(pointData);
 
-      update.attr("cx", function (d) { return d.x; })
-        .attr("cy", function (d) { return d.y; })
+      update.attr("cx", function (d) {
+          return d.x;
+        })
+        .attr("cy", function (d) {
+          return d.y;
+        })
         .attr("r", pointRadius)
 
       update.enter().append("circle")
         .attr("r", pointRadius)
         .attr("fill", "red")
-        .attr("cx", function (d) { return d.x; })
-        .attr("cy", function (d) { return d.y; })
+        .attr("cx", function (d) {
+          return d.x;
+        })
+        .attr("cy", function (d) {
+          return d.y;
+        })
         .on('click', (datum) => {
 
           d3.event.stopPropagation();
@@ -244,7 +306,9 @@ export default class PointTask extends Component {
           this.setState((prevState) => {
             let updated = prevState.currentWork
             updated.pointPosition = pointData
-            return { currentWork: updated }
+            return {
+              currentWork: updated
+            }
           })
 
         })
@@ -253,21 +317,27 @@ export default class PointTask extends Component {
   }
 
   changeR = (ev) => {
-    this.setState({ lineWidth: parseFloat(ev.target.value) });
+    this.setState({
+      lineWidth: parseFloat(ev.target.value)
+    });
   }
 
   defaultErrorHandling = () => {
-      Taro.hideLoading()
-      Taro.navigateBack({
-              delta: 1
-          })
+    Taro.hideLoading()
+    Taro.navigateBack({
+      delta: 1
+    })
   }
 
   render() {
-    let { currentWork, pointRadius, lineData } = this.state;
+    let {
+      currentWork,
+      pointRadius,
+      lineData
+    } = this.state;
 
     if (currentWork && currentWork.src) {
-        Taro.hideLoading()
+      Taro.hideLoading()
     }
 
     if (currentWork.pointPosition) {
@@ -302,4 +372,3 @@ export default class PointTask extends Component {
     )
   }
 }
-

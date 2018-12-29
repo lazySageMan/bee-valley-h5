@@ -1,4 +1,7 @@
-import Taro, { Component, Config } from '@tarojs/taro'
+import Taro, {
+  Component,
+  Config
+} from '@tarojs/taro'
 import Index from './pages/index'
 
 import './app.scss'
@@ -33,15 +36,15 @@ class App extends Component {
     }
   }
 
-  componentDidMount () {}
+  componentDidMount() {}
 
-  componentDidShow () {}
+  componentDidShow() {}
 
-  componentDidHide () {}
+  componentDidHide() {}
 
-  componentCatchError () {}
+  componentCatchError() {}
 
-  render () {
+  render() {
     return (
       <Index />
     )
