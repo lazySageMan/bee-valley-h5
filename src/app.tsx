@@ -17,7 +17,7 @@ class App extends Component {
    */
   config: Config = {
     pages: [
-      '/pages/login/login',
+      '/pages/login/index',
       '/pages/attribute_review/index',
       '/pages/signup/index',
       '/pages/index/index',

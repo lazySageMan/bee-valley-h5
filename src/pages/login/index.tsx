@@ -14,7 +14,7 @@ import {
   checkDveice
 } from '../../utils/beevalley'
 
-import './login.scss'
+import './index.scss'
 import wechat from '../../image/wechat.png'
 
 export default class Login extends Component {
