@@ -232,7 +232,7 @@ export default class reviewData extends Taro.Component {
       )
     })
     return (
-      <View className='data-wrap'>
+      <View className='data-wrap-review'>
                 {showModeImg.isOpened && (
                     <View className='hide-wrap' onClick={this.onClose}>
                         <View className='img-wrap' style={`width:${showModeImg.width}PX;height:${showModeImg.height}PX;margin:auto;`}>

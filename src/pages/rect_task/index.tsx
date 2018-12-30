@@ -570,7 +570,7 @@ export default class RectTask extends Component {
       '';
 
     return (
-      <View className='rect'>
+      <View className='rect_task'>
                 <NavBar title='方框任务' />
                 <View className='imgItem' id='workearea'>
                     {currentWork && currentWork.src && (

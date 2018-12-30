@@ -1,6 +1,6 @@
 {
-	"miniprogramRoot": "./dist",
-	"projectname": "test",
+	"miniprogramRoot": "dist/",
+	"projectname": "bee-valley-h5",
 	"description": "",
 	"appid": "wx5e7e2fa755258a0e",
 	"setting": {

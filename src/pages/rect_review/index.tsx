@@ -308,7 +308,7 @@ export default class RectReview extends Component {
     this.updateReact(currentWork)
 
     return (
-      <View className='rect'>
+      <View className='rect_review'>
                 <NavBar title='方框审核' />
                 <View className='imgItem' id='workearea'>
                     {currentWork.src && (
