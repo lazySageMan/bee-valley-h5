@@ -354,7 +354,7 @@ export default class PointTask extends Component {
     }
 
     return (
-      <View className='count'>
+      <View className='count_task'>
         <NavBar title='目标定位任务' />
         <View className='imgItem'>
           {currentWork && currentWork.src && (

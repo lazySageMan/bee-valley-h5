@@ -307,7 +307,7 @@ export default class PointReview extends Component {
     }
 
     return (
-      <View className='count'>
+      <View className='count_review'>
                 <NavBar title='目标定位审核' />
                 <View className='imgItem'>
                     {currentWork.src && (

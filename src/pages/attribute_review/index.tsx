@@ -171,9 +171,9 @@ export default class PointTask extends Component {
 
     }
     return (
-      <View className='count'>
+      <View className='attribute_review'>
                 <NavBar title='属性标注审核' />
-                <View className='imgItem1'>
+                <View className='imgItem'>
                     {currentWork && currentWork.src && (
                         <Image src={currentWork.src} mode='widthFix' style={`width:${currentWork.meta.imageWidth}PX;height:${currentWork.meta.imageHeight}PX;`}></Image>
                     )
