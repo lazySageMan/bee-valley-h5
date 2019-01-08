@@ -82,6 +82,7 @@ const config = {
     //   host: '192.168.31.147',  //修改成你局域网ip 或localhost
     //   port: 8080,
     // },
+    esnextModules: ['taro-ui'],
     module: {
       postcss: {
         autoprefixer: {
