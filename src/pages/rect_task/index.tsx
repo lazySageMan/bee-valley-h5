@@ -81,8 +81,8 @@ export default class RectTask extends Component {
     let {
       ratio
     } = this.state;
-    let anchorX = Math.floor(work.prerequisites[0].result[work.meta.index].x);
-    let anchorY = Math.floor(work.prerequisites[0].result[work.meta.index].y);
+    let anchorX = work.prerequisites ? Math.floor(work.prerequisites[0].result[work.meta.index].x) : null;
+    let anchorY = work.prerequisites ? Math.floor(work.prerequisites[0].result[work.meta.index].y) : null;
     let imageWidth = work.meta.imageWidth;
     let imageHeight = work.meta.imageHeight;
     work['anchorX'] = anchorX;
@@ -385,28 +385,38 @@ export default class RectTask extends Component {
   }
 
   calculateWorkarea = (imageWidth, imageHeight, anchorX, anchorY, windowWidth, windowHeight) => {
-    var x;
-    if (anchorX < windowWidth / 2) {
-      x = 0;
-    } else if (anchorX > imageWidth - windowWidth / 2) {
-      x = imageWidth - windowWidth;
-    } else {
-      x = anchorX - windowWidth / 2
+
+    if (anchorX === null || anchorY === null ){
+      return {
+        x: 0,
+        y: 0,
+        width: imageWidth,
+        height: imageHeight
+      }
+    } else{
+      var x;
+      if (anchorX < windowWidth / 2) {
+        x = 0;
+      } else if (anchorX > imageWidth - windowWidth / 2) {
+        x = imageWidth - windowWidth;
+      } else {
+        x = anchorX - windowWidth / 2
+      }
+      var y;
+      if (anchorY < windowHeight / 2) {
+        y = 0;
+      } else if (anchorY > imageHeight - windowHeight / 2) {
+        y = imageHeight - windowHeight;
+      } else {
+        y = anchorY - windowHeight / 2
+      }
+      return {
+        x: Math.floor(x),
+        y: Math.floor(y),
+        width: windowWidth,
+        height: windowHeight
+      };
     }
-    var y;
-    if (anchorY < windowHeight / 2) {
-      y = 0;
-    } else if (anchorY > imageHeight - windowHeight / 2) {
-      y = imageHeight - windowHeight;
-    } else {
-      y = anchorY - windowHeight / 2
-    }
-    return {
-      x: Math.floor(x),
-      y: Math.floor(y),
-      width: windowWidth,
-      height: windowHeight
-    };
   }
 
   submitWork = () => {
@@ -425,8 +435,8 @@ export default class RectTask extends Component {
       } = currentWork, {
         apiToken
       } = this,
-      relativeAnchorX = (anchorX - xOffset) / ratio,
-        relativeAnchorY = (anchorY - yOffset) / ratio
+        relativeAnchorX = anchorX !== null ? (anchorX - xOffset) / ratio : rectPosition.xMin + (rectPosition.xMax - rectPosition.xMin)/2,
+        relativeAnchorY = anchorY !== null ? (anchorY - yOffset) / ratio : rectPosition.yMin + (rectPosition.yMax - rectPosition.yMin) / 2
       if (rectPosition && relativeAnchorX > rectPosition.xMin && relativeAnchorX < rectPosition.xMax && relativeAnchorY > rectPosition.yMin && relativeAnchorY < rectPosition.yMax) {
 
         let rectData = [{
