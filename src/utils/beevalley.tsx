@@ -1,5 +1,6 @@
 // import Axios from 'axios'
 import Taro from '@tarojs/taro'
+
 import {
   host
 } from '../config'
@@ -222,7 +223,7 @@ function register(mobile, passwd, code) {
       "code": code,
       "region": "CN"
     }
-  }).then((res) => res).then((err) => err)
+  })
 }
 
 function parseJson(str) {
@@ -231,6 +232,27 @@ function parseJson(str) {
 
 function checkDveice(res) {
   return (res.model !== null) ? true : false;
+}
+
+function uploadWorkFile(token, workId, fileSrc) {
+
+  return fetch(fileSrc)
+  .then(res => res.blob())
+  .then(blob => {
+    let formData = new FormData();
+    formData.append("workId", workId);
+    formData.append("file", blob);
+
+    return Taro.request({
+      url: `${host}works/files`,
+      method: 'POST',
+      header: {
+        'Authorization': 'Bearer ' + token
+      },
+      data: formData
+    }).then(handleRes);
+  });
+
 }
 
 export {
@@ -249,5 +271,6 @@ export {
   checkDveice,
   sendMobileCode,
   register,
-  downloadReviewFiles
+  downloadReviewFiles,
+  uploadWorkFile
 };

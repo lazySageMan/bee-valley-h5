@@ -10,7 +10,9 @@ import {
 } from 'taro-ui'
 import NavBar from '../../components/navBar/index'
 import {
-  fetchWork
+  fetchWork,
+  uploadWorkFile,
+  submitWork
 } from '../../utils/beevalley'
 
 import './index.scss'
@@ -42,9 +44,7 @@ export default class DataAcquistion extends Taro.Component {
 
   getImg = (index) => {
     Taro.chooseImage({
-      count: 1,
-      sizeType: ['compressed'],
-      sourceType: ['album', 'camera']
+      count: 1
     }).then((res) => {
       this.setState(prevState => {
         let selectedImages = prevState.selectedImages;
@@ -69,6 +69,21 @@ export default class DataAcquistion extends Taro.Component {
 
 
   submitWork = () => {
+    let { selectedImages } = this.state;
+
+    if (selectedImages.findIndex(img => !img) === -1) {
+
+      for (var x in selectedImages) {
+        uploadWorkFile(this.apiToken, this.workId, selectedImages[x])
+        .then(data => {
+          // TODO
+          // submitWork(this.apiToken, this.workId, data);
+          console.log(data)
+        })
+      }
+
+    }
+
 
   }
 
