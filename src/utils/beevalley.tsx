@@ -85,7 +85,8 @@ function submitWork(token, workId, result) {
     responseType: 'arraybuffer',
     data: {
       'id': workId,
-      'result': result
+      'result': result,
+      'source': 'qts'
     },
     header: {
       'content-type': 'application/json',

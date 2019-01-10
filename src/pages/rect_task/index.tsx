@@ -81,12 +81,20 @@ export default class RectTask extends Component {
     let {
       ratio
     } = this.state;
-    let anchorX = work.prerequisites ? Math.floor(work.prerequisites[0].result[work.meta.index].x) : null;
-    let anchorY = work.prerequisites ? Math.floor(work.prerequisites[0].result[work.meta.index].y) : null;
-    let imageWidth = work.meta.imageWidth;
-    let imageHeight = work.meta.imageHeight;
+
+    let anchorX = 0;
+    let anchorY = 0;
+
+    if (work.prerequisites) {
+      anchorX = Math.floor(work.prerequisites[0].result[work.meta.index].x);
+      anchorY = Math.floor(work.prerequisites[0].result[work.meta.index].y);
+    }
+
     work['anchorX'] = anchorX;
     work['anchorY'] = anchorY;
+
+    let imageWidth = work.meta.imageWidth;
+    let imageHeight = work.meta.imageHeight;
 
     if (this.isMobile) {
       let options = this.calculateWorkarea(imageWidth, imageHeight, anchorX, anchorY, Math.round(this.screenWidth * ratio), Math.round(this.screenHeight * ratio));
@@ -385,15 +393,6 @@ export default class RectTask extends Component {
   }
 
   calculateWorkarea = (imageWidth, imageHeight, anchorX, anchorY, windowWidth, windowHeight) => {
-
-    if (anchorX === null || anchorY === null ){
-      return {
-        x: 0,
-        y: 0,
-        width: imageWidth,
-        height: imageHeight
-      }
-    } else{
       var x;
       if (anchorX < windowWidth / 2) {
         x = 0;
@@ -416,7 +415,6 @@ export default class RectTask extends Component {
         width: windowWidth,
         height: windowHeight
       };
-    }
   }
 
   submitWork = () => {
@@ -435,8 +433,8 @@ export default class RectTask extends Component {
       } = currentWork, {
         apiToken
       } = this,
-        relativeAnchorX = anchorX !== null ? (anchorX - xOffset) / ratio : rectPosition.xMin + (rectPosition.xMax - rectPosition.xMin)/2,
-        relativeAnchorY = anchorY !== null ? (anchorY - yOffset) / ratio : rectPosition.yMin + (rectPosition.yMax - rectPosition.yMin) / 2
+        relativeAnchorX = anchorX !== 0 ? (anchorX - xOffset) / ratio : rectPosition.xMin + (rectPosition.xMax - rectPosition.xMin) / 2,
+        relativeAnchorY = anchorY !== 0 ? (anchorY - yOffset) / ratio : rectPosition.yMin + (rectPosition.yMax - rectPosition.yMin) / 2
       if (rectPosition && relativeAnchorX > rectPosition.xMin && relativeAnchorX < rectPosition.xMax && relativeAnchorY > rectPosition.yMin && relativeAnchorY < rectPosition.yMax) {
 
         let rectData = [{
@@ -507,7 +505,7 @@ export default class RectTask extends Component {
         title: '不能继续缩小'
       })
     } else {
-      ratio -= 1;
+      ratio -= 0.5;
       this.setState({
         ratio: ratio
       }, () => {
@@ -522,12 +520,14 @@ export default class RectTask extends Component {
       currentWork,
       ratio
     } = this.state;
-    if (this.screenWidth * (ratio + 1) > currentWork.meta.imageWidth || this.screenHeight * (ratio + 1) > currentWork.meta.imageHeight) {
+
+    ratio += 0.5;
+
+    if (this.screenWidth * ratio > currentWork.meta.imageWidth || this.screenHeight * ratio > currentWork.meta.imageHeight) {
       Taro.showToast({
         title: '不能继续放大'
       })
     } else {
-      ratio += 1;
       this.setState({
         ratio: ratio
       }, () => {
@@ -557,7 +557,6 @@ export default class RectTask extends Component {
 
       this.svg.attr("width", imageWidth)
         .attr("height", imageHeight);
-
       if (currentWork.anchorX && currentWork.anchorY) {
         let circleData = {
           x: (currentWork.anchorX - currentWork.xOffset) / ratio,
