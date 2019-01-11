@@ -71,7 +71,7 @@ export default class reviewData extends Taro.Component {
 
   componentWillUnmount() {
     if (this.reviewId) {
-      cancelWork(this.apiToken, this.reviewId);
+      cancelWork(this.apiToken, [this.reviewId]);
     }
   }
 
