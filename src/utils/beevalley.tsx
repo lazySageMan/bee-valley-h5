@@ -57,6 +57,17 @@ function downloadWorkFile(token, workId, options) {
   }).then(handleRes)
 }
 
+function downloadWorkFiles(token, workId, fileId) {
+  return Taro.request({
+    url: `${host}works/${workId}/files/${fileId}`,
+    method: 'GET',
+    header: {
+      'Authorization': 'Bearer ' + token
+    },
+    responseType: 'arraybuffer'
+  }).then(handleRes)
+}
+
 function downloadReviewFiles(token, reviewId, fileId) {
   return Taro.request({
     url: `${host}reviews/${reviewId}/files/${fileId}`,
@@ -86,8 +97,7 @@ function submitWork(token, workId, result) {
     responseType: 'arraybuffer',
     data: {
       'id': workId,
-      'result': result,
-      'source': 'qts'
+      'result': result
     },
     header: {
       'content-type': 'application/json',
@@ -273,5 +283,6 @@ export {
   sendMobileCode,
   register,
   downloadReviewFiles,
-  uploadWorkFile
+  uploadWorkFile,
+  downloadWorkFiles
 };

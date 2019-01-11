@@ -11,8 +11,10 @@ import {
 import NavBar from '../../components/navBar/index'
 import {
   fetchWork,
+  submitWork,
   uploadWorkFile,
-  submitWork
+  downloadWorkFiles,
+  cancelWork
 } from '../../utils/beevalley'
 
 import './index.scss'
@@ -21,22 +23,82 @@ export default class DataAcquistion extends Taro.Component {
 
   constructor() {
     super(...arguments)
+    this.state = {
+      currentWork: [],
+      details: []
+    }
     this.apiToken = Taro.getStorageSync('apiToken');
   }
 
   componentDidMount() {
     this.packageId = this.$router.params.packageId
+    this.nextWork();
+  }
+
+  componentWillUnmount() {
+    if (this.workId) {
+      cancelWork(this.apiToken, this.workId);
+    }
+  }
+
+  getDiff = (arr1, arr2) => {
+    return arr1.filter(i => arr2.indexOf(i) < 0)
+  }
+
+  nextWork = () => {
+    Taro.showLoading({
+      title: '加载中...'
+    })
+    this.countIndex = 0;
     fetchWork(this.apiToken, 'collect', 1, this.packageId).then(res => {
       if (res.length > 0) {
+        let work = res[0];
         // TODO fix potential bug here
-        this.workId = res[0].id
-        this.setState({
-          sampleImages: res[0].meta.samples,
-          selectedImages: new Array(res[0].meta.samples.length)
+        this.workId = work.id
+        let workData = work.meta.samples.map( v => {
+          return {
+            samplesSrc: v,
+            shouldUpload: true,
+            photoSrc: null,
+            fileId: null
+          }
         })
+
+        if (work.previousWork){
+          let successImg = this.getDiff(work.previousWork.result, work.meta.rejectedReason);
+          Taro.showLoading({
+            title: '加载中...'
+          })
+          successImg.forEach(f => {
+            let index = work.previousWork.result.indexOf(f)
+            workData[index].shouldUpload = false
+            workData[index].fileId = f
+
+            downloadWorkFiles(this.apiToken, work.id, f).then( res => {
+              workData[index].photoSrc = 'data:image/jpeg;base64,' + Taro.arrayBufferToBase64(new Uint8Array(res));
+              this.setState({
+                currentWork: workData
+              })
+            })
+          })
+        }
+        this.setState({
+          details: work.details,
+          currentWork: workData
+        })
+        Taro.hideLoading();
       } else {
-        Taro.showToast({
-          title: '没有任务了'
+        Taro.hideLoading();
+        Taro.showModal({
+          title: '提示',
+          content: '当前没有任务了！',
+          confirmText: '知道了',
+          showCancel: false,
+          success: function(){
+            Taro.navigateBack({
+              delta: 1
+            })
+          }
         })
       }
     })
@@ -47,10 +109,10 @@ export default class DataAcquistion extends Taro.Component {
       count: 1
     }).then((res) => {
       this.setState(prevState => {
-        let selectedImages = prevState.selectedImages;
-        selectedImages[index] = res.tempFilePaths[0];
+        let currentWork = prevState.currentWork;
+        currentWork[index].photoSrc = res.tempFilePaths[0];
         return {
-          selectedImages: selectedImages
+          currentWork: currentWork
         }
       })
     })
@@ -58,58 +120,93 @@ export default class DataAcquistion extends Taro.Component {
 
   delete = (index) => {
     this.setState(prevState => {
-      let selectedImages = prevState.selectedImages;
-      selectedImages[index] = null
+      let currentWork = prevState.currentWork;
+      currentWork[index].photoSrc = null
       return {
-        selectedImages: selectedImages
+        currentWork: currentWork
       }
     })
   }
 
+  uploadImg = () => {
+    let { currentWork } = this.state;
+    if (this.countIndex === currentWork.length) {
+      let uploadImgId = currentWork.map(v => v.fileId).filter(f => f);
+      submitWork(this.apiToken, this.workId, uploadImgId).then(res => {
+        Taro.hideLoading();
+        Taro.showToast({
+          title: '上传成功',
+          icon: 'success'
+        })
 
-
-  submitWork = () => {
-    let { selectedImages } = this.state;
-
-    if (selectedImages.findIndex(img => !img) === -1) {
-
-      for (var x in selectedImages) {
-        uploadWorkFile(this.apiToken, this.workId, selectedImages[x])
-        .then(data => {
-          // TODO
-          // submitWork(this.apiToken, this.workId, data);
-          console.log(data)
+        this.nextWork();
+      })
+    } else {
+      let ele = currentWork[this.countIndex];
+      if (!ele.shouldUpload) {
+        this.countIndex++;
+        this.uploadImg();
+      } else {
+        uploadWorkFile(this.apiToken, this.workId, ele.photoSrc).then(res => {
+          // console.log(res)
+          this.countIndex++;
+          ele.fileId = res;
+          this.uploadImg();
         })
       }
-
     }
+  }
 
+  submitWork = () => {
+    let { currentWork } = this.state;
 
+    if (currentWork.findIndex(img => !img.photoSrc) === -1) {
+      Taro.showLoading({
+        title: '上传中...'
+      })
+      this.uploadImg();
+
+    }else{
+      Taro.showModal({
+        title: '提示',
+        content: '请上传对应图片',
+        confirmText: '知道了',
+        showCancel: false
+      })
+    }
   }
 
   render() {
 
     let {
-      sampleImages,
-      selectedImages
+       currentWork,
+       details
     } = this.state;
-
     let sampleImageView
-    if (sampleImages && selectedImages) {
-      sampleImageView = sampleImages.map((item, index) => {
+    if (currentWork) {
+      sampleImageView = currentWork.map((item, index) => {
         return (
           <View key={index} className='show-item'>
             <View className='eg img-item'>
               <View className='eg-item'>示例</View>
-              <Image src={item} className='img' mode='aspectFit'></Image>
+              <Image src={item.samplesSrc} className='img' mode='aspectFit'></Image>
             </View>
             <View className='img-item'>
               {
-                selectedImages[index] ?
+                item.photoSrc ?
                   (
                     <View className='showImg'>
-                      <AtIcon size='20' value='close-circle' color='red' onClick={this.delete.bind(this, index)}></AtIcon>
-                      <Image src={selectedImages[index]} className='img' mode='aspectFit'></Image>
+                      {
+                        !item.shouldUpload ?
+                        (
+                            <View>该图片上传成功</View>
+                        )
+                        :
+                        (
+                            <AtIcon size='20' value='close-circle' color='red' onClick={this.delete.bind(this, index)}></AtIcon>
+                        )
+                      }
+                      <Image src={item.photoSrc} className='img' mode='aspectFit'></Image>
                     </View>
                   )
                   :
@@ -133,13 +230,11 @@ export default class DataAcquistion extends Taro.Component {
           <View className='task_demand'>
             <View className='title'>任务要求</View>
             <View className='content-list'>
-              <View className='list-item'>1 每组图片10张以上，同一组目标对象必须是同一个老年人；</View>
-              <View className='list-item'>2 老年人应在60岁以上，男女不限；</View>
-              <View className='list-item'>3 图像来源可以是监控摄像头，手机自拍，拍别人，不能是网上搜索的图片；</View>
-              <View className='list-item'>4 每张图片的人脸必须五官清晰可见，能够准确辨认出身份；</View>
-              <View className='list-item'>5 所有图片应避免在同一时刻、同一场景下拍摄，尽量保证场景差异性越大越好（比如在不同的餐厅、景区、商场等）；</View>
-              <View className='list-item'>6 所有图片的人脸角度差异性越大越好（比如在保证五官清晰的前提下，有不同角度的侧脸、低头、抬头等）；</View>
-              <View className='list-item'>7 同一张图片内若有多张人脸，目标人脸必须最大。</View>
+              {details.map((v, i) => {
+                return (
+                  <View className='list-item' key={i}>{i + 1}{v}</View>
+                )
+              })}
             </View>
 
           </View>
@@ -153,18 +248,17 @@ export default class DataAcquistion extends Taro.Component {
             <View className='take-photo'>
               {sampleImageView}
             </View>
-            <View className='info'>请拍摄10组照片</View>
+            <View className='info'>请拍摄{currentWork.length}组照片</View>
             <View className='cenggao'></View>
           </View>
         </View>
         <View className='cengHeight'></View>
         <View className='top'>
-          <NavBar title='老人图像采集任务'></NavBar>
-          <View className='top-info'>0/1 已添加</View>
+          <NavBar title='采集任务'></NavBar>
         </View>
 
         <View className='bottom-btn'>
-          <AtButton type='primary' circle className='btn' onClick={this.submitWork}>提交审核</AtButton>
+          <AtButton type='primary' circle className='btn' onClick={this.submitWork}>提交</AtButton>
         </View>
       </View>
     )

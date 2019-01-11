@@ -13,7 +13,8 @@ import NavBar from '../../components/navBar/index'
 import {
   fetchReview,
   downloadReviewFiles,
-  submitReview
+  submitReview,
+  cancelWork
 } from '../../utils/beevalley'
 
 import './index.scss'
@@ -68,6 +69,12 @@ export default class reviewData extends Taro.Component {
     })
   }
 
+  componentWillUnmount() {
+    if (this.reviewId) {
+      cancelWork(this.apiToken, this.reviewId);
+    }
+  }
+
   nextWork = () => {
 
     this.setState({
@@ -108,8 +115,16 @@ export default class reviewData extends Taro.Component {
         Taro.hideLoading()
       } else {
         Taro.hideLoading()
-        Taro.showToast({
-          title: '没有任务了'
+        Taro.showModal({
+          title: '提示',
+          content: '当前没有任务了！',
+          confirmText: '知道了',
+          showCancel: false,
+          success: function () {
+            Taro.navigateBack({
+              delta: 1
+            })
+          }
         })
       }
     })
@@ -270,7 +285,7 @@ export default class reviewData extends Taro.Component {
                 </View>
                 <View className='cengHeight'></View>
                 <View className='top'>
-                    <NavBar title='老人图像审核'></NavBar>
+                    <NavBar title='采集审核'></NavBar>
 
                 </View>
 
