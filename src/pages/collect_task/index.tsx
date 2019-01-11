@@ -95,7 +95,6 @@ export default class DataAcquistion extends Taro.Component {
           confirmText: '知道了',
           showCancel: false,
           success: function(){
-            this.workId = null;
             Taro.navigateBack({
               delta: 1
             })
@@ -140,7 +139,8 @@ export default class DataAcquistion extends Taro.Component {
           content: '上传成功',
           confirmText: '知道了',
           showCancel: false,
-          success: function () {
+          success:  () => {
+            this.workId = null;
             Taro.navigateBack({
               delta: 1
             })
@@ -156,9 +156,8 @@ export default class DataAcquistion extends Taro.Component {
         this.uploadImg();
       } else {
         uploadWorkFile(this.apiToken, this.workId, ele.photoSrc).then(res => {
-          // console.log(res)
           this.countIndex++;
-          ele.fileId = res;
+          ele.fileId = res[0];
           this.uploadImg();
         })
       }
