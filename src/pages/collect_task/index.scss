@@ -228,13 +228,16 @@
         justify-content: center;
         background: #fff;
         .btn {
-          width: 90%;
+          width: 45%;
           height: 7vh;
           line-height: 7vh;
           outline: none;
           border: none;
           background: red;
           color: #fff;
+        }
+        .btn:last-child{
+          background: #FFCC00;
         }
     }
     .cengHeight{

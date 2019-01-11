@@ -37,7 +37,7 @@ export default class DataAcquistion extends Taro.Component {
 
   componentWillUnmount() {
     if (this.workId) {
-      cancelWork(this.apiToken, this.workId);
+      cancelWork(this.apiToken, [this.workId]);
     }
   }
 
@@ -95,6 +95,7 @@ export default class DataAcquistion extends Taro.Component {
           confirmText: '知道了',
           showCancel: false,
           success: function(){
+            this.workId = null;
             Taro.navigateBack({
               delta: 1
             })
@@ -134,12 +135,19 @@ export default class DataAcquistion extends Taro.Component {
       let uploadImgId = currentWork.map(v => v.fileId).filter(f => f);
       submitWork(this.apiToken, this.workId, uploadImgId).then(res => {
         Taro.hideLoading();
-        Taro.showToast({
-          title: '上传成功',
-          icon: 'success'
+        Taro.showModal({
+          title: '提示',
+          content: '上传成功',
+          confirmText: '知道了',
+          showCancel: false,
+          success: function () {
+            Taro.navigateBack({
+              delta: 1
+            })
+          }
         })
 
-        this.nextWork();
+
       })
     } else {
       let ele = currentWork[this.countIndex];
@@ -171,9 +179,29 @@ export default class DataAcquistion extends Taro.Component {
         title: '提示',
         content: '请上传对应图片',
         confirmText: '知道了',
-        showCancel: false
+        showCancel: false,
+        success: function (res) {
+          if (res.confirm) {
+            // console.log(1)
+          }
+        }
       })
     }
+  }
+
+  cancelWork = () => {
+    Taro.showModal({
+      title: '放弃任务',
+      content: '确定放弃当前任务',
+      confirmText: "知道了",
+      success: function (res) {
+        if (res.confirm) {
+          Taro.navigateBack({
+            delta: 1
+          })
+        }
+      }
+    })
   }
 
   render() {
@@ -259,6 +287,7 @@ export default class DataAcquistion extends Taro.Component {
 
         <View className='bottom-btn'>
           <AtButton type='primary' circle className='btn' onClick={this.submitWork}>提交</AtButton>
+          <AtButton type='primary' circle className='btn' onClick={this.cancelWork}>放弃</AtButton>
         </View>
       </View>
     )
