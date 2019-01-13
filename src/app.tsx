@@ -26,7 +26,8 @@ class App extends Component {
       'pages/count_task/index',
       'pages/count_review/index',
       'pages/collect_task/index',
-      'pages/collect_review/index'
+      'pages/collect_review/index',
+      'pages/phone_login/index'
     ],
     window: {
       backgroundTextStyle: 'light',

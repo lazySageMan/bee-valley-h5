@@ -15,7 +15,8 @@ import {
 } from '../../utils/beevalley'
 
 import './index.scss'
-import wechat from '../../image/wechat.png'
+import wechat from '../../image/weixin.png'
+import phone from '../../image/message.png'
 
 export default class Login extends Component {
 
@@ -119,6 +120,12 @@ export default class Login extends Component {
     })
   }
 
+  phoneLogin = () => {
+    Taro.redirectTo({
+      url: '/pages/phone_login/index'
+    })
+  }
+
   render() {
     let {
       isMobile
@@ -136,12 +143,16 @@ export default class Login extends Component {
                 <View className='iconMenu'>
                     <View className='iconTitle'>其他方式登录</View>
                 </View>
-                { !isMobile &&
+                <View className='otherLogin'>
+                  {!isMobile &&
                     <View className='icon' onClick={this.wechatLogin}>
-                        <Image style='width:50px;height:50px;' src={wechat}></Image>
+                      <Image className='img' src={wechat}></Image>
                     </View>
-                }
-
+                  }
+                  <View className='icon' onClick={this.phoneLogin}>
+                    <Image className='img' src={phone}></Image>
+                  </View>
+                </View>
             </View>
     )
   }
