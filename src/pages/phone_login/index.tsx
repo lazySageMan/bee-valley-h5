@@ -9,7 +9,7 @@ import {
 } from '@tarojs/components'
 import {
   sendMobileCode,
-  register
+  loginSms
 } from '../../utils/beevalley'
 
 import './index.scss'
@@ -29,12 +29,6 @@ export default class Register extends Component {
   handleUsernameChange = (event) => {
     this.setState({
       userPhone: event.target.value
-    });
-  }
-
-  handlePasswordChange = (event) => {
-    this.setState({
-      userPasswd: event.target.value
     });
   }
 
@@ -80,11 +74,18 @@ export default class Register extends Component {
     } = this.state
     if (userPhone.length === 11 && userPhone.charAt(0) === '1') {
       if (userTime === "发送验证码" || userTime === "重新发送") {
-        //sendMobileCode(userPhone)
-        this.setState({
-          userTime: 60,
-          bgcolor: 'gray'
-        }, () => this.lessTime())
+        sendMobileCode(userPhone, "login").then(() => {
+           this.setState({
+              userTime: 60,
+              bgcolor: 'gray'
+           }, () => this.lessTime())
+        }).catch(() => {
+          // console.log(err)
+          Taro.showToast({
+            title: '网络错误，请重新获取验证码',
+            mask: true
+          })
+        })
       } else {
         Taro.showToast({
           title: '验证码已发送，请注意查看',
@@ -100,18 +101,17 @@ export default class Register extends Component {
 
   }
 
-  register = () => {
+  loginSms = () => {
     let {
       userPhone,
-      userPasswd,
       userCode,
       userTime
     } = this.state
 
     // console.log(userPhone, userPasswd, userCode, userTime)
-    if (userPhone === '' || userPasswd === '' || userCode === '') {
+    if (userPhone === '' || userCode === '') {
       Taro.showToast({
-        title: '手机号，或者密码为空',
+        title: '手机号，或者验证码为空',
         mask: true
       })
       return;
@@ -124,39 +124,42 @@ export default class Register extends Component {
       })
     } else {
       if (userPhone.length === 11 && userPhone.charAt(0) === '1'  && userCode.length !== 0) {
-        // register(userPhone, userPasswd, userCode).then((res) => {
-        //   if (res.statusCode === 403) {
-        //     if (res.data.error.code === "13") {
-        //       Taro.showToast({
-        //         title: '该手机号注册过了',
-        //         mask: true,
-        //         duration: 2000
-        //       })
-        //     } else if (res.data.error.code === "14") {
-        //       Taro.showToast({
-        //         title: '验证码有误',
-        //         mask: true,
-        //         duration: 2000
-        //       })
-        //     }
-        //     return;
-        //   } else {
-        //     Taro.showToast({
-        //       title: '注册成功',
-        //       mask: true,
-        //       duration: 2000,
-        //       success: () => {
-        //         Taro.setStorageSync('apiToken', res.data)
-        //         Taro.setStorageSync('login', true)
-
-        //         Taro.redirectTo({
-        //           url: '/pages/index/index'
-        //         })
-        //       }
-        //     })
-        //}
-
-        //})
+        loginSms(userPhone, userCode).then((res) => {
+          if (res.statusCode === 403) {
+            if (res.data.error.code === "13") {
+              Taro.showToast({
+                title: '该手机号注册过了',
+                mask: true,
+                duration: 2000
+              })
+            } else if (res.data.error.code === "14") {
+              Taro.showToast({
+                title: '验证码有误',
+                mask: true,
+                duration: 2000
+              })
+            }
+            return;
+          } else {
+            Taro.showToast({
+              title: '登录成功',
+              mask: true,
+              duration: 2000,
+              success: () => {
+                Taro.setStorageSync('apiToken', res.data)
+                Taro.setStorageSync('login', true)
+                Taro.redirectTo({
+                  url: '/pages/index/index'
+                })
+              }
+            })
+          }
+        }).catch(() => {
+          Taro.showToast({
+            title: '验证码错误，请重新输入',
+            mask: true
+          })
+        })
 
       } else {
         Taro.showToast({
@@ -180,13 +183,13 @@ export default class Register extends Component {
 
     return (
       <View className='phone-wrap'>
-        <Text className='title'>手机登录</Text>
+        <Text className='title'>短信验证码登录</Text>
         <Input className='inputText' type='text' value={userPhone} placeholder='账号手机号' onChange={this.handleUsernameChange} />
         <View className='identCode'>
           <Input className='code' type='text' value={userCode} placeholder='验证码' onChange={this.changeCode} />
           <Button className='codeBtn' style={`background:${bgcolor}`} onClick={this.sendCode}>{userTime}</Button>
         </View>
-        <Button className='register-btn' onClick={this.register}>立即登录</Button>
+        <Button className='register-btn' onClick={this.loginSms}>立即登录</Button>
       </View>
     )
   }
