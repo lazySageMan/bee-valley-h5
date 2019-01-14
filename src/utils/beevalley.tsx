@@ -21,9 +21,18 @@ function handleError(res) {
     })
     throw 'unauthorized'
   } else if (res.statusCode === 403) {
-    throw 'forbidden'
+    let errorInfo = parseJson(res.data)
+    if (errorInfo && errorInfo.error && errorInfo.error.code === "13") {
+      throw 'user exists'
+    } else if (errorInfo && errorInfo.error && errorInfo.error.code === "14") {
+      throw 'invalid code'
+    } else {
+      throw 'forbidden'
+    }
   } else if (res.statusCode === 429) {
     throw 'too many request'
+  } else if (res.statusCode !== 200) {
+    throw 'unexpected error'
   }
 }
 
@@ -43,7 +52,7 @@ function fetchWork(token, type, num, packageId) {
     },
     dataType: 'text',
     responseType: 'text'
-  }).then(handleRes).then((data) => JSON.parse(data))
+  }).then(handleRes).then(parseJson)
 }
 
 function downloadWorkFile(token, workId, options) {
@@ -83,7 +92,8 @@ function cancelWork(token, workId) {
   return Taro.request({
     url: `${host}works/${workId.join(',')}/cancel`,
     method: 'DELETE',
-    responseType: 'arraybuffer',
+    dataType: 'text',
+    responseType: 'text',
     header: {
       'Authorization': 'Bearer ' + token
     },
@@ -94,7 +104,8 @@ function submitWork(token, workId, result) {
   return Taro.request({
     url: `${host}works/`,
     method: 'POST',
-    responseType: 'arraybuffer',
+    dataType: 'text',
+    responseType: 'text',
     data: {
       'id': workId,
       'result': result
@@ -125,7 +136,7 @@ function fetchReview(token, type, num, packageId) {
     },
     dataType: 'text',
     responseType: 'text'
-  }).then(handleRes).then((data) => JSON.parse(data))
+  }).then(handleRes).then(parseJson)
 }
 
 function downloadReviewFile(token, reviewId, options) {
@@ -152,7 +163,8 @@ function submitReview(token, reviewId, result, detail) {
       'content-type': 'application/json',
       'Authorization': 'Bearer ' + token
     },
-    responseType: 'arraybuffer'
+    dataType: 'text',
+    responseType: 'text'
   }).then(handleRes)
 }
 
@@ -238,7 +250,7 @@ function register(mobile, passwd, code) {
     },
     dataType: 'text',
     responseType: 'text'
-  })
+  }).then(handleRes)
 }
 
 function loginSms(mobile, code){
@@ -255,7 +267,7 @@ function loginSms(mobile, code){
     },
     dataType: 'text',
     responseType: 'text'
-  })
+  }).then(handleRes)
 }
 
 function parseJson(str) {

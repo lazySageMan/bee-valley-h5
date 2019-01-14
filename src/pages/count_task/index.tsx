@@ -54,7 +54,7 @@ export default class PointTask extends Component {
           title: '没有任务了'
         })
       }
-    })
+    }).catch(this.defaultErrorHandling)
   }
 
   nextWork = () => {
@@ -322,11 +322,18 @@ export default class PointTask extends Component {
     });
   }
 
-  defaultErrorHandling = () => {
+  defaultErrorHandling = (error) => {
     Taro.hideLoading()
-    Taro.navigateBack({
-      delta: 1
-    })
+    if (error === 'forbidden') {
+      Taro.navigateBack({
+        delta: 1
+      })
+    } else {
+      Taro.showToast({
+        title: error,
+        mask: true
+      })
+    }
   }
 
   render() {

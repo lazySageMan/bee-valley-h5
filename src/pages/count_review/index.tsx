@@ -47,7 +47,7 @@ export default class PointReview extends Component {
           title: '没有任务了'
         })
       }
-    })
+    }).catch(this.defaultErrorHandling)
   }
 
   nextWork = () => {
@@ -89,7 +89,7 @@ export default class PointReview extends Component {
           this.work[foundIndex].src = imgBase64;
         }
       }
-    });
+    }).catch(this.defaultErrorHandling);
 
   }
 
@@ -279,11 +279,18 @@ export default class PointReview extends Component {
     });
   }
 
-  defaultErrorHandling = () => {
+  defaultErrorHandling = (error) => {
     Taro.hideLoading()
-    Taro.navigateBack({
-      delta: 1
-    })
+    if (error === 'forbidden') {
+      Taro.navigateBack({
+        delta: 1
+      })
+    } else {
+      Taro.showToast({
+        title: error,
+        mask: true
+      })
+    }
   }
 
   render() {

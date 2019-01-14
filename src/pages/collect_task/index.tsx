@@ -41,6 +41,20 @@ export default class DataAcquistion extends Taro.Component {
     }
   }
 
+  defaultErrorHandling = (error) => {
+    Taro.hideLoading()
+    if (error === 'forbidden') {
+      Taro.navigateBack({
+        delta: 1
+      })
+    } else {
+      Taro.showToast({
+        title: error,
+        mask: true
+      })
+    }
+  }
+
   getDiff = (arr1, arr2) => {
     return arr1.filter(i => arr2.indexOf(i) < 0)
   }
@@ -101,7 +115,7 @@ export default class DataAcquistion extends Taro.Component {
           }
         })
       }
-    })
+    }).catch(this.defaultErrorHandling)
   }
 
   getImg = (index) => {
@@ -146,9 +160,7 @@ export default class DataAcquistion extends Taro.Component {
             })
           }
         })
-
-
-      })
+      }).catch(this.defaultErrorHandling)
     } else {
       let ele = currentWork[this.countIndex];
       if (!ele.shouldUpload) {

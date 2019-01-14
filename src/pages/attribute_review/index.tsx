@@ -46,11 +46,18 @@ export default class PointTask extends Component {
 
   }
 
-  defaultErrorHandling = () => {
+  defaultErrorHandling = (error) => {
     Taro.hideLoading()
-    Taro.navigateBack({
-      delta: 1
-    })
+    if (error === 'forbidden') {
+      Taro.navigateBack({
+        delta: 1
+      })
+    } else {
+      Taro.showToast({
+        title: error,
+        mask: true
+      })
+    }
   }
 
   nextReview = () => {
@@ -87,7 +94,7 @@ export default class PointTask extends Component {
         this.work = res;
         this.nextReview();
       }
-    })
+    }).catch(this.defaultErrorHandling)
   }
 
   downLoadImg = (work) => {
@@ -99,7 +106,7 @@ export default class PointTask extends Component {
           currentWork: work
         })
         Taro.hideLoading()
-      })
+      }).catch(this.defaultErrorHandling)
     }
   }
 
@@ -114,9 +121,7 @@ export default class PointTask extends Component {
     submitReview(this.apiToken, currentWork.id, true).then(() => {
       Taro.hideLoading();
       this.nextReview();
-    }).catch(() => {
-      this.defaultErrorHandling()
-    })
+    }).catch(this.defaultErrorHandling)
   }
 
   cancelWork = () => {
@@ -132,9 +137,7 @@ export default class PointTask extends Component {
       Taro.hideLoading();
       this.nextReview();
 
-    }).catch(() => {
-      this.defaultErrorHandling()
-    })
+    }).catch(this.defaultErrorHandling)
   }
 
   rejectWork = () => {
@@ -148,9 +151,7 @@ export default class PointTask extends Component {
     submitReview(this.apiToken, currentWork.id, false).then(() => {
       Taro.hideLoading();
       this.nextReview();
-    }).catch(() => {
-      this.defaultErrorHandling()
-    })
+    }).catch(this.defaultErrorHandling)
   }
 
   render() {

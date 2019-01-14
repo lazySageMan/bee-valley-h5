@@ -19,7 +19,6 @@ export default class Register extends Component {
     super(props);
     this.state = {
       userPhone: '',
-      userPasswd: '',
       userCode: '',
       userTime: '发送验证码',
       bgcolor: 'orangered'
@@ -79,7 +78,7 @@ export default class Register extends Component {
               userTime: 60,
               bgcolor: 'gray'
            }, () => this.lessTime())
-        }).catch(() => {
+        }).catch((err) => {
           // console.log(err)
           Taro.showToast({
             title: '网络错误，请重新获取验证码',
@@ -125,40 +124,31 @@ export default class Register extends Component {
     } else {
       if (userPhone.length === 11 && userPhone.charAt(0) === '1'  && userCode.length !== 0) {
         loginSms(userPhone, userCode).then((res) => {
-          if (res.statusCode === 403) {
-            if (res.data.error.code === "13") {
-              Taro.showToast({
-                title: '该手机号注册过了',
-                mask: true,
-                duration: 2000
-              })
-            } else if (res.data.error.code === "14") {
-              Taro.showToast({
-                title: '验证码有误',
-                mask: true,
-                duration: 2000
+          Taro.showToast({
+            title: '登录成功',
+            mask: true,
+            duration: 2000,
+            success: () => {
+              Taro.setStorageSync('apiToken', res)
+              Taro.setStorageSync('login', true)
+              Taro.redirectTo({
+                url: '/pages/index/index'
               })
             }
-            return;
+          })
+        }).catch((error) => {
+          if (error === 'invalid code') {
+            Taro.showToast({
+              title: '验证码无效',
+              mask: true,
+              duration: 2000
+            })
           } else {
             Taro.showToast({
-              title: '登录成功',
-              mask: true,
-              duration: 2000,
-              success: () => {
-                Taro.setStorageSync('apiToken', res.data)
-                Taro.setStorageSync('login', true)
-                Taro.redirectTo({
-                  url: '/pages/index/index'
-                })
-              }
+              title: '验证码错误，请重新输入',
+              mask: true
             })
           }
-        }).catch(() => {
-          Taro.showToast({
-            title: '验证码错误，请重新输入',
-            mask: true
-          })
         })
 
       } else {

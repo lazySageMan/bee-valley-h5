@@ -62,11 +62,18 @@ export default class reviewData extends Taro.Component {
     this.nextWork()
   }
 
-  defaultErrorHandling = () => {
+  defaultErrorHandling = (error) => {
     Taro.hideLoading()
-    Taro.navigateBack({
-      delta: 1
-    })
+    if (error === 'forbidden') {
+      Taro.navigateBack({
+        delta: 1
+      })
+    } else {
+      Taro.showToast({
+        title: error,
+        mask: true
+      })
+    }
   }
 
   componentWillUnmount() {
@@ -101,6 +108,8 @@ export default class reviewData extends Taro.Component {
               }
             })
           })
+          // TODO handle error properly
+
         })
         let images = sampleImages.map((item) => {
           return {
@@ -127,7 +136,7 @@ export default class reviewData extends Taro.Component {
           }
         })
       }
-    })
+    }).catch(this.defaultErrorHandling)
 
   }
 

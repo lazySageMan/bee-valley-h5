@@ -36,12 +36,12 @@ export default class Login extends Component {
       })
     } else {
       phoneLogin(this.state.username, this.state.password).then((token) => {
-        if (!token) {
-          Taro.showToast({
-            title: '登陆失败',
-            mask: true
-          })
-        } else {
+        // if (!token) {
+        //   Taro.showToast({
+        //     title: '登陆失败',
+        //     mask: true
+        //   })
+        // } else {
 
           Taro.setStorageSync('apiToken', token)
           Taro.setStorageSync('login', true)
@@ -49,9 +49,18 @@ export default class Login extends Component {
           Taro.redirectTo({
             url: '/pages/index/index'
           })
-        }
-      })
+        // }
+      }).catch(this.defaultErrorHandling)
     }
+  }
+
+  defaultErrorHandling = (error) => {
+
+    Taro.showToast({
+      title: '登陆失败',
+      mask: true
+    })
+
   }
 
   wechatLogin = () => {
@@ -84,20 +93,20 @@ export default class Login extends Component {
     this.code = url.searchParams.get('code');
     if (this.code) {
       wechatLogin(this.code).then((token) => {
-        if (!token) {
-          Taro.showToast({
-            title: '登陆失败',
-            mask: true
-          })
-        } else {
+        // if (!token) {
+        //   Taro.showToast({
+        //     title: '登陆失败',
+        //     mask: true
+        //   })
+        // } else {
           Taro.setStorageSync('apiToken', token)
           Taro.setStorageSync('login', true)
 
           Taro.redirectTo({
             url: '/pages/index/index'
           })
-        }
-      })
+        // }
+      }).catch(this.defaultErrorHandling)
     }
 
   }
