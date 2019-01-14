@@ -115,13 +115,13 @@ export default class Login extends Component {
   }
 
   toRegister = () => {
-    Taro.redirectTo({
+    Taro.navigateTo({
       url: '/pages/signup/index'
     })
   }
 
   phoneLogin = () => {
-    Taro.redirectTo({
+    Taro.navigateTo({
       url: '/pages/phone_login/index'
     })
   }
