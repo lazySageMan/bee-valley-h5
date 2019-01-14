@@ -124,17 +124,10 @@ export default class Register extends Component {
     } else {
       if (userPhone.length === 11 && userPhone.charAt(0) === '1'  && userCode.length !== 0) {
         loginSms(userPhone, userCode).then((res) => {
-          Taro.showToast({
-            title: '登录成功',
-            mask: true,
-            duration: 2000,
-            success: () => {
-              Taro.setStorageSync('apiToken', res)
-              Taro.setStorageSync('login', true)
-              Taro.redirectTo({
-                url: '/pages/index/index'
-              })
-            }
+          Taro.setStorageSync('apiToken', res)
+          Taro.setStorageSync('login', true)
+          Taro.redirectTo({
+            url: '/pages/index/index'
           })
         }).catch((error) => {
           if (error === 'invalid code') {
