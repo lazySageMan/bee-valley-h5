@@ -206,7 +206,7 @@ function listAuthorizedReview(token) {
   }).then(handleRes).then(parseJson)
 }
 
-function sendMobileCode(mobile) {
+function sendMobileCode(mobile, type) {
   return Taro.request({
     url: `${host}mobile/send`,
     method: 'POST',
@@ -216,8 +216,10 @@ function sendMobileCode(mobile) {
     data: {
       "mobile": mobile,
       "region": "CN",
-      "topic": "signup"
-    }
+      "topic": type
+    },
+    dataType: 'text',
+    responseType: 'text'
   }).then(handleRes).then(parseJson)
 }
 
@@ -233,7 +235,26 @@ function register(mobile, passwd, code) {
       "password": passwd,
       "code": code,
       "region": "CN"
-    }
+    },
+    dataType: 'text',
+    responseType: 'text'
+  })
+}
+
+function loginSms(mobile, code){
+  return Taro.request({
+    url: `${host}login/sms`,
+    method: 'POST',
+    header: {
+      'content-type': 'application/json'
+    },
+    data: {
+      "mobile": mobile,
+      "code": code,
+      "region": "CN"
+    },
+    dataType: 'text',
+    responseType: 'text'
   })
 }
 
@@ -284,5 +305,6 @@ export {
   register,
   downloadReviewFiles,
   uploadWorkFile,
-  downloadWorkFiles
+  downloadWorkFiles,
+  loginSms
 };
