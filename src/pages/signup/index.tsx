@@ -80,11 +80,18 @@ export default class Register extends Component {
     } = this.state
     if (userPhone.length === 11 && userPhone.charAt(0) === '1') {
       if (userTime === "发送验证码" || userTime === "重新发送") {
-        sendMobileCode(userPhone)
-        this.setState({
-          userTime: 60,
-          bgcolor: 'gray'
-        }, () => this.lessTime())
+        sendMobileCode(userPhone, "signup").then(() => {
+          this.setState({
+            userTime: 60,
+            bgcolor: 'gray'
+          }, () => this.lessTime())
+        }).catch(() => {
+          // console.log(err)
+          Taro.showToast({
+            title: '网络错误，请重新获取验证码',
+            mask: true
+          })
+        })
       } else {
         Taro.showToast({
           title: '验证码已发送，请注意查看',
@@ -155,7 +162,11 @@ export default class Register extends Component {
               }
             })
           }
-
+        }).catch(() => {
+          Taro.showToast({
+            title: '验证码错误，请重新输入',
+            mask: true
+          })
         })
 
       } else {
