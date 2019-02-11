@@ -36,12 +36,6 @@ export default class Login extends Component {
       })
     } else {
       phoneLogin(this.state.username, this.state.password).then((token) => {
-        // if (!token) {
-        //   Taro.showToast({
-        //     title: '登陆失败',
-        //     mask: true
-        //   })
-        // } else {
 
           Taro.setStorageSync('apiToken', token)
           Taro.setStorageSync('login', true)
@@ -49,7 +43,6 @@ export default class Login extends Component {
           Taro.redirectTo({
             url: '/pages/index/index'
           })
-        // }
       }).catch(this.defaultErrorHandling)
     }
   }
@@ -64,14 +57,9 @@ export default class Login extends Component {
   }
 
   wechatLogin = () => {
-    var url = new URL(window.location.href);
-    let code = url.searchParams.get('code');
-
-    if (!code) {
-      var redirect_uri = encodeURIComponent('http://bee-valley.todview.com');
-      var state = Math.ceil(Math.random() * 1000);
-      window.location = 'https://open.weixin.qq.com/connect/qrconnect?appid=wx325f7c60ccdd70ed&redirect_uri=' + redirect_uri + '&response_type=code&scope=snsapi_login&state=' + state + '#wechat_redirect';
-    }
+    Taro.navigateTo({
+      url: '/pages/wechat_login/index'
+    })
   }
 
   componentDidMount() {
@@ -82,7 +70,6 @@ export default class Login extends Component {
     this.setState({
       isMobile: isMobile
     })
-    //console.log(this.isMobile)
 
     if (login === true) {
       Taro.redirectTo({
@@ -93,19 +80,12 @@ export default class Login extends Component {
     this.code = url.searchParams.get('code');
     if (this.code) {
       wechatLogin(this.code).then((token) => {
-        // if (!token) {
-        //   Taro.showToast({
-        //     title: '登陆失败',
-        //     mask: true
-        //   })
-        // } else {
           Taro.setStorageSync('apiToken', token)
           Taro.setStorageSync('login', true)
 
           Taro.redirectTo({
             url: '/pages/index/index'
           })
-        // }
       }).catch(this.defaultErrorHandling)
     }
 

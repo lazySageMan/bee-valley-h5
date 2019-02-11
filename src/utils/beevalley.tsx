@@ -4,6 +4,7 @@ import Taro from '@tarojs/taro'
 import {
   host
 } from '../config'
+import { func } from '_@types_prop-types@15.5.8@@types/prop-types';
 
 function handleRes(res) {
   handleError(res)
@@ -299,6 +300,23 @@ function uploadWorkFile(token, workId, fileSrc) {
 
 }
 
+function wxLogin(a, b){
+    var c = "default";
+    a.self_redirect === !0 ? c = "true" : a.self_redirect === !1 && (c = "false");
+    var d = b.createElement("iframe"),
+    e = "https://open.weixin.qq.com/connect/qrconnect?appid=" + a.appid + "&scope=" + a.scope + "&redirect_uri=" + a.redirect_uri + "&state=" + a.state + "&login_type=jssdk&self_redirect=" + c;
+    e += a.style ? "&style=" + a.style : "", e += a.href ? "&href=" + a.href : "",
+    d.src = e,
+    d.frameBorder = "0",
+    d.allowTransparency = "true",
+    d.scrolling = "no",
+    d.width = "300px",
+    d.height = "400px";
+    var f = b.getElementById(a.id); f.innerHTML = "", f.appendChild(d);
+}
+
+
+
 export {
   fetchWork,
   downloadWorkFile,
@@ -318,5 +336,6 @@ export {
   downloadReviewFiles,
   uploadWorkFile,
   downloadWorkFiles,
-  loginSms
+  loginSms,
+  wxLogin
 };
