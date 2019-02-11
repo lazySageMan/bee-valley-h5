@@ -27,7 +27,8 @@ class App extends Component {
       'pages/count_review/index',
       'pages/collect_task/index',
       'pages/collect_review/index',
-      'pages/phone_login/index'
+      'pages/phone_login/index',
+      'pages/wechat_login/index'
     ],
     window: {
       backgroundTextStyle: 'light',
