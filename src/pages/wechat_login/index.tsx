@@ -7,6 +7,7 @@ import {
 import {
   wxLogin
 } from '../../utils/beevalley'
+import NavBar from '../../components/navBar/index'
 import './index.scss'
 import {
   homepage
@@ -32,8 +33,11 @@ export default class wechatLogin extends Component {
 
   render() {
     return (
-      <View id='login_container'>
+      <View className='wechatLogin'>
+        <NavBar title='微信快捷登录' verification />
+        <View id='login_container'>
 
+        </View>
       </View>
     )
   }

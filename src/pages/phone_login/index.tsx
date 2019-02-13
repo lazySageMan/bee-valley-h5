@@ -11,6 +11,7 @@ import {
   sendMobileCode,
   loginSms
 } from '../../utils/beevalley'
+import NavBar from '../../components/navBar/index'
 
 import './index.scss'
 
@@ -165,14 +166,17 @@ export default class Register extends Component {
     } = this.state
 
     return (
-      <View className='phone-wrap'>
-        <Text className='title'>短信验证码登录</Text>
-        <Input className='inputText' type='text' value={userPhone} placeholder='账号手机号' onChange={this.handleUsernameChange} />
-        <View className='identCode'>
-          <Input className='code' type='text' value={userCode} placeholder='验证码' onChange={this.changeCode} />
-          <Button className='codeBtn' style={`background:${bgcolor}`} onClick={this.sendCode}>{userTime}</Button>
+      <View className='phoneLoginWrap'>
+        <NavBar title='手机验证码登录' verification />
+        <View className='phone-wrap'>
+          <Text className='title'>短信验证码登录</Text>
+          <Input className='inputText' type='text' value={userPhone} placeholder='账号手机号' onChange={this.handleUsernameChange} />
+          <View className='identCode'>
+            <Input className='code' type='text' value={userCode} placeholder='验证码' onChange={this.changeCode} />
+            <Button className='codeBtn' style={`background:${bgcolor}`} onClick={this.sendCode}>{userTime}</Button>
+          </View>
+          <Button className='register-btn' onClick={this.loginSms}>立即登录</Button>
         </View>
-        <Button className='register-btn' onClick={this.loginSms}>立即登录</Button>
       </View>
     )
   }
