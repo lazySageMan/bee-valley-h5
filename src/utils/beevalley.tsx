@@ -4,7 +4,6 @@ import Taro from '@tarojs/taro'
 import {
   host
 } from '../config'
-import { func } from '_@types_prop-types@15.5.8@@types/prop-types';
 
 function handleRes(res) {
   handleError(res)

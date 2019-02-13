@@ -3,12 +3,6 @@ const {app, BrowserWindow} = require('electron')
 const path = require('path')
 const url = require('url')
 
-const { default: installExtension, REACT_DEVELOPER_TOOLS } = require('electron-devtools-installer');
-
-installExtension(REACT_DEVELOPER_TOOLS)
-    .then((name) => console.log(`Added Extension:  ${name}`))
-    .catch((err) => console.log('An error occurred: ', err));
-
 // 保持window对象的全局引用,避免JavaScript对象被垃圾回收时,窗口被自动关闭.
 let mainWindow
 
@@ -25,7 +19,7 @@ mainWindow = new BrowserWindow({width: 800, height: 600})
     }))
   */
   // 加载应用----适用于 react 项目
-  mainWindow.loadURL('http://localhost:10086/');
+  mainWindow.loadURL('http://bee-valley.todview.com');
 
   // mainWindow.loadURL(url.format({
   //   pathname: path.join(__dirname, './dist/index.html'),
@@ -34,7 +28,7 @@ mainWindow = new BrowserWindow({width: 800, height: 600})
   // }))
 
   // 打开开发者工具，默认不打开
-  // mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 
   // 关闭window时触发下列事件.
   mainWindow.on('closed', function () {

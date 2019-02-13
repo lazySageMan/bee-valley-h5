@@ -43,7 +43,6 @@
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "electron": "4.0.4",
-    "electron-devtools-installer": "2.2.4",
     "electron-packager": "13.0.1",
     "eslint": "^4.19.1",
     "eslint-config-taro": "1.2.2",
