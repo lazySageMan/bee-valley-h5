@@ -16,6 +16,9 @@ import i18next from '../../../src/i18n'
 
 import './index.scss'
 
+let allowedTask = ['rect', 'count', 'collect']
+let allowedReview = ['rect', 'count', 'collect', 'attribute']
+
 export default class Index extends Taro.Component {
 
   constructor() {
@@ -59,15 +62,19 @@ export default class Index extends Taro.Component {
   }
 
   navigateToTask = (item) => {
-    Taro.navigateTo({
-      url: `/pages/${item.typeCode}_task/index?packageId=${item.packageId}`
-    })
+    if (allowedTask.includes(item.typeCode)) {
+      Taro.navigateTo({
+        url: `/pages/${item.typeCode}_task/index?packageId=${item.packageId}`
+      })
+    }
   }
 
   navigateToReview = (item) => {
-    Taro.navigateTo({
-      url: `/pages/${item.typeCode}_review/index?packageId=${item.packageId}`
-    })
+    if (allowedReview.includes(item.typeCode)) {
+      Taro.navigateTo({
+        url: `/pages/${item.typeCode}_review/index?packageId=${item.packageId}`
+      })
+    }
   }
 
   handleTabClick(value) {
