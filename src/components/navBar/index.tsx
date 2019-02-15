@@ -1,7 +1,7 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View } from '@tarojs/components'
 import { AtNavBar } from 'taro-ui'
-import i18next from '../../../.temp/i18n';
+import i18next from '../../i18n';
 
 export default class NavBar extends Component {
     constructor(props){
