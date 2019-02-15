@@ -18,6 +18,7 @@ import {
 } from '../../utils/beevalley'
 
 import './index.scss'
+import i18next from '../../i18n';
 
 export default class DataAcquistion extends Taro.Component {
 
@@ -61,7 +62,7 @@ export default class DataAcquistion extends Taro.Component {
 
   nextWork = () => {
     Taro.showLoading({
-      title: '加载中...'
+      title: `${i18next.t('Loadingin')}...`
     })
     this.countIndex = 0;
     fetchWork(this.apiToken, 'collect', 1, this.packageId).then(res => {
@@ -81,7 +82,7 @@ export default class DataAcquistion extends Taro.Component {
         if (work.previousWork){
           let successImg = this.getDiff(work.previousWork.result, work.meta.rejectedReason);
           Taro.showLoading({
-            title: '加载中...'
+            title: `${i18next.t('Loadingin')}...`
           })
           successImg.forEach(f => {
             let index = work.previousWork.result.indexOf(f)
@@ -104,9 +105,9 @@ export default class DataAcquistion extends Taro.Component {
       } else {
         Taro.hideLoading();
         Taro.showModal({
-          title: '提示',
-          content: '当前没有任务了！',
-          confirmText: '知道了',
+          title: i18next.t('Tips'),
+          content: i18next.t('notask'),
+          confirmText: i18next.t('Gotit'),
           showCancel: false,
           success: function(){
             Taro.navigateBack({
@@ -149,9 +150,9 @@ export default class DataAcquistion extends Taro.Component {
       submitWork(this.apiToken, this.workId, uploadImgId).then(res => {
         Taro.hideLoading();
         Taro.showModal({
-          title: '提示',
-          content: '上传成功',
-          confirmText: '知道了',
+          title: i18next.t('Tips'),
+          content: i18next.t('Uploadsucceeded'),
+          confirmText: i18next.t('Gotit'),
           showCancel: false,
           success:  () => {
             this.workId = null;
@@ -181,15 +182,15 @@ export default class DataAcquistion extends Taro.Component {
 
     if (currentWork.findIndex(img => !img.photoSrc) === -1) {
       Taro.showLoading({
-        title: '上传中...'
+        title: `${i18next.t('Uploadin')}...`
       })
       this.uploadImg();
 
     }else{
       Taro.showModal({
-        title: '提示',
-        content: '请上传对应图片',
-        confirmText: '知道了',
+        title: i18next.t('Tips'),
+        content: i18next.t('correspondingpicture'),
+        confirmText: i18next.t('Gotit'),
         showCancel: false,
         success: function (res) {
           if (res.confirm) {
@@ -202,9 +203,9 @@ export default class DataAcquistion extends Taro.Component {
 
   cancelWork = () => {
     Taro.showModal({
-      title: '放弃任务',
-      content: '确定放弃当前任务',
-      confirmText: "知道了",
+      title: i18next.t('Abandonment'),
+      content: i18next.t('currenttask'),
+      confirmText: i18next.t('Gotit'),
       success: function (res) {
         if (res.confirm) {
           Taro.navigateBack({
@@ -227,7 +228,7 @@ export default class DataAcquistion extends Taro.Component {
         return (
           <View key={index} className='show-item'>
             <View className='eg img-item'>
-              <View className='eg-item'>示例</View>
+              <View className='eg-item'>{i18next.t('Example')}</View>
               <Image src={item.samplesSrc} className='img' mode='aspectFit'></Image>
             </View>
             <View className='img-item'>
@@ -238,7 +239,7 @@ export default class DataAcquistion extends Taro.Component {
                       {
                         !item.shouldUpload ?
                         (
-                            <View>该图片上传成功</View>
+                            <View>{i18next.t('imagesuccessfully')}</View>
                         )
                         :
                         (
@@ -252,7 +253,7 @@ export default class DataAcquistion extends Taro.Component {
                   (
                     <View className='showIcon' onClick={this.getImg.bind(this, index)}>
                       <AtIcon size='60' value='camera' color='orange'></AtIcon>
-                      添加图片
+                      {i18next.t('addpicture')}
                                               </View>
                   )
               }
@@ -267,7 +268,7 @@ export default class DataAcquistion extends Taro.Component {
       <View className='data-wrap-task'>
         <View className='main-content'>
           <View className='task_demand'>
-            <View className='title'>任务要求</View>
+            <View className='title'>{i18next.t('Taskrequirements')}</View>
             <View className='content-list'>
               {details.map((v, i) => {
                 return (
@@ -282,23 +283,23 @@ export default class DataAcquistion extends Taro.Component {
           <View className='user-photo-wrap'>
             <View className='title'>
               <AtIcon size='30' value='image' color='orange'></AtIcon>
-              <Text className='font'>拍摄第一张照片</Text>
+              <Text className='font'>{i18next.t('Takephoto')}</Text>
             </View>
             <View className='take-photo'>
               {sampleImageView}
             </View>
-            <View className='info'>请拍摄{currentWork.length}组照片</View>
+            <View className='info'>{i18next.t('shoot')}{currentWork.length}{i18next.t('Groupphotos')}</View>
             <View className='cenggao'></View>
           </View>
         </View>
         <View className='cengHeight'></View>
         <View className='top'>
-          <NavBar title='采集任务'></NavBar>
+          <NavBar title={i18next.t('CaptureTasks')}></NavBar>
         </View>
 
         <View className='bottom-btn'>
-          <AtButton type='primary' circle className='btn' onClick={this.submitWork}>提交</AtButton>
-          <AtButton type='primary' circle className='btn' onClick={this.cancelWork}>放弃</AtButton>
+          <AtButton type='primary' circle className='btn' onClick={this.submitWork}>{i18next.t('Submit')}</AtButton>
+          <AtButton type='primary' circle className='btn' onClick={this.cancelWork}>{i18next.t('Give')}</AtButton>
         </View>
       </View>
     )

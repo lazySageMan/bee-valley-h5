@@ -4,7 +4,7 @@ import en from '../src/utils/en'
 import zh from '../src/utils/zh'
 
 i18next.init({
-  lng: 'cn', //当前语言
+  lng: 'en', //当前语言
   debug: true,
   resources: {
     en: {

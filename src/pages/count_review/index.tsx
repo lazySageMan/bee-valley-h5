@@ -17,6 +17,7 @@ import {
   checkDveice
 } from '../../utils/beevalley'
 import './index.scss'
+import i18next from '../../i18n'
 
 export default class PointReview extends Component {
 
@@ -44,7 +45,7 @@ export default class PointReview extends Component {
         this.nextWork()
       } else {
         Taro.showToast({
-          title: '没有任务了'
+          title: i18next.t('notask')
         })
       }
     }).catch(this.defaultErrorHandling)
@@ -315,7 +316,7 @@ export default class PointReview extends Component {
 
     return (
       <View className='count_review'>
-                <NavBar title='目标定位审核' />
+        <NavBar title={i18next.t('TargetLocationAudit')} />
                 <View className='imgItem'>
                     {currentWork.src && (
                         <Image src={currentWork.src} style={`width:${currentWork.meta.imageWidth}px;height:${currentWork.meta.imageHeight}px;`}></Image>
@@ -323,10 +324,10 @@ export default class PointReview extends Component {
                     <View className='workImg'></View>
                 </View>
                 <View className='btnItem'>
-                    <Button type='primary' onClick={this.submitWork}>通过</Button>
-                    <Button type='warn' onClick={this.rejectWork}>驳回</Button>
-                    <Button style='background: #FFCC00;' type='warn' onClick={this.cancelWork}>放弃</Button>
-                    <Input placeholder='十字标的半径' className='changeR' onChange={this.changeR}></Input>
+          <Button type='primary' onClick={this.submitWork}>{i18next.t('pass')}</Button>
+          <Button type='warn' onClick={this.rejectWork}>{i18next.t('dismissed')}</Button>
+          <Button style='background: #FFCC00;' type='warn' onClick={this.cancelWork}>{i18next.t('Give')}</Button>
+          <Input placeholder={i18next.t('standard')} className='changeR' onChange={this.changeR}></Input>
                 </View>
             </View>
     )

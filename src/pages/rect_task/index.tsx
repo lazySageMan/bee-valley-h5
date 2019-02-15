@@ -15,7 +15,7 @@ import {
   submitWork,
   checkDveice
 } from '../../utils/beevalley'
-
+import i18next from '../../i18n'
 import './index.scss'
 
 export default class RectTask extends Component {
@@ -71,7 +71,7 @@ export default class RectTask extends Component {
         this.nextWork();
       } else {
         Taro.showToast({
-          title: '没有任务了'
+          title: i18next.t('notask')
         })
       }
     })
@@ -457,7 +457,10 @@ export default class RectTask extends Component {
           })
           .catch(this.defaultErrorHandling)
       } else {
-        alert("请框中圆点标记目标")
+        // alert(i18next.t('marktarget'))
+        Taro.showToast({
+          title: i18next.t('marktarget')
+        })
       }
     }
   }
@@ -509,7 +512,7 @@ export default class RectTask extends Component {
     } = this.state;
     if (ratio <= 1) {
       Taro.showToast({
-        title: '不能继续缩小'
+        title: i18next.t('continueshrink')
       })
     } else {
       ratio -= 0.5;
@@ -532,7 +535,7 @@ export default class RectTask extends Component {
 
     if (this.screenWidth * ratio > currentWork.meta.imageWidth || this.screenHeight * ratio > currentWork.meta.imageHeight) {
       Taro.showToast({
-        title: '不能继续放大'
+        title: i18next.t('continuezoom')
       })
     } else {
       this.setState({
@@ -587,7 +590,7 @@ export default class RectTask extends Component {
 
     return (
       <View className='rect_task'>
-                <NavBar title='方框任务' />
+        <NavBar title={i18next.t('Boxtasks')} />
                 <View className='imgItem' id='workearea'>
                     {currentWork && currentWork.src && (
                         <Image src={currentWork.src} style={`width:${imageWidth}px;height:${imageHeight}px;`}></Image>
@@ -596,8 +599,8 @@ export default class RectTask extends Component {
                     <View className='workImg'></View>
                 </View>
                 <View className='btnItem'>
-                    <Button type='primary' onClick={this.submitWork}>提交</Button>
-                    <Button type='warn' onClick={this.cancelWork}>放弃</Button>
+          <Button type='primary' onClick={this.submitWork}>{i18next.t('Submit')}</Button>
+          <Button type='warn' onClick={this.cancelWork}>{i18next.t('Give')}</Button>
                     {adjustBtn}
                 </View>
             </View>

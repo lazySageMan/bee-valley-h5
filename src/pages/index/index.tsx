@@ -13,7 +13,7 @@ import {
   listAuthorizedReview,
   checkDveice
 } from '../../utils/beevalley'
-import i18next from '../../../src/i18n'
+import i18next from '../../i18n'
 
 import './index.scss'
 
@@ -87,8 +87,10 @@ export default class Index extends Taro.Component {
   logout = () => {
 
     Taro.showModal({
-      title: '提示',
-      content: '是否确定登出',
+      title: i18next.t('Tips'),
+      content: i18next.t('sureLogout'),
+      confirmText: i18next.t('sure'),
+      cancelText: i18next.t('cancel'),
       success: (res) => {
         if (res.confirm) {
           Taro.removeStorageSync('login')
@@ -103,13 +105,13 @@ export default class Index extends Taro.Component {
 
   render() {
     const tabList = [{
-      title: '任务列表'
+      title: i18next.t('TaskList')
     }, {
-      title: '审核列表'
+        title: i18next.t('Auditlist')
     }]
     return (
       <View className='indexwrap'>
-        <AtButton className='logout' type='secondary' onClick={this.logout}>登出</AtButton>
+        <AtButton className='logout' type='secondary' onClick={this.logout}>{i18next.t('logout')}</AtButton>
         <View className='list-wrap'>
           <AtTabs current={this.state.current} tabList={tabList} onClick={this.handleTabClick.bind(this)}>
               <AtTabsPane current={this.state.current} index={0} >

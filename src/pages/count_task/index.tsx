@@ -17,7 +17,7 @@ import {
   submitWork,
   checkDveice
 } from '../../utils/beevalley'
-
+import i18next from '../../i18n'
 import './index.scss'
 
 export default class PointTask extends Component {
@@ -51,7 +51,7 @@ export default class PointTask extends Component {
         this.nextWork()
       } else {
         Taro.showToast({
-          title: '没有任务了'
+          title: i18next.t('notask')
         })
       }
     }).catch(this.defaultErrorHandling)
@@ -161,7 +161,9 @@ export default class PointTask extends Component {
         .then(() => this.nextWork())
         .catch(this.defaultErrorHandling)
     } else {
-      alert('请标注点')
+      Taro.showToast({
+        title: i18next.t('indicatepoint')
+      })
     }
   }
 
@@ -362,7 +364,7 @@ export default class PointTask extends Component {
 
     return (
       <View className='count_task'>
-        <NavBar title='目标定位任务' />
+        <NavBar title={i18next.t('Targettask')} />
         <View className='imgItem'>
           {currentWork && currentWork.src && (
             <Image src={currentWork.src} style={`width:${currentWork.meta.imageWidth}px;height:${currentWork.meta.imageHeight}px;`}></Image>
@@ -371,9 +373,9 @@ export default class PointTask extends Component {
           <View className='workImg'></View>
         </View>
         <View className='btnItem'>
-          <Button type='primary' onClick={this.submitWork}>提交</Button>
-          <Button type='warn' onClick={this.cancelWork}>放弃</Button>
-          <Input placeholder='十字标的半径' className='changeR' onChange={this.changeR}></Input>
+          <Button type='primary' onClick={this.submitWork}>{i18next.t('Submit')}</Button>
+          <Button type='warn' onClick={this.cancelWork}>{i18next.t('Give')}</Button>
+          <Input placeholder={i18next.t('standard')} className='changeR' onChange={this.changeR}></Input>
         </View>
       </View>
     )

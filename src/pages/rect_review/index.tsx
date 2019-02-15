@@ -15,7 +15,7 @@ import {
   checkDveice
 } from '../../utils/beevalley'
 import NavBar from '../../components/navBar/index'
-
+import i18next from '../../i18n'
 import './index.scss'
 
 export default class RectReview extends Component {
@@ -38,7 +38,7 @@ export default class RectReview extends Component {
         this.nextWork()
       } else {
         Taro.showToast({
-          title: '没有任务了'
+          title: i18next.t('notask')
         })
       }
     })
@@ -316,7 +316,7 @@ export default class RectReview extends Component {
 
     return (
       <View className='rect_review'>
-                <NavBar title='方框审核' />
+        <NavBar title={i18next.t('BoxAudit')} />
                 <View className='imgItem' id='workearea'>
                     {currentWork.src && (
                         <Image src={currentWork.src} style={`width:${currentWork.meta.imageWidth}px;height:${currentWork.meta.imageHeight}px;`}></Image>
@@ -325,9 +325,9 @@ export default class RectReview extends Component {
                     <View className='workImg'></View>
                 </View>
                 <View className='btnItem'>
-                    <Button type='primary' onClick={this.submitWork}>通过</Button>
-                    <Button type='warn' onClick={this.rejectWork}>驳回</Button>
-                    <Button style='background: #FFCC00;' type='warn' onClick={this.cancelWork}>放弃</Button>
+          <Button type='primary' onClick={this.submitWork}>{i18next.t('pass')}</Button>
+          <Button type='warn' onClick={this.rejectWork}>{i18next.t('dismissed')}</Button>
+          <Button style='background: #FFCC00;' type='warn' onClick={this.cancelWork}>{i18next.t('cancel')}</Button>
                 </View>
             </View>
     )

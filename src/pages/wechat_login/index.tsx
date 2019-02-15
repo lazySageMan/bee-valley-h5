@@ -8,6 +8,7 @@ import {
   wxLogin
 } from '../../utils/beevalley'
 import NavBar from '../../components/navBar/index'
+import i18next from '../../i18n';
 import './index.scss'
 import {
   homepage
@@ -34,7 +35,7 @@ export default class wechatLogin extends Component {
   render() {
     return (
       <View className='wechatLogin'>
-        <NavBar title='微信快捷登录' verification />
+        <NavBar title={i18next.t('WeChatLogin')} verification />
         <View id='login_container'>
 
         </View>
