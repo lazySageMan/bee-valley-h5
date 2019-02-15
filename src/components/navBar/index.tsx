@@ -1,6 +1,7 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View } from '@tarojs/components'
 import { AtNavBar } from 'taro-ui'
+import i18next from '../../../.temp/i18n';
 
 export default class NavBar extends Component {
     constructor(props){
@@ -38,7 +39,7 @@ export default class NavBar extends Component {
                   leftIconType='chevron-left'
                   color='#000'
                   title={title}
-                  leftText='返回'
+                  leftText={i18next.t('back')}
                 />
             </View>
         )

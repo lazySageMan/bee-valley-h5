@@ -13,6 +13,7 @@ import {
 } from '../../utils/beevalley'
 import NavBar from '../../components/navBar/index'
 import './index.scss'
+import i18next from '../../../.temp/i18n';
 
 export default class Register extends Component {
   constructor(props) {
@@ -21,7 +22,7 @@ export default class Register extends Component {
       userPhone: '',
       userPasswd: '',
       userCode: '',
-      userTime: '发送验证码',
+      userTime: i18next.t('sendIdentifyCode'),
       bgcolor: 'orangered'
     }
   }
@@ -60,7 +61,7 @@ export default class Register extends Component {
       if (time === 0) {
         clearInterval(timer)
         this.setState({
-          userTime: "重新发送",
+          userTime: i18next.t('resend'),
           bgcolor: "orangered"
         })
       } else {
@@ -79,7 +80,7 @@ export default class Register extends Component {
       userTime
     } = this.state
     if (userPhone.length === 11 && userPhone.charAt(0) === '1') {
-      if (userTime === "发送验证码" || userTime === "重新发送") {
+      if (userTime === "发送验证码" || userTime === "重新发送" || userTime === 'send verification code' || userTime === 'resend') {
         sendMobileCode(userPhone, "signup").then(() => {
           this.setState({
             userTime: 60,
@@ -88,19 +89,19 @@ export default class Register extends Component {
         }).catch(() => {
           // console.log(err)
           Taro.showToast({
-            title: '网络错误，请重新获取验证码',
+            title: i18next.t('networkError'),
             mask: true
           })
         })
       } else {
         Taro.showToast({
-          title: '验证码已发送，请注意查看',
+          title: i18next.t('Verificationcodehasbeen'),
           mask: true
         })
       }
     } else {
       Taro.showToast({
-        title: '正确填写手机号码',
+        title: i18next.t('Fillmobilenumber'),
         mask: true
       })
     }
@@ -118,15 +119,15 @@ export default class Register extends Component {
     // console.log(userPhone, userPasswd, userCode, userTime)
     if (userPhone === '' || userPasswd === '' || userCode === '') {
       Taro.showToast({
-        title: '手机号，或者密码为空',
+        title: i18next.t('empty'),
         mask: true
       })
       return;
     }
 
-    if (userTime === "发送验证码" || userTime === "重新发送") {
+    if (userTime === "发送验证码" || userTime === "重新发送" || userTime === 'send verification code' || userTime === 'resend') {
       Taro.showToast({
-        title: '验证码已近过期，重新获取验证码',
+        title: i18next.t('verificationexpired'),
         mask: true
       })
     } else {
@@ -141,19 +142,19 @@ export default class Register extends Component {
         }).catch((error) => {
           if (error === 'user exists') {
             Taro.showToast({
-              title: '该手机号注册过了',
+              title: i18next.t('hasbeenregistered'),
               mask: true,
               duration: 2000
             })
           } else if (error === 'invalid code') {
             Taro.showToast({
-              title: '验证码无效',
+              title: i18next.t('Verificationinvalid'),
               mask: true,
               duration: 2000
             })
           } else {
             Taro.showToast({
-              title: '验证码错误，请重新输入',
+              title: i18next.t('verificationincorrect'),
               mask: true
             })
           }
@@ -161,7 +162,7 @@ export default class Register extends Component {
 
       } else {
         Taro.showToast({
-          title: '正确填写注册信息',
+          title: i18next.t('registrationinformation'),
           mask: true
         })
       }
@@ -182,20 +183,20 @@ export default class Register extends Component {
 
     return (
       <View className='registerWrap'>
-        <NavBar title='用户注册' verification />
+        <NavBar title={i18next.t('userRegister')} verification />
         <View className='register-wrap'>
-            <Text className='title'>用户注册</Text>
-            <Input className='inputText' type='text' value={userPhone} placeholder='手机号' onChange={this.handleUsernameChange} />
-            <Input className='inputText' type='password' value={userPasswd} placeholder='密码' onChange={this.handlePasswordChange} />
+          <Text className='title'>{i18next.t('userRegister')}</Text>
+            <Input className='inputText' type='text' value={userPhone} placeholder={i18next.t('phone')} onChange={this.handleUsernameChange} />
+          <Input className='inputText' type='password' value={userPasswd} placeholder={i18next.t('passWord')} onChange={this.handlePasswordChange} />
             <View className='identCode'>
-                <Input className='code' type='text' value={userCode} placeholder='验证码' onChange={this.changeCode} />
+            <Input className='code' type='text' value={userCode} placeholder={i18next.t('identifyCode')} onChange={this.changeCode} />
                 <Button className='codeBtn' style={`background:${bgcolor}`} onClick={this.sendCode}>{userTime}</Button>
             </View>
             <View className='viewText'>
-                <Text>忘记密码？</Text>
-                <Text>已有账号？<Text className='onLogin' onClick={this.toLogin}>立即登录</Text></Text>
+            <Text>{i18next.t('forgetPassWord')}？</Text>
+            <Text>{i18next.t('existAccount')}？<Text className='onLogin' onClick={this.toLogin}>{i18next.t('login')}</Text></Text>
             </View>
-            <Button className='register-btn' onClick={this.register}>立即注册</Button>
+          <Button className='register-btn' onClick={this.register}>{i18next.t('register')}</Button>
         </View>
       </View>
     )

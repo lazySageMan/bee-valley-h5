@@ -1,7 +1,8 @@
 import Taro from '@tarojs/taro'
 import {
   AtTabs,
-  AtTabsPane
+  AtTabsPane,
+  AtButton
 } from 'taro-ui'
 import {
   View
@@ -83,6 +84,23 @@ export default class Index extends Taro.Component {
     })
   }
 
+  logout = () => {
+
+    Taro.showModal({
+      title: '提示',
+      content: '是否确定登出',
+      success: (res) => {
+        if (res.confirm) {
+          Taro.removeStorageSync('login')
+          Taro.removeStorageSync('apiToken')
+          Taro.redirectTo({
+            url: '/'
+          })
+        }
+      }
+    })
+  }
+
   render() {
     const tabList = [{
       title: '任务列表'
@@ -91,6 +109,7 @@ export default class Index extends Taro.Component {
     }]
     return (
       <View className='list-wrap'>
+        <AtButton className='logout' type='secondary' onClick={this.logout}>登出</AtButton>
         <AtTabs current={this.state.current} tabList={tabList} onClick={this.handleTabClick.bind(this)}>
             <AtTabsPane current={this.state.current} index={0} >
                 <TaskList isMobile={this.isMobile} taskList={this.state.taskList} onClick={this.navigateToTask} ></TaskList>
