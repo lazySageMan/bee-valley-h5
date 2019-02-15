@@ -13,7 +13,7 @@ import {
   wechatLogin,
   checkDveice
 } from '../../utils/beevalley'
-
+import i18next from '../../i18n'
 import './index.scss'
 import wechat from '../../image/weixin.png'
 import phone from '../../image/message.png'
@@ -22,6 +22,9 @@ export default class Login extends Component {
 
   constructor(props) {
     super(props)
+    this.state = {
+      language: 'chinese'
+    }
   }
 
   login = () => {
@@ -31,7 +34,7 @@ export default class Login extends Component {
     } = this.state;
     if (!username || !password) {
       Taro.showToast({
-        title: '账号或密码为空',
+        title: i18next.t('empty'),
         mask: true
       })
     } else {
@@ -50,7 +53,7 @@ export default class Login extends Component {
   defaultErrorHandling = (error) => {
 
     Taro.showToast({
-      title: '登陆失败',
+      title: i18next.t('Loginfailed'),
       mask: true
     })
 
@@ -115,34 +118,60 @@ export default class Login extends Component {
     })
   }
 
+  changeLanGe = (language) => {
+    if(language === 'chinese'){
+      i18next.changeLanguage('cn');
+    }else{
+      i18next.changeLanguage('en');
+    }
+    this.setState({
+      language: language
+    })
+  }
+
   render() {
     let {
-      isMobile
+      isMobile,
+      language
     } = this.state;
+
+    let changeLan = (language === 'english') ? (
+      <View className='changeLanguage'>
+        <Text className='select'>English</Text>|<Text onClick={this.changeLanGe.bind(this, 'chinese')}>中文</Text>
+      </View>
+    ) : (
+        <View className='changeLanguage'>
+
+          <Text onClick={this.changeLanGe.bind(this, 'english')}>English</Text>|<Text className='select'>中文</Text>
+        </View>
+    )
     return (
-      <View className='wrap'>
-                <Text className='title'>用户登录</Text>
-                <Input className='inputText' type='text' placeholder='手机号/邮箱/用户名' onChange={this.handleUsernameChange} />
-                <Input className='inputText' type='password' placeholder='密码' onChange={this.handlePasswordChange} />
-                <Button className='btn' onClick={this.login}>立即登录</Button>
-                <View className='viewText'>
-                    <Text>忘记密码？</Text>
-                    <Text>还没有账号？<Text className='onResiges' onClick={this.toRegister}>立即注册</Text></Text>
-                </View>
-                <View className='iconMenu'>
-                    <View className='iconTitle'>其他方式登录</View>
-                </View>
-                <View className='otherLogin'>
-                  {!isMobile &&
-                    <View className='icon' onClick={this.wechatLogin}>
-                      <Image className='img' src={wechat}></Image>
-                    </View>
-                  }
-                  <View className='icon' onClick={this.phoneLogin}>
-                    <Image className='img' src={phone}></Image>
-                  </View>
-                </View>
+      <View className='loginWrap'>
+        {changeLan}
+        <View className='wrap'>
+          <Text className='title'>{i18next.t("userLogin")}</Text>
+          <Input className='inputText' type='text' placeholder={i18next.t('account')} onChange={this.handleUsernameChange} />
+          <Input className='inputText' type='password' placeholder={i18next.t('passWord')} onChange={this.handlePasswordChange} />
+          <Button className='btn' onClick={this.login}>{i18next.t('login')}</Button>
+          <View className='viewText'>
+            <Text>{i18next.t('forgetPassWord')}？</Text>
+            <Text>{i18next.t('noAccount')}？<Text className='onResiges' onClick={this.toRegister}>{i18next.t('register')}</Text></Text>
+          </View>
+          <View className='iconMenu'>
+            <View className='iconTitle'>{i18next.t('otherLogin')}</View>
+          </View>
+          <View className='otherLogin'>
+            {!isMobile &&
+              <View className='icon' onClick={this.wechatLogin}>
+                <Image className='img' src={wechat}></Image>
+              </View>
+            }
+            <View className='icon' onClick={this.phoneLogin}>
+              <Image className='img' src={phone}></Image>
             </View>
+          </View>
+        </View>
+      </View>
     )
   }
 }

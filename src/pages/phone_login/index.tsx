@@ -12,7 +12,7 @@ import {
   loginSms
 } from '../../utils/beevalley'
 import NavBar from '../../components/navBar/index'
-
+import i18next from '../../i18n';
 import './index.scss'
 
 export default class Register extends Component {
@@ -167,12 +167,12 @@ export default class Register extends Component {
 
     return (
       <View className='phoneLoginWrap'>
-        <NavBar title='手机验证码登录' verification />
+        <NavBar title={i18next.t('CodeLogin')} verification />
         <View className='phone-wrap'>
-          <Text className='title'>短信验证码登录</Text>
-          <Input className='inputText' type='text' value={userPhone} placeholder='账号手机号' onChange={this.handleUsernameChange} />
+          <Text className='title'>{i18next.t('smsCodeLogin')}</Text>
+          <Input className='inputText' type='text' value={userPhone} placeholder={i18next.t('phone')} onChange={this.handleUsernameChange} />
           <View className='identCode'>
-            <Input className='code' type='text' value={userCode} placeholder='验证码' onChange={this.changeCode} />
+            <Input className='code' type='text' value={userCode} placeholder={i18next.t('identifyCode')} onChange={this.changeCode} />
             <Button className='codeBtn' style={`background:${bgcolor}`} onClick={this.sendCode}>{userTime}</Button>
           </View>
           <Button className='register-btn' onClick={this.loginSms}>立即登录</Button>
