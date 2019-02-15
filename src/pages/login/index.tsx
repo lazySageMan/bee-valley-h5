@@ -13,11 +13,10 @@ import {
   wechatLogin,
   checkDveice
 } from '../../utils/beevalley'
-import i18next from '../../../src/i18n'
+import i18next from '../../i18n'
 import './index.scss'
 import wechat from '../../image/weixin.png'
 import phone from '../../image/message.png'
-import i18next from '../../../.temp/i18n';
 
 export default class Login extends Component {
 
@@ -54,7 +53,7 @@ export default class Login extends Component {
   defaultErrorHandling = (error) => {
 
     Taro.showToast({
-      title: '登陆失败',
+      title: i18next.t('Loginfailed'),
       mask: true
     })
 

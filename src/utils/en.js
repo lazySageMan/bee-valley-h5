@@ -22,6 +22,9 @@ export default {
   hasbeenregistered: 'The phone number has been registered',
   Verificationinvalid: 'Verification code is invalid',
   verificationincorrect: 'The verification code is incorrect, please re-enter',
-  registrationinformation: 'Fill in the registration information correctly'
+  registrationinformation: 'Fill in the registration information correctly',
+  Loginfailed: 'Login failed',
+  CodeLogin: 'Mobile Authentication Code Login',
+  smsCodeLogin: 'SMS Verification Code Login'
 
 }

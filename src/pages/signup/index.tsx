@@ -13,7 +13,7 @@ import {
 } from '../../utils/beevalley'
 import NavBar from '../../components/navBar/index'
 import './index.scss'
-import i18next from '../../../.temp/i18n';
+import i18next from '../../i18n';
 
 export default class Register extends Component {
   constructor(props) {

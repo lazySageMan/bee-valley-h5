@@ -22,5 +22,8 @@ export default {
   hasbeenregistered: '该手机号注册过了',
   Verificationinvalid: '验证码无效',
   verificationincorrect: '验证码错误，请重新输入',
-  registrationinformation: '正确填写注册信息'
+  registrationinformation: '正确填写注册信息',
+  Loginfailed: '登录失败',
+  CodeLogin: '手机验证码登录',
+  smsCodeLogin: '短信验证码登录'
 }
