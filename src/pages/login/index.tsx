@@ -135,19 +135,11 @@ export default class Login extends Component {
       language
     } = this.state;
 
-    let changeLan = (language === 'english') ? (
-      <View className='changeLanguage'>
-        <Text className='select'>English</Text>|<Text onClick={this.changeLanGe.bind(this, 'chinese')}>中文</Text>
-      </View>
-    ) : (
-        <View className='changeLanguage'>
-
-          <Text onClick={this.changeLanGe.bind(this, 'english')}>English</Text>|<Text className='select'>中文</Text>
-        </View>
-    )
     return (
       <View className='loginWrap'>
-        {changeLan}
+        <View className='changeLanguage'>
+          <Text className={language === 'english' ? 'select' : ''} onClick={this.changeLanGe.bind(this, 'english')}>English</Text>|<Text className={language === 'chinese' ? 'select' : ''} onClick={this.changeLanGe.bind(this, 'chinese')} >中文</Text>
+        </View>
         <View className='wrap'>
           <Text className='title'>{i18next.t("userLogin")}</Text>
           <Input className='inputText' type='text' placeholder={i18next.t('account')} onChange={this.handleUsernameChange} />
