@@ -206,6 +206,7 @@ export default class DataAcquistion extends Taro.Component {
       title: i18next.t('Abandonment'),
       content: i18next.t('currenttask'),
       confirmText: i18next.t('Gotit'),
+      cancelText: i18next.t('cancel'),
       success: function (res) {
         if (res.confirm) {
           Taro.navigateBack({
@@ -288,7 +289,7 @@ export default class DataAcquistion extends Taro.Component {
             <View className='take-photo'>
               {sampleImageView}
             </View>
-            <View className='info'>{i18next.t('shoot')}{currentWork.length}{i18next.t('Groupphotos')}</View>
+            <View className='info'>{i18next.t('shoot')} {currentWork.length} {i18next.t('Groupphotos')}</View>
             <View className='cenggao'></View>
           </View>
         </View>
