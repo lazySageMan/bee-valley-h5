@@ -23,7 +23,7 @@ export default class Login extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      language: 'chinese'
+      language: 'cn'
     }
   }
 
@@ -67,7 +67,13 @@ export default class Login extends Component {
 
   componentDidMount() {
     const login = Taro.getStorageSync('login')
-
+    const userLanguage = Taro.getStorageSync('userLanguage')
+    if(userLanguage){
+      i18next.changeLanguage(userLanguage);
+      this.setState({
+        language: userLanguage
+      })
+    }
     let res = Taro.getSystemInfoSync()
     let isMobile = checkDveice(res)
     this.setState({
@@ -119,11 +125,12 @@ export default class Login extends Component {
   }
 
   changeLanGe = (language) => {
-    if(language === 'chinese'){
+    if(language === 'cn'){
       i18next.changeLanguage('cn');
     }else{
       i18next.changeLanguage('en');
     }
+    Taro.setStorageSync('userLanguage', language);
     this.setState({
       language: language
     })
@@ -138,7 +145,7 @@ export default class Login extends Component {
     return (
       <View className='loginWrap'>
         <View className='changeLanguage'>
-          <Text className={language === 'english' ? 'select' : ''} onClick={this.changeLanGe.bind(this, 'english')}>English</Text>|<Text className={language === 'chinese' ? 'select' : ''} onClick={this.changeLanGe.bind(this, 'chinese')} >中文</Text>
+          <Text className={language === 'en' ? 'select' : ''} onClick={this.changeLanGe.bind(this, 'en')}>English</Text>|<Text className={language === 'cn' ? 'select' : ''} onClick={this.changeLanGe.bind(this, 'cn')} >中文</Text>
         </View>
         <View className='wrap'>
           <Text className='title'>{i18next.t("userLogin")}</Text>
