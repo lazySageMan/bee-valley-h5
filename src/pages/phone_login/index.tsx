@@ -21,7 +21,7 @@ export default class Register extends Component {
     this.state = {
       userPhone: '',
       userCode: '',
-      userTime: '发送验证码',
+      userTime: i18next.t('sendIdentifyCode'),
       bgcolor: 'orangered'
     }
   }
@@ -54,7 +54,7 @@ export default class Register extends Component {
       if (time === 0) {
         clearInterval(timer)
         this.setState({
-          userTime: "重新发送",
+          userTime: i18next.t('resend'),
           bgcolor: "orangered"
         })
       } else {
@@ -73,7 +73,7 @@ export default class Register extends Component {
       userTime
     } = this.state
     if (userPhone.length === 11 && userPhone.charAt(0) === '1') {
-      if (userTime === "发送验证码" || userTime === "重新发送") {
+      if (userTime === "发送验证码" || userTime === "重新发送" || userTime === 'send verification code' || userTime === 'resend') {
         sendMobileCode(userPhone, "login").then(() => {
            this.setState({
               userTime: 60,
@@ -82,19 +82,19 @@ export default class Register extends Component {
         }).catch((err) => {
           // console.log(err)
           Taro.showToast({
-            title: '网络错误，请重新获取验证码',
+            title: i18next.t('networkError'),
             mask: true
           })
         })
       } else {
         Taro.showToast({
-          title: '验证码已发送，请注意查看',
+          title: i18next.t('Verificationcodehasbeen'),
           mask: true
         })
       }
     } else {
       Taro.showToast({
-        title: '正确填写手机号码',
+        title: i18next.t('Fillmobilenumber'),
         mask: true
       })
     }
@@ -111,15 +111,15 @@ export default class Register extends Component {
     // console.log(userPhone, userPasswd, userCode, userTime)
     if (userPhone === '' || userCode === '') {
       Taro.showToast({
-        title: '手机号，或者验证码为空',
+        title: i18next.t('empty'),
         mask: true
       })
       return;
     }
 
-    if (userTime === "发送验证码" || userTime === "重新发送") {
+    if (userTime === "发送验证码" || userTime === "重新发送" || userTime === 'send verification code' || userTime === 'resend') {
       Taro.showToast({
-        title: '验证码已近过期，重新获取验证码',
+        title: i18next.t('verificationexpired'),
         mask: true
       })
     } else {
@@ -133,13 +133,13 @@ export default class Register extends Component {
         }).catch((error) => {
           if (error === 'invalid code') {
             Taro.showToast({
-              title: '验证码无效',
+              title: i18next.t('Verificationinvalid'),
               mask: true,
               duration: 2000
             })
           } else {
             Taro.showToast({
-              title: '验证码错误，请重新输入',
+              title: i18next.t('verificationincorrect'),
               mask: true
             })
           }
@@ -147,7 +147,7 @@ export default class Register extends Component {
 
       } else {
         Taro.showToast({
-          title: '正确填写注册信息',
+          title: i18next.t('empty'),
           mask: true
         })
       }
@@ -175,7 +175,7 @@ export default class Register extends Component {
             <Input className='code' type='text' value={userCode} placeholder={i18next.t('identifyCode')} onChange={this.changeCode} />
             <Button className='codeBtn' style={`background:${bgcolor}`} onClick={this.sendCode}>{userTime}</Button>
           </View>
-          <Button className='register-btn' onClick={this.loginSms}>立即登录</Button>
+          <Button className='register-btn' onClick={this.loginSms}>{i18next.t('login')}</Button>
         </View>
       </View>
     )

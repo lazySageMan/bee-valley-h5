@@ -18,7 +18,7 @@ import {
 } from '../../utils/beevalley'
 
 import './index.scss'
-
+import i18next from '../../i18n'
 export default class reviewData extends Taro.Component {
   constructor() {
     super(...arguments)
@@ -36,7 +36,7 @@ export default class reviewData extends Taro.Component {
 
     this.checkboxOption = [{
       value: 'checked',
-      label: '不合格',
+      label: i18next.t('Nonconforming')
     }]
 
     this.apiToken = Taro.getStorageSync('apiToken');
@@ -125,9 +125,9 @@ export default class reviewData extends Taro.Component {
       } else {
         Taro.hideLoading()
         Taro.showModal({
-          title: '提示',
-          content: '当前没有任务了！',
-          confirmText: '知道了',
+          title: i18next.t('Tips'),
+          content: i18next.t('notask'),
+          confirmText: i18next.t('Gotit'),
           showCancel: false,
           success: function () {
             Taro.navigateBack({
@@ -233,7 +233,7 @@ export default class reviewData extends Taro.Component {
       return (
         <View key={index} className='show-item'>
                     <View className='eg img-item'>
-                        <View className='eg-item'>示例</View>
+            <View className='eg-item'>{i18next.t('Example')}</View>
                         <Image src={item.sample} className='img' mode='aspectFit'></Image>
                     </View>
                     <View className='img-item'>
@@ -266,8 +266,8 @@ export default class reviewData extends Taro.Component {
                 )}
                 <View className='main-content'>
                     <View className='task_demand'>
-                        <View className='panel__title'>第1步</View>
-                        <View className='title'>审核要求</View>
+            <View className='panel__title'>{i18next.t('Step')}</View>
+            <View className='title'>{i18next.t('requirements')}</View>
                         {
                           details.map((item, index) => {
                                   return (
@@ -283,24 +283,24 @@ export default class reviewData extends Taro.Component {
                     <View className='user-photo-wrap'>
                         <View className='title'>
                             <AtIcon size='30' value='image' color='orange'></AtIcon>
-                            <Text className='font'>审核下列图片</Text>
+              <Text className='font'>{i18next.t('ReviewImg')}</Text>
                         </View>
                         <View className='take-photo'>
                             {showImg}
                         </View>
-                        <View className='info'>将不合格的图片勾选，并驳回</View>
+            <View className='info'>{i18next.t('dismissit')}</View>
                         <View className='cenggao'></View>
                     </View>
                 </View>
                 <View className='cengHeight'></View>
                 <View className='top'>
-                    <NavBar title='采集审核'></NavBar>
+          <NavBar title={i18next.t('AcquisitionAudit')}></NavBar>
 
                 </View>
 
                 <View className='bottom-btn'>
-                    <AtButton type='primary' circle className='btn1' onClick={this.submitWork}>通过</AtButton>
-                    <AtButton type='primary' circle className='btn1' onClick={this.rejectWork}>驳回</AtButton>
+          <AtButton type='primary' circle className='btn1' onClick={this.submitWork}>{i18next.t('pass')}</AtButton>
+          <AtButton type='primary' circle className='btn1' onClick={this.rejectWork}>{i18next.t('dismissed')}</AtButton>
                 </View>
             </View>
     )

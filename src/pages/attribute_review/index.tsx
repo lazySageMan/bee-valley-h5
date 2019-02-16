@@ -13,7 +13,7 @@ import {
   cancelWork
 } from '../../utils/beevalley'
 import NavBar from '../../components/navBar/index'
-
+import i18next from '../../i18n'
 import './index.scss'
 
 export default class PointTask extends Component {
@@ -79,10 +79,10 @@ export default class PointTask extends Component {
       if (res.length === 0) {
         Taro.hideLoading();
         Taro.showModal({
-          title: '提示',
-          content: '当前没有任务了',
+          title: i18next.t('Tips'),
+          content: i18next.t('notask'),
           showCancel: false,
-          confirmText: '知道了',
+          confirmText: i18next.t('Gotit'),
           success: function () {
             Taro.navigateBack({
               delta: 1
@@ -112,7 +112,7 @@ export default class PointTask extends Component {
 
   submitWork = () => {
     Taro.showLoading({
-      title: '提交中',
+      title: i18next.t('Submit'),
       mask: true
     })
     let {
@@ -126,7 +126,7 @@ export default class PointTask extends Component {
 
   cancelWork = () => {
     Taro.showLoading({
-      title: '放弃中',
+      title: i18next.t('Abandonmentin'),
       mask: true
     })
     let {
@@ -142,7 +142,7 @@ export default class PointTask extends Component {
 
   rejectWork = () => {
     Taro.showLoading({
-      title: '驳回中',
+      title: i18next('dismissed'),
       mask: true
     })
     let {
@@ -173,7 +173,7 @@ export default class PointTask extends Component {
     }
     return (
       <View className='attribute_review'>
-                <NavBar title='属性标注审核' />
+        <NavBar title={i18next.t('CalloutAudit')} />
                 <View className='imgItem'>
                     {currentWork && currentWork.src && (
                         <Image src={currentWork.src} mode='widthFix' style={`width:${currentWork.meta.imageWidth}PX;height:${currentWork.meta.imageHeight}PX;`}></Image>
@@ -184,9 +184,9 @@ export default class PointTask extends Component {
                     </View>
                 </View>
                 <View className='btnItem'>
-                    <Button type='primary' onClick={this.submitWork}>通过</Button>
-                    <Button type='warn' onClick={this.rejectWork}>驳回</Button>
-                    <Button style='background: #FFCC00;' type='warn' onClick={this.cancelWork}>放弃</Button>
+          <Button type='primary' onClick={this.submitWork}>{i18next.t('pass')}</Button>
+          <Button type='warn' onClick={this.rejectWork}>{i18next.t('dismissed')}</Button>
+          <Button style='background: #FFCC00;' type='warn' onClick={this.cancelWork}>{i18next.t('Give')}</Button>
                 </View>
             </View>
     )

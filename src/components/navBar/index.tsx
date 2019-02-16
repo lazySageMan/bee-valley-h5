@@ -12,8 +12,10 @@ export default class NavBar extends Component {
       let { verification } = this.props;
       if (!verification){
         Taro.showModal({
-          title: '提示',
-          content: '是否确定退出',
+          title: i18next.t('Tips'),
+          content: i18next.t('sureLogout'),
+          confirmText: i18next.t('sure'),
+          cancelText: i18next.t('cancel'),
           success: (res) => {
             if (res.confirm) {
               Taro.navigateBack({
