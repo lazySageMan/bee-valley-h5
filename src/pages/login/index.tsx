@@ -67,11 +67,13 @@ export default class Login extends Component {
 
   componentDidMount() {
     const login = Taro.getStorageSync('login')
-    const userLanguage = Taro.getStorageSync('userLanguage')
-    if(userLanguage){
-      i18next.changeLanguage(userLanguage);
+    if (i18next.language.toString() === 'en-US'){
       this.setState({
-        language: userLanguage
+        language: 'en'
+      })
+    }else{
+      this.setState({
+        language: i18next.language.toString()
       })
     }
     let res = Taro.getSystemInfoSync()
@@ -130,7 +132,6 @@ export default class Login extends Component {
     }else{
       i18next.changeLanguage('en');
     }
-    Taro.setStorageSync('userLanguage', language);
     this.setState({
       language: language
     })
