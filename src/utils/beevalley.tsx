@@ -1,6 +1,5 @@
 // import Axios from 'axios'
 import Taro from '@tarojs/taro'
-import i18next from '../i18n'
 import {
   host
 } from '../config'
