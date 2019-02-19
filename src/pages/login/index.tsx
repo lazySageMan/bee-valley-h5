@@ -127,11 +127,7 @@ export default class Login extends Component {
   }
 
   changeLanGe = (language) => {
-    if(language === 'cn'){
-      i18next.changeLanguage('cn');
-    }else{
-      i18next.changeLanguage('en');
-    }
+    i18next.changeLanguage(language)
     this.setState({
       language: language
     })
