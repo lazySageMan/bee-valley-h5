@@ -266,7 +266,6 @@ export default class reviewData extends Taro.Component {
                 )}
                 <View className='main-content'>
                     <View className='task_demand'>
-            <View className='panel__title'>{i18next.t('Step')}</View>
             <View className='title'>{i18next.t('requirements')}</View>
                         {
                           details.map((item, index) => {

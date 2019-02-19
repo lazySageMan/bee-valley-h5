@@ -32,11 +32,6 @@ export default class Index extends Taro.Component {
   }
 
   componentDidMount() {
-    //测试
-    console.log(i18next.t("changeToEnglish"));
-
-
-
     this.apiToken = Taro.getStorageSync('apiToken');
 
     let res = Taro.getSystemInfoSync()

@@ -2,6 +2,7 @@ import Taro, { Component } from '@tarojs/taro'
 import { View } from '@tarojs/components'
 import { AtNavBar } from 'taro-ui'
 import i18next from '../../i18n';
+import './index.scss'
 
 export default class NavBar extends Component {
     constructor(props){
@@ -38,6 +39,7 @@ export default class NavBar extends Component {
             <View className='backBtn'>
                 <AtNavBar
                   onClickLeftIcon={this.handleNavBarClick}
+                  className='atNavBar'
                   leftIconType='chevron-left'
                   color='#000'
                   title={title}
