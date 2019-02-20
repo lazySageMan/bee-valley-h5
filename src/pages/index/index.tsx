@@ -1,11 +1,11 @@
 import Taro from '@tarojs/taro'
 import {
   AtTabs,
-  AtTabsPane,
-  AtButton
+  AtTabsPane
 } from 'taro-ui'
 import {
-  View
+  View,
+  Button
 } from '@tarojs/components'
 import TaskList from '../../components/taskList/index'
 import {
@@ -106,7 +106,7 @@ export default class Index extends Taro.Component {
     }]
     return (
       <View className='indexwrap'>
-        <AtButton type='secondary' onClick={this.logout}>{i18next.t('logout')}</AtButton>
+        <Button className='logout' type='secondary' onClick={this.logout}>{i18next.t('logout')}</Button>
         <View className='list-wrap'>
           <AtTabs current={this.state.current} tabList={tabList} onClick={this.handleTabClick.bind(this)}>
               <AtTabsPane current={this.state.current} index={0} >
