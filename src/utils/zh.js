@@ -70,5 +70,6 @@ export default {
   Nonconforming: '不合格',
   Abandonmentin: '取消中',
   CalloutAudit: '属性标注审核',
-  BoxAudit: '方框审核'
+  BoxAudit: '方框审核',
+  qqLogin: 'QQ快捷登录'
 }

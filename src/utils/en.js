@@ -70,6 +70,7 @@ export default {
   Nonconforming: 'Unqualified',
   Abandonmentin: 'Cancelling',
   CalloutAudit: 'Attribute tagging review',
-  BoxAudit: 'Box labeling review'
+  BoxAudit: 'Box labeling review',
+  qqLogin: 'Login with QQ'
 
 }

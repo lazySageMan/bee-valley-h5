@@ -313,6 +313,10 @@ function wxLogin(a, b){
     var f = b.getElementById(a.id); f.innerHTML = "", f.appendChild(d);
 }
 
+function qqLogin(){
+  
+}
+
 
 
 export {
