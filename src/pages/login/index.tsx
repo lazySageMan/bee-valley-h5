@@ -141,6 +141,12 @@ export default class Login extends Component {
     })
   }
 
+  resetPassword = () => {
+    Taro.navigateTo({
+      url: '/pages/reset_password/index'
+    })
+  }
+
   render() {
     let {
       isMobile,
@@ -158,7 +164,7 @@ export default class Login extends Component {
           <Input className='inputText' type='password' placeholder={i18next.t('passWord')} onChange={this.handlePasswordChange} />
           <Button className='btn' onClick={this.login}>{i18next.t('login')}</Button>
           <View className='viewText'>
-            <Text>{i18next.t('forgetPassWord')}？</Text>
+            <Text><Text className='onResiges' onClick={this.resetPassword}>{i18next.t('forgetPassWord')}</Text>？</Text>
             <Text>{i18next.t('noAccount')}？<Text className='onResiges' onClick={this.toRegister}>{i18next.t('register')}</Text></Text>
           </View>
           <View className='iconMenu'>

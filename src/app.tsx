@@ -29,7 +29,8 @@ class App extends Component {
       'pages/collect_review/index',
       'pages/phone_login/index',
       'pages/wechat_login/index',
-      'pages/qq_login/index'
+      'pages/qq_login/index',
+      'pages/reset_password/index'
     ],
     window: {
       backgroundTextStyle: 'light',

@@ -313,8 +313,26 @@ function wxLogin(a, b){
     var f = b.getElementById(a.id); f.innerHTML = "", f.appendChild(d);
 }
 
+function resetPasswords(mobile, password, code){
+  return Taro.request({
+    url: `${host}password/reset`,
+    method: 'POST',
+    header: {
+      'content-type': 'application/json'
+    },
+    data: {
+      "mobile": mobile,
+      "password": password,
+      "code": code,
+      "region": "CN"
+    },
+    dataType: 'text',
+    responseType: 'text'
+  }).then(handleRes)
+}
+
 function qqLogin(){
-  
+
 }
 
 
@@ -339,5 +357,6 @@ export {
   uploadWorkFile,
   downloadWorkFiles,
   loginSms,
-  wxLogin
+  wxLogin,
+  resetPasswords
 };

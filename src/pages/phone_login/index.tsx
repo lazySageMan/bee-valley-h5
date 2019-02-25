@@ -73,7 +73,7 @@ export default class Register extends Component {
       userTime
     } = this.state
     if (userPhone.length === 11 && userPhone.charAt(0) === '1') {
-      if (userTime === "发送验证码" || userTime === "重新发送" || userTime === 'send verification code' || userTime === 'resend') {
+      if (userTime === "发送验证码" || userTime === "重新发送" || userTime === 'Send verification code' || userTime === 'Resend') {
         sendMobileCode(userPhone, "login").then(() => {
            this.setState({
               userTime: 60,
@@ -117,7 +117,7 @@ export default class Register extends Component {
       return;
     }
 
-    if (userTime === "发送验证码" || userTime === "重新发送" || userTime === 'send verification code' || userTime === 'resend') {
+    if (userTime === "发送验证码" || userTime === "重新发送" || userTime === 'Send verification code' || userTime === 'Resend') {
       Taro.showToast({
         title: i18next.t('verificationexpired'),
         mask: true

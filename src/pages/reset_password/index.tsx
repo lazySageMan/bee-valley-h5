@@ -1,0 +1,226 @@
+import Taro, {
+  Component
+} from '@tarojs/taro'
+import {
+  View,
+  Text,
+  Input,
+  Button
+} from '@tarojs/components'
+import {
+  sendMobileCode,
+  resetPasswords
+} from '../../utils/beevalley'
+import NavBar from '../../components/navBar/index'
+import i18next from '../../i18n'
+import './index.scss'
+
+export default class resetUserPassword extends Component{
+
+  constructor(props){
+    super(props);
+    this.state = {
+      userPhone: '',
+      userPasswd: '',
+      userRepasswd: '',
+      userCode: '',
+      userTime: i18next.t('sendIdentifyCode'),
+      bgcolor: 'orangered'
+    }
+  }
+
+  handleUsernameChange = (event) => {
+    this.setState({
+      userPhone: event.target.value
+    });
+  }
+
+  handlePasswordChange = (event) => {
+    this.setState({
+      userPasswd: event.target.value
+    });
+  }
+
+  handleuserRepasswdChange = (event) => {
+    this.setState({
+      userRepasswd: event.target.value
+    });
+  }
+
+  changeCode = (event) => {
+    this.setState({
+      userCode: event.target.value
+    });
+  }
+
+  toLogin = () => {
+    Taro.navigateTo({
+      url: '/pages/login/index'
+    })
+  }
+
+  toRegister = () => {
+    Taro.navigateTo({
+      url: '/pages/signup/index'
+    })
+  }
+
+  sendCode = () => {
+    let {
+      userPhone,
+      userTime
+    } = this.state
+    if (userPhone.length === 11 && userPhone.charAt(0) === '1') {
+      if (userTime === "发送验证码" || userTime === "重新发送" || userTime === 'Send verification code' || userTime === 'Resend') {
+        sendMobileCode(userPhone, "reset_password").then(() => {
+          this.setState({
+            userTime: 60,
+            bgcolor: 'gray'
+          }, () => this.lessTime())
+        }).catch(() => {
+          // console.log(err)
+          Taro.showToast({
+            title: i18next.t('networkError'),
+            mask: true
+          })
+        })
+      } else {
+        Taro.showToast({
+          title: i18next.t('Verificationcodehasbeen'),
+          mask: true
+        })
+      }
+    } else {
+      Taro.showToast({
+        title: i18next.t('Fillmobilenumber'),
+        mask: true
+      })
+    }
+  }
+
+  lessTime = () => {
+    let {
+      userTime
+    } = this.state
+    let time = Number(userTime);
+
+    let timer = setInterval(() => {
+      if (time === 0) {
+        clearInterval(timer)
+        this.setState({
+          userTime: i18next.t('resend'),
+          bgcolor: "orangered"
+        })
+      } else {
+        time -= 1;
+        this.setState({
+          userTime: time
+        })
+      }
+    }, 1000)
+  }
+
+  resetPassword = () => {
+    let {
+      userPhone,
+      userPasswd,
+      userCode,
+      userRepasswd,
+      userTime
+    } = this.state
+
+    // console.log(userPhone, userPasswd, userCode, userTime)
+    if (userPhone === '' || userPasswd === '' || userCode === '' || userRepasswd === '') {
+      Taro.showToast({
+        title: i18next.t('empty'),
+        mask: true
+      })
+      return;
+    }
+
+    if (userTime === "发送验证码" || userTime === "重新发送" || userTime === 'Send verification code' || userTime === 'Resend') {
+      Taro.showToast({
+        title: i18next.t('verificationexpired'),
+        mask: true
+      })
+      return;
+    }
+
+    if (userRepasswd !== userPasswd) {
+      Taro.showToast({
+        title: i18next.t('passwordDifferent'),
+        mask: true
+      })
+      return;
+    }
+    if (userPasswd.length >= 6 && userCode.length !== 0) {
+      resetPasswords(userPhone, userPasswd, userCode).then((res) => {
+        // Taro.setStorageSync('apiToken', res)
+        // Taro.setStorageSync('login', true)
+
+        // Taro.redirectTo({
+        //   url: '/pages/index/index'
+        // })
+        console.log(res)
+      }).catch((error) => {
+        if (error === 'user exists') {
+          Taro.showToast({
+            title: i18next.t('hasbeenregistered'),
+            mask: true,
+            duration: 2000
+          })
+        } else if (error === 'invalid code') {
+          Taro.showToast({
+            title: i18next.t('Verificationinvalid'),
+            mask: true,
+            duration: 2000
+          })
+        } else {
+          Taro.showToast({
+            title: i18next.t('verificationincorrect'),
+            mask: true
+          })
+        }
+      })
+
+    } else {
+      Taro.showToast({
+        title: i18next.t('registrationinformation'),
+        mask: true
+      })
+    }
+  }
+
+  render(){
+
+    let {
+      userPhone,
+      userPasswd,
+      userCode,
+      userTime,
+      userRepasswd,
+      bgcolor
+    } = this.state
+
+    return(
+      <View className='resetPassword'>
+        <NavBar title={i18next.t('resetPassword')} verification />
+        <View className='resetPassword-wrap'>
+          <Text className='title'>{i18next.t('resetPassword')}</Text>
+          <Input className='inputText' type='text' value={userPhone} placeholder={i18next.t('phone')} onChange={this.handleUsernameChange} />
+          <Input className='inputText' type='password' value={userPasswd} placeholder={i18next.t('passWord')} onChange={this.handlePasswordChange} />
+          <Input className='inputText' type='password' value={userRepasswd} placeholder={i18next.t('repeatPassword')} onChange={this.handleuserRepasswdChange} />
+          <View className='identCode'>
+            <Input className='code' type='text' value={userCode} placeholder={i18next.t('identifyCode')} onChange={this.changeCode} />
+            <Button className='codeBtn' style={`background:${bgcolor}`} onClick={this.sendCode}>{userTime}</Button>
+          </View>
+          <View className='viewText'>
+            <Text><Text className='onLogin' onClick={this.toRegister}>{i18next.t('register')}</Text>？</Text>
+            <Text>{i18next.t('existAccount')}？<Text className='onLogin' onClick={this.toLogin}>{i18next.t('login')}</Text></Text>
+          </View>
+          <Button className='register-btn' onClick={this.resetPassword}>{i18next.t('resetPassword')}</Button>
+        </View>
+      </View>
+    )
+  }
+}

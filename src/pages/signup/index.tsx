@@ -80,7 +80,7 @@ export default class Register extends Component {
       userTime
     } = this.state
     if (userPhone.length === 11 && userPhone.charAt(0) === '1') {
-      if (userTime === "发送验证码" || userTime === "重新发送" || userTime === 'send verification code' || userTime === 'resend') {
+      if (userTime === "发送验证码" || userTime === "重新发送" || userTime === 'Send verification code' || userTime === 'Resend') {
         sendMobileCode(userPhone, "signup").then(() => {
           this.setState({
             userTime: 60,
@@ -125,7 +125,7 @@ export default class Register extends Component {
       return;
     }
 
-    if (userTime === "发送验证码" || userTime === "重新发送" || userTime === 'send verification code' || userTime === 'resend') {
+    if (userTime === "发送验证码" || userTime === "重新发送" || userTime === 'Send verification code' || userTime === 'Resend') {
       Taro.showToast({
         title: i18next.t('verificationexpired'),
         mask: true
@@ -169,7 +169,11 @@ export default class Register extends Component {
     }
   }
 
-
+  resetPassword = () => {
+    Taro.navigateTo({
+      url: '/pages/reset_password/index'
+    })
+  }
 
   render() {
 
@@ -193,7 +197,7 @@ export default class Register extends Component {
                 <Button className='codeBtn' style={`background:${bgcolor}`} onClick={this.sendCode}>{userTime}</Button>
             </View>
             <View className='viewText'>
-            <Text>{i18next.t('forgetPassWord')}？</Text>
+            <Text><Text className='onLogin' onClick={this.resetPassword}>{i18next.t('forgetPassWord')}</Text>？</Text>
             <Text>{i18next.t('existAccount')}？<Text className='onLogin' onClick={this.toLogin}>{i18next.t('login')}</Text></Text>
             </View>
           <Button className='register-btn' onClick={this.register}>{i18next.t('register')}</Button>
