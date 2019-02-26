@@ -70,6 +70,10 @@ export default {
   Nonconforming: 'Unqualified',
   Abandonmentin: 'Cancelling',
   CalloutAudit: 'Attribute tagging review',
-  BoxAudit: 'Box labeling review'
+  BoxAudit: 'Box labeling review',
+  qqLogin: 'Login with QQ',
+  resetPassword: 'Reset password',
+  repeatPassword: 'Repeat password',
+  passwordDifferent: 'The passwords entered twice are different'
 
 }
