@@ -21,7 +21,9 @@ export default class Register extends Component {
     this.state = {
       userPhone: '',
       userCode: '',
-      userTime: i18next.t('sendIdentifyCode'),
+      isSendCode: true,
+      sendCode: i18next.t('sendIdentifyCode'),
+      userTime: 0,
       bgcolor: 'orangered'
     }
   }
@@ -46,7 +48,9 @@ export default class Register extends Component {
 
   lessTime = () => {
     let {
-      userTime
+      userTime,
+      sendCode,
+      isSendCode
     } = this.state
     let time = Number(userTime);
 
@@ -54,8 +58,9 @@ export default class Register extends Component {
       if (time === 0) {
         clearInterval(timer)
         this.setState({
-          userTime: i18next.t('resend'),
-          bgcolor: "orangered"
+          sendCode: i18next.t('resend'),
+          bgcolor: "orangered",
+          isSendCode: true
         })
       } else {
         time -= 1;
@@ -70,14 +75,16 @@ export default class Register extends Component {
   sendCode = () => {
     let {
       userPhone,
-      userTime
+      userTime,
+      isSendCode
     } = this.state
     if (userPhone.length === 11 && userPhone.charAt(0) === '1') {
-      if (userTime === "发送验证码" || userTime === "重新发送" || userTime === 'Send verification code' || userTime === 'Resend') {
+      if (isSendCode) {
         sendMobileCode(userPhone, "login").then(() => {
            this.setState({
               userTime: 60,
-              bgcolor: 'gray'
+              bgcolor: 'gray',
+             isSendCode: false
            }, () => this.lessTime())
         }).catch((err) => {
           // console.log(err)
@@ -105,7 +112,7 @@ export default class Register extends Component {
     let {
       userPhone,
       userCode,
-      userTime
+      isSendCode
     } = this.state
 
     // console.log(userPhone, userPasswd, userCode, userTime)
@@ -117,7 +124,7 @@ export default class Register extends Component {
       return;
     }
 
-    if (userTime === "发送验证码" || userTime === "重新发送" || userTime === 'Send verification code' || userTime === 'Resend') {
+    if (isSendCode) {
       Taro.showToast({
         title: i18next.t('verificationexpired'),
         mask: true
@@ -162,7 +169,9 @@ export default class Register extends Component {
       userPhone,
       userCode,
       userTime,
-      bgcolor
+      bgcolor,
+      isSendCode,
+      sendCode
     } = this.state
 
     return (
@@ -173,7 +182,7 @@ export default class Register extends Component {
           <Input className='inputText' type='text' value={userPhone} placeholder={i18next.t('phone')} onChange={this.handleUsernameChange} />
           <View className='identCode'>
             <Input className='code' type='text' value={userCode} placeholder={i18next.t('identifyCode')} onChange={this.changeCode} />
-            <Button className='codeBtn' style={`background:${bgcolor}`} onClick={this.sendCode}>{userTime}</Button>
+            <Button className='codeBtn' style={`background:${bgcolor}`} onClick={this.sendCode}>{isSendCode ? sendCode : userTime}</Button>
           </View>
           <Button className='register-btn' onClick={this.loginSms}>{i18next.t('login')}</Button>
         </View>
