@@ -74,6 +74,9 @@ export default {
   qqLogin: 'Login with QQ',
   resetPassword: 'Reset password',
   repeatPassword: 'Repeat password',
-  passwordDifferent: 'The passwords entered twice are different'
+  passwordDifferent: 'The passwords entered twice are different',
+  passwordupdated: 'password has been updated',
+  newPassWord: 'new password'
+
 
 }
