@@ -169,8 +169,17 @@ export default class resetUserPassword extends Component{
         //   url: '/pages/index/index'
         // })
         // console.log(res)
-        Taro.navigateTo({
-          url: '/pages/login/index'
+
+        Taro.showModal({
+          title: i18next.t('Tips'),
+          content: i18next.t('passwordupdated'),
+          confirmText: i18next.t('Gotit'),
+          showCancel: false,
+          success: function () {
+            Taro.navigateTo({
+              url: '/pages/login/index'
+            })
+          }
         })
       }).catch((error) => {
         if (error === 'user exists') {
@@ -220,7 +229,7 @@ export default class resetUserPassword extends Component{
         <View className='resetPassword-wrap'>
           <Text className='title'>{i18next.t('resetPassword')}</Text>
           <Input className='inputText' type='text' value={userPhone} placeholder={i18next.t('phone')} onChange={this.handleUsernameChange} />
-          <Input className='inputText' type='password' value={userPasswd} placeholder={i18next.t('passWord')} onChange={this.handlePasswordChange} />
+          <Input className='inputText' type='password' value={userPasswd} placeholder={i18next.t('newPassWord')} onChange={this.handlePasswordChange} />
           <Input className='inputText' type='password' value={userRepasswd} placeholder={i18next.t('repeatPassword')} onChange={this.handleuserRepasswdChange} />
           <View className='identCode'>
             <Input className='code' type='text' value={userCode} placeholder={i18next.t('identifyCode')} onChange={this.changeCode} />

@@ -74,5 +74,8 @@ export default {
   qqLogin: 'QQ快捷登录',
   resetPassword: '重置密码',
   repeatPassword: '重复密码',
-  passwordDifferent: '两次输入的密码不一致'
+  passwordDifferent: '两次输入的密码不一致',
+  passwordupdated: '密码修改成功',
+  newPassWord: '新密码'
+
 }
