@@ -17,7 +17,7 @@ import i18next from '../../i18n'
 
 import './index.scss'
 
-let allowedTask = ['rect', 'count', 'collect']
+let allowedTask = ['rect', 'count', 'collect', 'attribute']
 let allowedReview = ['rect', 'count', 'collect', 'attribute']
 
 export default class Index extends Taro.Component {

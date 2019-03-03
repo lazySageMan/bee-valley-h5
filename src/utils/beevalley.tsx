@@ -331,6 +331,19 @@ function resetPasswords(mobile, password, code){
   }).then(handleRes)
 }
 
+function getAttribute(token, category, attribute, prerequisiteId){
+  return Taro.request({
+    url: prerequisiteId ? `${host}categories/${category}/attributes/${attribute}?prerequisite=${prerequisiteId}` : `${host}categories/${category}/attributes/${attribute}`,
+    method: 'GET',
+    header: {
+      'content-type': 'application/json',
+      'Authorization': 'Bearer ' + token
+    },
+    dataType: 'text',
+    responseType: 'text'
+  }).then(handleRes)
+}
+
 function qqLogin(){
 
 }
@@ -358,5 +371,6 @@ export {
   downloadWorkFiles,
   loginSms,
   wxLogin,
-  resetPasswords
+  resetPasswords,
+  getAttribute
 };

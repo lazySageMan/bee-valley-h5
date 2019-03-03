@@ -76,7 +76,8 @@ export default {
   repeatPassword: 'Repeat password',
   passwordDifferent: 'The passwords entered twice are different',
   passwordupdated: 'password has been updated',
-  newPassWord: 'new password'
-
-
+  newPassWord: 'new password',
+  Attributetask: 'Attribute labeling task',
+  Targetattribute: 'Target attribute',
+  correspondingattribute: 'Please select the corresponding attribute'
 }
