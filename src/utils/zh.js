@@ -76,6 +76,8 @@ export default {
   repeatPassword: '重复密码',
   passwordDifferent: '两次输入的密码不一致',
   passwordupdated: '密码修改成功',
-  newPassWord: '新密码'
-
+  newPassWord: '新密码',
+  Attributetask: '属性标注任务',
+  Targetattribute: '标属性',
+  correspondingattribute: '请标注对应的属性'
 }

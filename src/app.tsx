@@ -30,7 +30,8 @@ class App extends Component {
       'pages/phone_login/index',
       'pages/wechat_login/index',
       'pages/qq_login/index',
-      'pages/reset_password/index'
+      'pages/reset_password/index',
+      'pages/attribute_task/index'
     ],
     window: {
       backgroundTextStyle: 'light',
