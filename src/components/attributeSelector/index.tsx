@@ -36,9 +36,9 @@ export default class attributeSelect extends Component {
     let dependency = selectdata.dependency ? selectdata.dependency : false;
     selectdata.dataArray.forEach((items, index) => {
       if (items.value === item.value) {
-        this.setState({
-          selectWord: item.value
-        })
+        // this.setState({
+        //   selectWord: item.value
+        // })
         dealSelect(index, item.value, item.id, selectdata.attr, dependency, itemIndex);
       }
     })
@@ -81,8 +81,8 @@ export default class attributeSelect extends Component {
             className='Input'
             placeholder={i18next.t('correspondingattribute')}
             onFocus={this.onFocus}
-            onChange={this.changeValue}
-            value={selectWord}
+
+            value={this.props.selectdata.value}
           ></Input>
         </View>
         {this.props.selectdata.isShowList && (
