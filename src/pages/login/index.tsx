@@ -17,7 +17,7 @@ import i18next from '../../i18n'
 import './index.scss'
 import wechat from '../../image/weixin.png'
 import phone from '../../image/message.png'
-import QQ from '../../image/qqlogin.png'
+// import QQ from '../../image/qqlogin.png'
 
 export default class Login extends Component {
 
@@ -127,12 +127,12 @@ export default class Login extends Component {
     })
   }
 
-  qqLogin = () => {
-    Taro.navigateTo({
-      url: '/pages/qq_login/index'
-    })
-    console.log('qqLogin')
-  }
+  // qqLogin = () => {
+  //   Taro.navigateTo({
+  //     url: '/pages/qq_login/index'
+  //   })
+  //   console.log('qqLogin')
+  // }
 
   changeLanGe = (language) => {
     i18next.changeLanguage(language)
@@ -179,9 +179,9 @@ export default class Login extends Component {
             <View className='icon' onClick={this.phoneLogin}>
               <Image className='img' src={phone}></Image>
             </View>
-            <View className='icon' onClick={this.qqLogin}>
+{/*            <View className='icon' onClick={this.qqLogin}>
               <Image className='img' src={QQ}></Image>
-            </View>
+            </View>*/}
           </View>
         </View>
       </View>
