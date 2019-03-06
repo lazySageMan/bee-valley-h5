@@ -117,6 +117,7 @@ export default class attributeTask extends Component {
         work.attributes[this.index].dataArray = [];
         work.attributes[this.index].indexArray = 0;
         work.attributes[this.index].isShowList = false;
+        work.attributes[this.index].value = '';
         this.index++;
         this.getSelect(work);
       } else {
@@ -124,6 +125,7 @@ export default class attributeTask extends Component {
             work.attributes[this.index].dataArray = JSON.parse(res);
             work.attributes[this.index].indexArray = 0;
             work.attributes[this.index].isShowList = false;
+            work.attributes[this.index].value = '';
             work.value = '';
             this.index++;
             this.getSelect(work);
@@ -224,11 +226,15 @@ export default class attributeTask extends Component {
         confirmText: i18next.t('Gotit')
       })
     }
-
-
-
   }
 
+  changeInput = (value, index) =>{
+    let { currentWork } = this.state;
+    currentWork.attributes[index].value = value;
+    this.setState({
+      currentWork: currentWork
+    })
+  }
 
   render(){
 
@@ -244,7 +250,7 @@ export default class attributeTask extends Component {
 
     let selects = currentWork.attributes ? currentWork.attributes.map((item, index) => {
       return (
-        <AttributeSelect changeShow={this.changeShow} selectdata={item} itemIndex={index} dealSelect={this.getSelectList} key={index}></AttributeSelect>
+        <AttributeSelect changeInput={this.changeInput} changeShow={this.changeShow} selectdata={item} itemIndex={index} dealSelect={this.getSelectList} key={index}></AttributeSelect>
       )
     })
     : null ;

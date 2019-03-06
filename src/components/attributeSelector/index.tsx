@@ -36,9 +36,6 @@ export default class attributeSelect extends Component {
     let dependency = selectdata.dependency ? selectdata.dependency : false;
     selectdata.dataArray.forEach((items, index) => {
       if (items.value === item.value) {
-        // this.setState({
-        //   selectWord: item.value
-        // })
         dealSelect(index, item.value, item.id, selectdata.attr, dependency, itemIndex);
       }
     })
@@ -47,9 +44,9 @@ export default class attributeSelect extends Component {
   changeValue = (e) => {
     this.filterWord(e.detail.value)
     let { selectWord } = this.state;
-    this.setState({
-      selectWord: e.target.value
-    })
+    let { itemIndex, changeInput } = this.props;
+    changeInput(e.detail.value, itemIndex);
+    return e.detail.value;
   }
 
   filterWord = (keyWord) => {
@@ -71,8 +68,8 @@ export default class attributeSelect extends Component {
       )
     }) : null;
 
-
     return (
+
       <View className='attributeSelect'>
         <View className='prompt'>
           <View className='title'>{this.props.selectdata.displayName}:</View>
@@ -81,7 +78,7 @@ export default class attributeSelect extends Component {
             className='Input'
             placeholder={i18next.t('correspondingattribute')}
             onFocus={this.onFocus}
-
+            onInput={this.changeValue}
             value={this.props.selectdata.value}
           ></Input>
         </View>
