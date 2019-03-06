@@ -142,7 +142,7 @@ export default class PointTask extends Component {
 
   rejectWork = () => {
     Taro.showLoading({
-      title: i18next('dismissed'),
+      title: i18next.t('dismissed'),
       mask: true
     })
     let {
