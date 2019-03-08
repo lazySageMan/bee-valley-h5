@@ -11,9 +11,13 @@ import {
 import {
   phoneLogin,
   wechatLogin,
-  checkDveice
+  checkDveice,
+  selectRegion,
+  closeList,
+  openList
 } from '../../utils/beevalley'
 import i18next from '../../i18n'
+import PullDown from '../../components/pullDownLIst/index.tsx'
 import './index.scss'
 import wechat from '../../image/weixin.png'
 import phone from '../../image/message.png'
@@ -24,14 +28,25 @@ export default class Login extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      language: 'cn'
+      language: 'cn',
+      regionData: {
+        selectIndex: 0,
+        allRegion: [
+          {
+            name: '中国',
+            region: 'CN'
+          }
+        ],
+        isOpen: false
+      }
     }
   }
 
   login = () => {
     let {
       username,
-      password
+      password,
+      regionData
     } = this.state;
     if (!username || !password) {
       Taro.showToast({
@@ -39,7 +54,7 @@ export default class Login extends Component {
         mask: true
       })
     } else {
-      phoneLogin(this.state.username, this.state.password).then((token) => {
+      phoneLogin(this.state.username, this.state.password, regionData.allRegion[regionData.selectIndex].region).then((token) => {
 
           Taro.setStorageSync('apiToken', token)
           Taro.setStorageSync('login', true)
@@ -150,17 +165,21 @@ export default class Login extends Component {
   render() {
     let {
       isMobile,
-      language
+      language,
+      regionData
     } = this.state;
 
     return (
-      <View className='loginWrap'>
+      <View className='loginWrap' onClick={() => closeList(this)}>
         <View className='changeLanguage'>
           <Text className={language === 'en' ? 'select' : ''} onClick={this.changeLanGe.bind(this, 'en')}>English</Text>|<Text className={language === 'cn' ? 'select' : ''} onClick={this.changeLanGe.bind(this, 'cn')} >中文</Text>
         </View>
         <View className='wrap'>
           <Text className='title'>{i18next.t("userLogin")}</Text>
-          <Input className='inputText' type='text' placeholder={i18next.t('account')} onChange={this.handleUsernameChange} />
+          <View className='userInput'>
+            <PullDown selectRegion={selectRegion} that={this} openList={openList} defaultSelect={regionData.allRegion[regionData.selectIndex].name} isOpen={regionData.isOpen} allRegion={regionData.allRegion}></PullDown>
+            <Input className='userName' type='text' placeholder={i18next.t('account')} onChange={this.handleUsernameChange} />
+          </View>
           <Input className='inputText' type='password' placeholder={i18next.t('passWord')} onChange={this.handlePasswordChange} />
           <Button className='btn' onClick={this.login}>{i18next.t('login')}</Button>
           <View className='viewText'>

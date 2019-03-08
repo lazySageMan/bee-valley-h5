@@ -9,9 +9,13 @@ import {
 } from '@tarojs/components'
 import {
   sendMobileCode,
-  register
+  register,
+  selectRegion,
+  closeList,
+  openList
 } from '../../utils/beevalley'
 import NavBar from '../../components/navBar/index'
+import PullDown from '../../components/pullDownLIst/index.tsx'
 import './index.scss'
 import i18next from '../../i18n';
 
@@ -25,7 +29,17 @@ export default class Register extends Component {
       isSendCode: true,
       sendCode: i18next.t('sendIdentifyCode'),
       userTime: 0,
-      bgcolor: 'orangered'
+      bgcolor: 'orangered',
+      regionData: {
+        selectIndex: 0,
+        allRegion: [
+          {
+            name: '中国',
+            region: 'CN'
+          }
+        ],
+        isOpen: false
+      }
     }
   }
 
@@ -83,11 +97,12 @@ export default class Register extends Component {
     let {
       userPhone,
       userTime,
-      isSendCode
+      isSendCode,
+      regionData
     } = this.state
     if (userPhone.length === 11 && userPhone.charAt(0) === '1') {
       if (isSendCode) {
-        sendMobileCode(userPhone, "signup").then(() => {
+        sendMobileCode(userPhone, "signup", regionData.allRegion[regionData.selectIndex].region).then(() => {
           this.setState({
             userTime: 60,
             bgcolor: 'gray',
@@ -120,7 +135,8 @@ export default class Register extends Component {
       userPhone,
       userPasswd,
       userCode,
-      isSendCode
+      isSendCode,
+      regionData
     } = this.state
 
     // console.log(userPhone, userPasswd, userCode, userTime)
@@ -139,7 +155,7 @@ export default class Register extends Component {
       })
     } else {
       if (userPhone.length === 11 && userPhone.charAt(0) === '1' && userPasswd.length >= 6 && userCode.length !== 0) {
-        register(userPhone, userPasswd, userCode).then((res) => {
+        register(userPhone, userPasswd, userCode, regionData.allRegion[regionData.selectIndex].region).then((res) => {
           Taro.setStorageSync('apiToken', res)
           Taro.setStorageSync('login', true)
 
@@ -191,16 +207,21 @@ export default class Register extends Component {
       userTime,
       bgcolor,
       isSendCode,
-      sendCode
+      sendCode,
+      regionData
 
     } = this.state
 
     return (
-      <View className='registerWrap'>
+      <View className='registerWrap' onClick={() => closeList(this)}>
         <NavBar title={i18next.t('userRegister')} verification />
         <View className='register-wrap'>
           <Text className='title'>{i18next.t('userRegister')}</Text>
-            <Input className='inputText' type='text' value={userPhone} placeholder={i18next.t('phone')} onChange={this.handleUsernameChange} />
+            {/* <Input className='inputText' type='text' value={userPhone} placeholder={i18next.t('phone')} onChange={this.handleUsernameChange} /> */}
+          <View className='userInput'>
+            <PullDown selectRegion={selectRegion} that={this} openList={openList} defaultSelect={regionData.allRegion[regionData.selectIndex].name} isOpen={regionData.isOpen} allRegion={regionData.allRegion}></PullDown>
+            <Input className='userName' type='text' placeholder={i18next.t('account')} onChange={this.handleUsernameChange} />
+          </View>
           <Input className='inputText' type='password' value={userPasswd} placeholder={i18next.t('passWord')} onChange={this.handlePasswordChange} />
             <View className='identCode'>
             <Input className='code' type='text' value={userCode} placeholder={i18next.t('identifyCode')} onChange={this.changeCode} />
