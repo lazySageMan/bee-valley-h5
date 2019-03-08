@@ -34,6 +34,8 @@ export default class Index extends Taro.Component {
   componentDidMount() {
     this.apiToken = Taro.getStorageSync('apiToken');
 
+    this.isShowReview = Taro.getStorageSync('taskonly') ? Taro.getStorageSync('taskonly') : false;
+
     let res = Taro.getSystemInfoSync()
     this.isMobile = checkDveice(res)
 
@@ -99,11 +101,16 @@ export default class Index extends Taro.Component {
   }
 
   render() {
-    const tabList = [{
-      title: i18next.t('TaskList')
-    }, {
+    console.log(this.isShowReview)
+    const tabList = !this.isShowReview ?
+      [{
+        title: i18next.t('TaskList')
+        }, {
         title: i18next.t('Auditlist')
-    }]
+      }] :
+      [{
+        title: i18next.t('TaskList')
+      }];
     return (
       <View className='indexwrap'>
         <Button className='logout' type='secondary' onClick={this.logout}>{i18next.t('logout')}</Button>

@@ -167,14 +167,14 @@ function submitReview(token, reviewId, result, detail) {
   }).then(handleRes)
 }
 
-function phoneLogin(phone, passwd) {
+function phoneLogin(phone, passwd, region) {
   return Taro.request({
     url: `${host}login/mobile`,
     method: 'POST',
     data: {
       'mobile': phone,
       'password': passwd,
-      'region': 'CN'
+      'region': region
     },
     header: {
       'content-type': 'application/json'
@@ -217,7 +217,7 @@ function listAuthorizedReview(token) {
   }).then(handleRes).then(parseJson)
 }
 
-function sendMobileCode(mobile, type) {
+function sendMobileCode(mobile, type, region) {
   return Taro.request({
     url: `${host}mobile/send`,
     method: 'POST',
@@ -226,7 +226,7 @@ function sendMobileCode(mobile, type) {
     },
     data: {
       "mobile": mobile,
-      "region": "CN",
+      "region": region,
       "topic": type
     },
     dataType: 'text',
@@ -234,7 +234,7 @@ function sendMobileCode(mobile, type) {
   }).then(handleRes).then(parseJson)
 }
 
-function register(mobile, passwd, code) {
+function register(mobile, passwd, code, region) {
   return Taro.request({
     url: `${host}signup/mobile`,
     method: 'POST',
@@ -245,14 +245,14 @@ function register(mobile, passwd, code) {
       "mobile": mobile,
       "password": passwd,
       "code": code,
-      "region": "CN"
+      "region": region
     },
     dataType: 'text',
     responseType: 'text'
   }).then(handleRes)
 }
 
-function loginSms(mobile, code){
+function loginSms(mobile, code, region){
   return Taro.request({
     url: `${host}login/sms`,
     method: 'POST',
@@ -262,7 +262,7 @@ function loginSms(mobile, code){
     data: {
       "mobile": mobile,
       "code": code,
-      "region": "CN"
+      "region": region
     },
     dataType: 'text',
     responseType: 'text'
@@ -313,7 +313,7 @@ function wxLogin(a, b){
     var f = b.getElementById(a.id); f.innerHTML = "", f.appendChild(d);
 }
 
-function resetPasswords(mobile, password, code){
+function resetPasswords(mobile, password, code, region){
   return Taro.request({
     url: `${host}password/reset`,
     method: 'POST',
@@ -324,7 +324,7 @@ function resetPasswords(mobile, password, code){
       "mobile": mobile,
       "password": password,
       "code": code,
-      "region": "CN"
+      "region": region
     },
     dataType: 'text',
     responseType: 'text'
@@ -342,6 +342,32 @@ function getAttribute(token, category, attribute, prerequisiteId){
     dataType: 'text',
     responseType: 'text'
   }).then(handleRes)
+}
+
+function selectRegion(that, index){
+  let { regionData } = that.state;
+  regionData.selectIndex = index;
+  that.setState({
+    regionData: regionData
+  })
+
+  closeList(that)
+}
+
+function closeList(that){
+  let { regionData } = that.state;
+  regionData.isOpen = false;
+  that.setState({
+    regionData: regionData
+  })
+}
+
+function openList(that){
+  let { regionData } = that.state;
+  regionData.isOpen = true;
+  that.setState({
+    regionData: regionData
+  })
 }
 
 function qqLogin(){
@@ -372,5 +398,8 @@ export {
   loginSms,
   wxLogin,
   resetPasswords,
-  getAttribute
+  getAttribute,
+  selectRegion,
+  closeList,
+  openList
 };

@@ -9,9 +9,13 @@ import {
 } from '@tarojs/components'
 import {
   sendMobileCode,
-  resetPasswords
+  resetPasswords,
+  selectRegion,
+  closeList,
+  openList
 } from '../../utils/beevalley'
 import NavBar from '../../components/navBar/index'
+import PullDown from '../../components/pullDownLIst/index.tsx'
 import i18next from '../../i18n'
 import './index.scss'
 
@@ -27,7 +31,17 @@ export default class resetUserPassword extends Component{
       isSendCode: true,
       sendCode: i18next.t('sendIdentifyCode'),
       userTime: 0,
-      bgcolor: 'orangered'
+      bgcolor: 'orangered',
+      regionData: {
+        selectIndex: 0,
+        allRegion: [
+          {
+            name: '中国',
+            region: 'CN'
+          }
+        ],
+        isOpen: false
+      }
     }
   }
 
@@ -71,11 +85,12 @@ export default class resetUserPassword extends Component{
     let {
       userPhone,
       userTime,
-      isSendCode
+      isSendCode,
+      regionData
     } = this.state
     if (userPhone.length === 11 && userPhone.charAt(0) === '1') {
       if (isSendCode) {
-        sendMobileCode(userPhone, "reset_password").then(() => {
+        sendMobileCode(userPhone, "reset_password", regionData.allRegion[regionData.selectIndex].region).then(() => {
           this.setState({
             userTime: 60,
             bgcolor: 'gray',
@@ -133,7 +148,8 @@ export default class resetUserPassword extends Component{
       userPasswd,
       userCode,
       userRepasswd,
-      isSendCode
+      isSendCode,
+      regionData
     } = this.state
 
     // console.log(userPhone, userPasswd, userCode, userTime)
@@ -161,7 +177,7 @@ export default class resetUserPassword extends Component{
       return;
     }
     if (userPasswd.length >= 6 && userCode.length !== 0) {
-      resetPasswords(userPhone, userPasswd, userCode).then((res) => {
+      resetPasswords(userPhone, userPasswd, userCode, regionData.allRegion[regionData.selectIndex].region).then((res) => {
         // Taro.setStorageSync('apiToken', res)
         // Taro.setStorageSync('login', true)
 
@@ -220,15 +236,20 @@ export default class resetUserPassword extends Component{
       userRepasswd,
       bgcolor,
       sendCode,
-      isSendCode
+      isSendCode,
+      regionData
     } = this.state
 
     return(
-      <View className='resetPassword'>
+      <View className='resetPassword' onClick={() => closeList(this)}>
         <NavBar title={i18next.t('resetPassword')} verification />
         <View className='resetPassword-wrap'>
           <Text className='title'>{i18next.t('resetPassword')}</Text>
-          <Input className='inputText' type='text' value={userPhone} placeholder={i18next.t('phone')} onChange={this.handleUsernameChange} />
+          {/* <Input className='inputText' type='text' value={userPhone} placeholder={i18next.t('phone')} onChange={this.handleUsernameChange} /> */}
+          <View className='userInput'>
+            <PullDown selectRegion={selectRegion} that={this} openList={openList} defaultSelect={regionData.allRegion[regionData.selectIndex].name} isOpen={regionData.isOpen} allRegion={regionData.allRegion}></PullDown>
+            <Input className='userName' type='text' placeholder={i18next.t('account')} onChange={this.handleUsernameChange} />
+          </View>
           <Input className='inputText' type='password' value={userPasswd} placeholder={i18next.t('newPassWord')} onChange={this.handlePasswordChange} />
           <Input className='inputText' type='password' value={userRepasswd} placeholder={i18next.t('repeatPassword')} onChange={this.handleuserRepasswdChange} />
           <View className='identCode'>
