@@ -79,5 +79,6 @@ export default {
   newPassWord: 'new password',
   Attributetask: 'Attribute labeling task',
   Targetattribute: 'Target attribute',
-  correspondingattribute: 'Please select the corresponding attribute'
+  correspondingattribute: 'Please select the corresponding attribute',
+  china: 'China'
 }

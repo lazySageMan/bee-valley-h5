@@ -18,6 +18,7 @@ import {
 } from '../../utils/beevalley'
 import i18next from '../../i18n'
 import PullDown from '../../components/pullDownLIst/index.tsx'
+import allRegion from '../../utils/allRegion'
 import './index.scss'
 import wechat from '../../image/weixin.png'
 import phone from '../../image/message.png'
@@ -31,12 +32,7 @@ export default class Login extends Component {
       language: 'cn',
       regionData: {
         selectIndex: 0,
-        allRegion: [
-          {
-            name: '中国',
-            region: 'CN'
-          }
-        ],
+        allRegion: allRegion,
         isOpen: false
       }
     }

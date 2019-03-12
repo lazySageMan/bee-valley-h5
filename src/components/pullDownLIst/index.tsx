@@ -3,7 +3,7 @@ import { View, Image } from '@tarojs/components'
 import './index.scss'
 import caretLeft from '../../image/caret-left.png'
 import caretDown from '../../image/caret-down.png'
-// import i18next from '../../i18n'
+import i18next from '../../i18n'
 
 export default class pullDown extends Component {
   constructor(props){
@@ -32,7 +32,7 @@ export default class pullDown extends Component {
     let { allRegion, isOpen, defaultSelect } = this.props;
     let listItem = allRegion.length !== 0 ? allRegion.map((item, index) => {
       return (
-        <View className='item' key={index} onClick={this.selectItem.bind(this, index, item.name)}>{item.name}</View>
+        <View className='item' key={index} onClick={this.selectItem.bind(this, index, item.name)}>{i18next.t(item.name)}</View>
       )
     }) : null;
 
@@ -42,7 +42,7 @@ export default class pullDown extends Component {
     return (
       <View className='pull_wrap'>
         <View className='title' onClick={this.openList}>
-          <View className='text'>{defaultSelect}</View>
+          <View className='text'>{i18next.t(defaultSelect)}</View>
           <View className='icon'>
             {chooseIcon}
           </View>

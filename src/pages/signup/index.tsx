@@ -18,6 +18,7 @@ import NavBar from '../../components/navBar/index'
 import PullDown from '../../components/pullDownLIst/index.tsx'
 import './index.scss'
 import i18next from '../../i18n';
+import allRegion from '../../utils/allRegion'
 
 export default class Register extends Component {
   constructor(props) {
@@ -32,12 +33,7 @@ export default class Register extends Component {
       bgcolor: 'orangered',
       regionData: {
         selectIndex: 0,
-        allRegion: [
-          {
-            name: '中国',
-            region: 'CN'
-          }
-        ],
+        allRegion: allRegion,
         isOpen: false
       }
     }

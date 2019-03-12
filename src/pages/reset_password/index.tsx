@@ -17,6 +17,7 @@ import {
 import NavBar from '../../components/navBar/index'
 import PullDown from '../../components/pullDownLIst/index.tsx'
 import i18next from '../../i18n'
+import allRegion from '../../utils/allRegion'
 import './index.scss'
 
 export default class resetUserPassword extends Component{
@@ -34,12 +35,7 @@ export default class resetUserPassword extends Component{
       bgcolor: 'orangered',
       regionData: {
         selectIndex: 0,
-        allRegion: [
-          {
-            name: '中国',
-            region: 'CN'
-          }
-        ],
+        allRegion: allRegion,
         isOpen: false
       }
     }
