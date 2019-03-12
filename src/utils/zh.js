@@ -79,5 +79,6 @@ export default {
   newPassWord: '新密码',
   Attributetask: '属性标注任务',
   Targetattribute: '标属性',
-  correspondingattribute: '请标注对应的属性'
+  correspondingattribute: '请标注对应的属性',
+  china: '中国'
 }
