@@ -271,7 +271,7 @@ export default class reviewData extends Taro.Component {
                           details.map((item, index) => {
                                   return (
                                     <View key={index} className='content-list'>
-                                                  <View className='list-item'>{index + 1} {item}；</View>
+                                                  <View className='list-item'>{(index + 1) + '. '} {item}；</View>
                                               </View>
                                   )
                                 }
