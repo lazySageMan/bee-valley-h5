@@ -31,7 +31,8 @@ class App extends Component {
       'pages/wechat_login/index',
       'pages/qq_login/index',
       'pages/reset_password/index',
-      'pages/attribute_task/index'
+      'pages/attribute_task/index',
+      'pages/face_recognition_login/index'
     ],
     window: {
       backgroundTextStyle: 'light',

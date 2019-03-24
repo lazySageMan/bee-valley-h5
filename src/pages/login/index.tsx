@@ -22,6 +22,7 @@ import allRegion from '../../utils/allRegion'
 import './index.scss'
 import wechat from '../../image/weixin.png'
 import phone from '../../image/message.png'
+import face from '../../image/face.png'
 // import QQ from '../../image/qqlogin.png'
 
 export default class Login extends Component {
@@ -158,6 +159,12 @@ export default class Login extends Component {
     })
   }
 
+  faceLogin = () => {
+    Taro.navigateTo({
+      url: '/pages/face_recognition_login/index'
+    })
+  }
+
   render() {
     let {
       isMobile,
@@ -197,6 +204,9 @@ export default class Login extends Component {
 {/*            <View className='icon' onClick={this.qqLogin}>
               <Image className='img' src={QQ}></Image>
             </View>*/}
+            {isMobile && <View className='icon' onClick={this.faceLogin}>
+              <Image className='img' src={face}></Image>
+            </View>}
           </View>
         </View>
       </View>

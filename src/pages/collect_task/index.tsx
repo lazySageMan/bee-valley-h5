@@ -273,7 +273,7 @@ export default class DataAcquistion extends Taro.Component {
             <View className='content-list'>
               {details.map((v, i) => {
                 return (
-                  <View className='list-item' key={i}>{i + 1}{v}</View>
+                  <View className='list-item' key={i}>{(i + 1) + '. '}{v}</View>
                 )
               })}
             </View>
