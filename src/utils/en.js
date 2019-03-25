@@ -80,5 +80,7 @@ export default {
   Attributetask: 'Attribute labeling task',
   Targetattribute: 'Target attribute',
   correspondingattribute: 'Please select the corresponding attribute',
-  china: 'China'
+  china: 'China',
+  faceRecognitionLogin: 'Face Recognition Login',
+  PermissionsCamera: 'Permissions are turned off, or the browser cannot turn on the camera'
 }

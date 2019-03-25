@@ -80,5 +80,7 @@ export default {
   Attributetask: '属性标注任务',
   Targetattribute: '标属性',
   correspondingattribute: '请标注对应的属性',
-  china: '中国'
+  china: '中国',
+  faceRecognitionLogin: '面容识别登录',
+  PermissionsCamera: '权限已关闭，或浏览器无法打开摄像头'
 }
