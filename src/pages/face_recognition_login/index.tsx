@@ -15,7 +15,7 @@ export default class faceRecognitionLogin extends Component {
     super(props)
   }
 
-  getImgSrc = (imgSrc) => {
+  onGetImgSrc = (imgSrc) => {
     console.log(imgSrc);
   }
 
@@ -24,7 +24,7 @@ export default class faceRecognitionLogin extends Component {
       <View className='faceLogin'>
         <NavBar title={i18next.t('faceRecognitionLogin')}></NavBar>
         <View id='imgItem'>
-          <FaceRecognition getImgSrc={this.getImgSrc}></FaceRecognition>
+          <FaceRecognition onGetImgSrc={this.onGetImgSrc}></FaceRecognition>
         </View>
       </View>
     )

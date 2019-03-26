@@ -6,9 +6,9 @@ import {
   Video,
   Image
 } from '@tarojs/components';
-import { checkDveice } from '../../utils/beevalley'
-
 import * as d3 from 'd3'
+
+import { checkDveice } from '../../utils/beevalley'
 import i18next from '../../i18n'
 
 import './index.scss'
@@ -118,7 +118,7 @@ export default class faceRecognitionLogin extends Component {
           imgsrc: imgSrc
         })
         this.mediaStreamTrack.stop();
-        this.props.getImgSrc(imgSrc);
+        this.props.onGetImgSrc(imgSrc);
       }
     }, 5000)
   }
