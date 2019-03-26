@@ -6,6 +6,7 @@ import {
   Video,
   Image
 } from '@tarojs/components';
+import { checkDveice } from '../../utils/beevalley'
 
 import * as d3 from 'd3'
 import i18next from '../../i18n'
@@ -22,10 +23,9 @@ export default class faceRecognitionLogin extends Component {
 
   componentDidMount(){
     let res = Taro.getSystemInfoSync();
-    this.videoWidth = res.windowWidth;
-
+    this.isMobile = checkDveice(res)
+    this.videoWidth = this.isMobile ? res.windowWidth : res.windowWidth * 0.6;
     this.videoHeight = res.windowHeight - res.windowHeight * 0.07;
-
 
     this.svg = d3.select(".Mask").append("svg");
     this.svg.attr("width", this.videoWidth)
@@ -62,8 +62,6 @@ export default class faceRecognitionLogin extends Component {
     ) {
       var constraints = {
         video: {
-          width: 600,
-          height: 375,
           facingMode: "user",
         }
       };
@@ -133,7 +131,7 @@ export default class faceRecognitionLogin extends Component {
         <View className='Mask' >
 
         </View>
-        {imgsrc ? <Image src={imgsrc} style='width:100vw;height:93vh'></Image> : <Video
+        {imgsrc ? <Image src={imgsrc} className='imgWrap' ></Image> : <Video
           id='webcam'
           loop
           autoplay

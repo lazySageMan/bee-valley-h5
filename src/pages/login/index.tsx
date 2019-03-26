@@ -204,9 +204,9 @@ export default class Login extends Component {
 {/*            <View className='icon' onClick={this.qqLogin}>
               <Image className='img' src={QQ}></Image>
             </View>*/}
-            {isMobile && <View className='icon' onClick={this.faceLogin}>
+            <View className='icon' onClick={this.faceLogin}>
               <Image className='img' src={face}></Image>
-            </View>}
+            </View>
           </View>
         </View>
       </View>

@@ -100,6 +100,12 @@ export default class Index extends Taro.Component {
     })
   }
 
+  uploadImg = () => {
+    Taro.navigateTo({
+      url: '/pages/upload_faceImg/index'
+    })
+  }
+
   render() {
     console.log(this.isShowReview)
     const tabList = !this.isShowReview ?
@@ -114,6 +120,7 @@ export default class Index extends Taro.Component {
     return (
       <View className='indexwrap'>
         <Button className='logout' type='secondary' onClick={this.logout}>{i18next.t('logout')}</Button>
+        <Button className='uploadImgs' type='secondary' onClick={this.uploadImg}>{i18next.t('Uploadface')}</Button>
         <View className='list-wrap'>
           <AtTabs current={this.state.current} tabList={tabList} onClick={this.handleTabClick.bind(this)}>
               <AtTabsPane current={this.state.current} index={0} >

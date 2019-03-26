@@ -32,7 +32,8 @@ class App extends Component {
       'pages/qq_login/index',
       'pages/reset_password/index',
       'pages/attribute_task/index',
-      'pages/face_recognition_login/index'
+      'pages/face_recognition_login/index',
+      'pages/upload_faceImg/index'
     ],
     window: {
       backgroundTextStyle: 'light',
