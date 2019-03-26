@@ -82,5 +82,6 @@ export default {
   correspondingattribute: 'Please select the corresponding attribute',
   china: 'China',
   faceRecognitionLogin: 'Face Recognition Login',
-  PermissionsCamera: 'Permissions are turned off, or the browser cannot turn on the camera'
+  PermissionsCamera: 'Permissions are turned off, or the browser cannot turn on the camera',
+  Uploadface: 'Upload photos'
 }

@@ -370,6 +370,24 @@ function openList(that){
   })
 }
 
+function uploadImg(token, fileSrc){
+  return fetch(fileSrc)
+    .then(res => res.blob())
+    .then(blob => {
+      let formData = new FormData();
+      formData.append("file", blob);
+
+      return Taro.request({
+        url: `${host}user/register_face`,
+        method: 'POST',
+        header: {
+          'Authorization': 'Bearer ' + token
+        },
+        data: formData
+      }).then(handleRes);
+    });
+}
+
 function qqLogin(){
 
 }
@@ -401,5 +419,6 @@ export {
   getAttribute,
   selectRegion,
   closeList,
-  openList
+  openList,
+  uploadImg
 };
