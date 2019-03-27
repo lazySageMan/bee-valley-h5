@@ -383,7 +383,9 @@ function uploadImg(token, fileSrc){
         header: {
           'Authorization': 'Bearer ' + token
         },
-        data: formData
+        data: formData,
+        dataType: 'text',
+        responseType: 'text'
       }).then(handleRes);
     });
 }

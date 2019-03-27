@@ -43,7 +43,6 @@ export default class UploadFaceImg extends Taro.Component {
 
   submitWork = () => {
     let {photoSrc} = this.state;
-
     if (!photoSrc) {
       Taro.showToast({
         title: `${i18next.t('correspondingpicture')}`
@@ -55,13 +54,16 @@ export default class UploadFaceImg extends Taro.Component {
       })
 
       uploadImg(this.apiToken, photoSrc).then(() => {
-        // console.log(res);
         Taro.hideLoading();
         Taro.showToast({
-          title: `${i18next.t('Uploadsucceeded')}`
+          title: i18next.t('Uploadsucceeded'),
+          success: () => {
+            Taro.navigateBack({
+              delta: 1
+            })
+          }
         })
       }).catch((err) => {
-        // console.log(err)
         Taro.showToast({
           title: err
         })
