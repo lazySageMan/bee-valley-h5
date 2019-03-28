@@ -113,7 +113,7 @@ export default class faceRecognitionLogin extends Component {
         this.canvas = document.createElement("canvas");
         let context = this.canvas.getContext("2d");
         context.drawImage(this.video, 0, 0, 300, 150);
-        let imgSrc = this.canvas.toDataURL("image/png");
+        let imgSrc = this.canvas.toDataURL("image/jpeg");
         this.setState({
           imgsrc: imgSrc
         })

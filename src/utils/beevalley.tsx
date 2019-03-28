@@ -403,7 +403,7 @@ function faceLogin(token, region, phone, fileSrc){
         data: formData,
         dataType: 'text',
         responseType: 'text'
-      }).then(handleRes);
+      }).then(res => res).catch(err => err);
     });
 }
 

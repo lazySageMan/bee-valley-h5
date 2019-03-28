@@ -26,12 +26,41 @@ export default class faceRecognitionLogin extends Component {
 
   onGetImgSrc = (imgSrc) => {
 
+    Taro.showLoading({
+      title: `${i18next.t('Loadingin')}...`
+    })
+
+    console.log(imgSrc)
+
     faceLogin(this.apiToken, this.region, this.phone, imgSrc).then(res => {
-      console.log(res);
-      alert(res);
-    }).catch(err => {
-      console.log(err)
-      alert(err)
+
+      if (res.statusCode === 200){
+        Taro.setStorageSync('apiToken', res.data)
+        Taro.setStorageSync('login', true)
+        Taro.hideLoading();
+        Taro.redirectTo({
+          url: '/pages/index/index'
+        })
+      }else{
+        let error = JSON.parse(res.data);
+        Taro.hideLoading();
+        let message = error.error.message ? error.error.message : error.error;
+        Taro.showModal({
+          title: i18next.t('Tips'),
+          content: message,
+          confirmText: i18next.t('Gotit'),
+          showCancel:false,
+          success: () => {
+            if (error.error.message){
+              window.location.reload();
+            }else{
+              Taro.navigateBack({
+                delta: 1
+              })
+            }
+          }
+        })
+      }
     })
   }
 
