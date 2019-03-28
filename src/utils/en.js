@@ -83,5 +83,6 @@ export default {
   china: 'China',
   faceRecognitionLogin: 'Face Recognition Login',
   PermissionsCamera: 'Permissions are turned off, or the browser cannot turn on the camera',
-  Uploadface: 'Upload photos'
+  Uploadface: 'Upload photos',
+  faceNumber: 'To use face login, you must enter the phone number of your account'
 }

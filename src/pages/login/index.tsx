@@ -160,9 +160,17 @@ export default class Login extends Component {
   }
 
   faceLogin = () => {
-    Taro.navigateTo({
-      url: '/pages/face_recognition_login/index'
-    })
+    let { username, regionData } = this.state;
+    if (username && username.length === 11 && username.charAt(0) === '1'){
+      Taro.navigateTo({
+        url: `/pages/face_recognition_login/index?phone=${username}&region=${regionData.allRegion[regionData.selectIndex].region}`
+      })
+    }else{
+      Taro.showToast({
+        title: i18next.t('faceNumber'),
+        mask: true
+      })
+    }
   }
 
   render() {

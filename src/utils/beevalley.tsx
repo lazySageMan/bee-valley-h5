@@ -390,6 +390,23 @@ function uploadImg(token, fileSrc){
     });
 }
 
+function faceLogin(token, region, phone, fileSrc){
+  return fetch(fileSrc)
+    .then(res => res.blob())
+    .then(blob => {
+      let formData = new FormData();
+      formData.append("file", blob);
+
+      return Taro.request({
+        url: `${host}login/face/${region}/${phone}`,
+        method: 'POST',
+        data: formData,
+        dataType: 'text',
+        responseType: 'text'
+      }).then(handleRes);
+    });
+}
+
 function qqLogin(){
 
 }
@@ -422,5 +439,6 @@ export {
   selectRegion,
   closeList,
   openList,
-  uploadImg
+  uploadImg,
+  faceLogin
 };
