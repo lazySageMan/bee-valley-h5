@@ -4,24 +4,22 @@ import Taro, {
 import {
   View,
   Video,
-  Image
 } from '@tarojs/components';
 import * as d3 from 'd3'
 
-import { checkDveice } from '../../utils/beevalley'
+import {
+  checkDveice
+} from '../../utils/beevalley'
 import i18next from '../../i18n'
 
 import './index.scss'
 
 export default class faceRecognitionLogin extends Component {
-  constructor(props){
+  constructor(props) {
     super(props);
-    this.state = {
-      imgsrc: null
-    }
   }
 
-  componentDidMount(){
+  componentDidMount() {
     let res = Taro.getSystemInfoSync();
     this.isMobile = checkDveice(res)
     this.videoWidth = this.isMobile ? res.windowWidth : res.windowWidth * 0.6;
@@ -49,7 +47,7 @@ export default class faceRecognitionLogin extends Component {
       .attr("height", (d) => d.height);
 
     this.initVideo();
-    this.getImgData();
+    // this.getImgData();
   }
 
   initVideo = () => {
@@ -97,6 +95,8 @@ export default class faceRecognitionLogin extends Component {
   videoSuccess = (stream) => {
     this.mediaStreamTrack = stream.getTracks()[0];
     this.video.srcObject = stream;
+    this.canvas = document.createElement("canvas");
+    this.getImgData()
   }
 
   videoError = (error) => {
@@ -105,39 +105,43 @@ export default class faceRecognitionLogin extends Component {
 
   componentWillUnmount = () => {
     this.mediaStreamTrack && this.mediaStreamTrack.stop();
+    this.mediaStreamTrack = null
   }
 
   getImgData = () => {
-    setTimeout(() => {
-      if (this.mediaStreamTrack) {
-        this.canvas = document.createElement("canvas");
-        let context = this.canvas.getContext("2d");
-        context.drawImage(this.video, 0, 0, 300, 150);
-        let imgSrc = this.canvas.toDataURL("image/jpeg");
-        this.setState({
-          imgsrc: imgSrc
-        })
-        this.mediaStreamTrack.stop();
-        this.props.onGetImgSrc(imgSrc);
-      }
-    }, 5000)
+    if (this.mediaStreamTrack) {
+      let context = this.canvas.getContext("2d");
+      // TODO
+      context.drawImage(this.video, 0, 0, 300, 150);
+      let that = this
+      this.canvas.toBlob((blob) => {
+        if (blob) {
+          that.props.onGetImgSrc(blob).then(rst => {
+            if (!rst) {
+              setTimeout(() => {
+                that.getImgData()
+              }, 2000)
+            }
+          })
+        }
+      }, "image/jpeg")
+    }
   }
 
 
-  render(){
-    let {imgsrc} = this.state;
+  render() {
     return (
       <View style='wrap_face'>
         <View className='Mask' >
 
         </View>
-        {imgsrc ? <Image src={imgsrc} className='imgWrap' ></Image> : <Video
+        <Video
           id='webcam'
           loop
           autoplay
           className='Video'
         >
-        </Video>}
+        </Video>
       </View>
     )
   }

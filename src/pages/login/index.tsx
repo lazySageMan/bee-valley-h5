@@ -53,12 +53,12 @@ export default class Login extends Component {
     } else {
       phoneLogin(this.state.username, this.state.password, regionData.allRegion[regionData.selectIndex].region).then((token) => {
 
-          Taro.setStorageSync('apiToken', token)
-          Taro.setStorageSync('login', true)
+        Taro.setStorageSync('apiToken', token)
+        Taro.setStorageSync('login', true)
 
-          Taro.redirectTo({
-            url: '/pages/index/index'
-          })
+        Taro.redirectTo({
+          url: '/pages/index/index'
+        })
       }).catch(this.defaultErrorHandling)
     }
   }
@@ -79,12 +79,32 @@ export default class Login extends Component {
   }
 
   componentDidMount() {
-    const login = Taro.getStorageSync('login')
-    if (i18next.language.toString() === 'en-US'){
+    // const login = Taro.getStorageSync('login')
+
+    // if (login === true) {
+    //   Taro.redirectTo({
+    //     url: '/pages/index/index'
+    //   })
+    // }
+
+    var url = new URL(window.location.href);
+    this.code = url.searchParams.get('code');
+    if (this.code) {
+      wechatLogin(this.code).then((token) => {
+        Taro.setStorageSync('apiToken', token)
+        Taro.setStorageSync('login', true)
+
+        Taro.redirectTo({
+          url: '/pages/index/index'
+        })
+      }).catch(this.defaultErrorHandling)
+    }
+
+    if (i18next.language.toString() === 'en-US') {
       this.setState({
         language: 'en'
       })
-    }else{
+    } else {
       this.setState({
         language: i18next.language.toString()
       })
@@ -94,24 +114,6 @@ export default class Login extends Component {
     this.setState({
       isMobile: isMobile
     })
-
-    if (login === true) {
-      Taro.redirectTo({
-        url: '/pages/index/index'
-      })
-    }
-    var url = new URL(window.location.href);
-    this.code = url.searchParams.get('code');
-    if (this.code) {
-      wechatLogin(this.code).then((token) => {
-          Taro.setStorageSync('apiToken', token)
-          Taro.setStorageSync('login', true)
-
-          Taro.redirectTo({
-            url: '/pages/index/index'
-          })
-      }).catch(this.defaultErrorHandling)
-    }
 
   }
 
@@ -160,12 +162,15 @@ export default class Login extends Component {
   }
 
   faceLogin = () => {
-    let { username, regionData } = this.state;
-    if (username && username.length === 11 && username.charAt(0) === '1'){
+    let {
+      username,
+      regionData
+    } = this.state;
+    if (username && username.length === 11 && username.charAt(0) === '1') {
       Taro.navigateTo({
         url: `/pages/face_recognition_login/index?phone=${username}&region=${regionData.allRegion[regionData.selectIndex].region}`
       })
-    }else{
+    } else {
       Taro.showToast({
         title: i18next.t('faceNumber'),
         mask: true

@@ -14,11 +14,11 @@ import './index.scss'
 
 export default class faceRecognitionLogin extends Component {
 
-  constructor(props){
+  constructor(props) {
     super(props)
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.phone = this.$router.params.phone;
     this.region = this.$router.params.region;
     this.apiToken = Taro.getStorageSync('apiToken');
@@ -30,41 +30,43 @@ export default class faceRecognitionLogin extends Component {
       title: `${i18next.t('Loadingin')}...`
     })
 
-    console.log(imgSrc)
+    // console.log(imgSrc)
 
-    faceLogin(this.apiToken, this.region, this.phone, imgSrc).then(res => {
-
-      if (res.statusCode === 200){
+    return faceLogin(this.region, this.phone, imgSrc).then(res => {
+      Taro.hideLoading()
+      if (res.statusCode === 200) {
         Taro.setStorageSync('apiToken', res.data)
         Taro.setStorageSync('login', true)
-        Taro.hideLoading();
         Taro.redirectTo({
           url: '/pages/index/index'
         })
-      }else{
-        let error = JSON.parse(res.data);
-        Taro.hideLoading();
-        let message = error.error.message ? error.error.message : error.error;
-        Taro.showModal({
-          title: i18next.t('Tips'),
-          content: message,
-          confirmText: i18next.t('Gotit'),
-          showCancel:false,
-          success: () => {
-            if (error.error.message){
-              window.location.reload();
-            }else{
-              Taro.navigateBack({
-                delta: 1
-              })
-            }
-          }
-        })
+        return true
+      } else {
+        console.log(res.data)
+        // let error = JSON.parse(res.data);
+        // Taro.hideLoading();
+        // let message = error.error.message ? error.error.message : error.error;
+        // Taro.showModal({
+        //   title: i18next.t('Tips'),
+        //   content: message,
+        //   confirmText: i18next.t('Gotit'),
+        //   showCancel:false,
+        //   success: () => {
+        //     if (error.error.message){
+        //       window.location.reload();
+        //     }else{
+        //       Taro.navigateBack({
+        //         delta: 1
+        //       })
+        //     }
+        //   }
+        // })
+        return false
       }
     })
   }
 
-  render(){
+  render() {
     return (
       <View className='faceLogin'>
         <NavBar title={i18next.t('faceRecognitionLogin')}></NavBar>

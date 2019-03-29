@@ -390,10 +390,11 @@ function uploadImg(token, fileSrc){
     });
 }
 
-function faceLogin(token, region, phone, fileSrc){
-  return fetch(fileSrc)
-    .then(res => res.blob())
-    .then(blob => {
+function faceLogin(region, phone, blob){
+  // return
+  // fetch(fileSrc)
+  //   .then(res => res.blob())
+  //   .then(blob => {
       let formData = new FormData();
       formData.append("file", blob);
 
@@ -404,7 +405,7 @@ function faceLogin(token, region, phone, fileSrc){
         dataType: 'text',
         responseType: 'text'
       }).then(res => res).catch(err => err);
-    });
+    // });
 }
 
 function qqLogin(){
