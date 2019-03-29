@@ -83,5 +83,6 @@ export default {
   china: '中国',
   faceRecognitionLogin: '面容识别登录',
   PermissionsCamera: '权限已关闭，或浏览器无法打开摄像头',
-  Uploadface: '上传照片'
+  Uploadface: '上传照片',
+  faceNumber: '使用人脸登录，必须输入你账户的手机号'
 }
