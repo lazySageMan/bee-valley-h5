@@ -30,10 +30,10 @@ export default class faceRecognitionLogin extends Component {
       .attr("height", this.videoHeight);
     let rect = this.svg.selectAll("rect");
     let update = rect.data([{
-      x: this.videoWidth / 2 - 75,
-      y: this.videoHeight / 2 - 75,
-      width: 150,
-      height: 150
+      x: this.videoWidth / 2 - this.videoWidth * 0.5 / 2,
+      y: this.videoHeight / 2 - this.videoWidth * 0.5 / 2,
+      width: this.videoWidth * 0.5,
+      height: this.videoWidth * 0.5
     }]);
     update.exit().remove();
     update.enter().append("rect")
@@ -60,7 +60,7 @@ export default class faceRecognitionLogin extends Component {
     ) {
       var constraints = {
         video: {
-          facingMode: "user",
+          facingMode: "user"
         }
       };
       this.getUserMedia(constraints, this.videoSuccess, this.videoError);
@@ -96,6 +96,8 @@ export default class faceRecognitionLogin extends Component {
     this.mediaStreamTrack = stream.getTracks()[0];
     this.video.srcObject = stream;
     this.canvas = document.createElement("canvas");
+    this.canvas.width = this.videoWidth;
+    this.canvas.height = this.videoHeight;
     this.getImgData()
   }
 
@@ -112,7 +114,7 @@ export default class faceRecognitionLogin extends Component {
     if (this.mediaStreamTrack) {
       let context = this.canvas.getContext("2d");
       // TODO
-      context.drawImage(this.video, 0, 0, 300, 150);
+      context.drawImage(this.video, 0, 0, this.videoWidth, this.videoHeight);
       let that = this
       this.canvas.toBlob((blob) => {
         if (blob) {
